@@ -1,0 +1,63 @@
+\chapter{Marco Teórico}
+
+\section{El problema de los datos sin interpretación en el e-commerce PyME}
+
+El crecimiento sostenido del comercio electrónico en Argentina ha generado un volumen creciente de datos operativos en tiendas de pequeño y mediano tamaño. Sin embargo, disponer de datos no equivale a disponer de conocimiento accionable. La mayoría de las herramientas disponibles para este segmento presentan la información en forma de cuadros de mando descriptivos: gráficos de columnas, gráficos circulares y métricas de resumen como facturación total o cantidad de clientes alcanzados.
+
+Este tipo de visualización requiere que el usuario posea habilidades analíticas, visión estratégica y conocimiento del negocio para derivar conclusiones y ejecutar acciones concretas. En la práctica, los propietarios de tiendas online actúan frecuentemente por intuición ante situaciones que podrían abordarse de forma anticipada y fundamentada: cuándo reponer stock, cuándo lanzar una promoción, cuándo ajustar precios ante un cambio de temporada o un riesgo de vencimiento de mercadería.
+
+Esta brecha entre la disponibilidad de datos y la capacidad de acción constituye el problema central que motiva el presente proyecto \parencite{Davenport2007, Provost2013}.
+
+\section{Business Intelligence: del analytics descriptivo al prescriptivo}
+
+El campo del Business Intelligence (BI) clasifica los sistemas de análisis de datos en cuatro niveles de madurez creciente:
+
+\begin{enumerate}
+    \item \textbf{Analytics descriptivo:} Responde a la pregunta ``¿qué ocurrió?'' y constituye la base de la mayoría de los dashboards comerciales actuales.
+
+    \item \textbf{Analytics diagnóstico:} Responde a ``¿por qué ocurrió?'', incorporando análisis de causas y correlaciones.
+
+    \item \textbf{Analytics predictivo:} Responde a ``¿qué es probable que ocurra?'' mediante modelos estadísticos y de aprendizaje automático.
+
+    \item \textbf{Analytics prescriptivo:} Responde a ``¿qué debería hacerse?'' y representa el nivel más avanzado, combinando predicciones con reglas de negocio y objetivos concretos para generar recomendaciones específicas y priorizadas.
+\end{enumerate}
+
+El presente proyecto se posiciona en el nivel prescriptivo: no busca mostrar qué vendió un comercio ni predecir cuánto venderá, sino recomendar acciones concretas con potencial impacto medido. Este enfoque implica superar las limitaciones de las herramientas descriptivas dominantes en el mercado local y acercar capacidades analíticas avanzadas a usuarios sin formación técnica especializada \parencite{Lepenioti2020, Negash2004}.
+
+\section{Sistemas de recomendación}
+
+Los sistemas de recomendación son componentes de software diseñados para sugerir ítems, acciones o decisiones relevantes a un usuario en función de datos disponibles. En el contexto del e-commerce, estos sistemas se han desarrollado principalmente para recomendar productos a consumidores finales. Sin embargo, su aplicación para recomendar acciones estratégicas a los propietarios de las tiendas representa un campo menos explorado y de alto valor potencial.
+
+Existen tres enfoques principales. El \emph{filtrado basado en contenido} analiza las características de los propios datos (por ejemplo, velocidad de rotación de un producto) para generar recomendaciones. El \emph{filtrado colaborativo} identifica patrones comunes entre múltiples usuarios o entidades similares. Los \emph{sistemas híbridos} combinan ambos enfoques para mejorar la precisión y la cobertura de las recomendaciones.
+
+El motor de análisis del presente proyecto adopta un enfoque híbrido. Por un lado, incorpora reglas de negocio predefinidas que responden a situaciones conocidas y recurrentes: si un producto recién incorporado agota su stock en poco tiempo, el sistema recomienda reposición inmediata; si un producto de temporada muestra caída en su rotación, el sistema sugiere una promoción o reducción de precio. Por otro lado, el sistema incorpora un componente dinámico basado en aprendizaje a partir del comportamiento histórico de cada tienda y cada rubro, permitiendo personalizar las recomendaciones según el perfil específico del comercio \parencite{Ricci2015, Adomavicius2005}.
+
+\section{Comportamiento del consumidor y particularidades por rubro}
+
+El e-commerce no es un fenómeno homogéneo. Los patrones de compra, los ciclos de reposición y las variables críticas para la toma de decisiones varían significativamente según el rubro. El presente proyecto focaliza su análisis en tres categorías que se encuentran entre las de mayor volumen en el mercado argentino: gastronomía, indumentaria y electrónica.
+
+En \emph{gastronomía}, las variables críticas incluyen la perecibilidad de los productos, la estacionalidad semanal y horaria de la demanda, y la necesidad de anticipar aumentos de consumo en fechas específicas. En \emph{indumentaria}, predominan los ciclos estacionales marcados (verano/invierno), la gestión de talles y variantes, y la sensibilidad al precio durante períodos de liquidación. En \emph{electrónica}, los factores determinantes son la obsolescencia tecnológica, la variación de precios en función del tipo de cambio y la competencia de precio en un mercado altamente comparativo.
+
+Reconocer estas diferencias es fundamental para que el motor de análisis genere recomendaciones contextualizadas y evite aplicar criterios genéricos que resulten irrelevantes o contraproducentes para cada tipo de comercio \parencite{CACE2025, Tiendanube2026}.
+
+\section{Adquisición y procesamiento de datos}
+
+El sistema propuesto contempla dos fuentes de ingesta de datos. La primera es la integración directa con la API de Tiendanube, plataforma líder de e-commerce en Argentina y América Latina, que permite acceder en tiempo real a datos de ventas, inventario, clientes y productos de cada tienda conectada. La segunda es la carga manual de archivos en formato CSV, orientada a comercios que deseen incorporar datos históricos previos a la integración o que operen sobre plataformas no conectadas.
+
+Este enfoque dual responde a una necesidad práctica del segmento PyME: no todos los comercios tienen un historial digital completo ni operan sobre una única plataforma. La combinación de ambas fuentes permite maximizar la cobertura y la utilidad del sistema desde su puesta en marcha.
+
+El procesamiento de los datos comprende etapas de limpieza, normalización y estructuración, previas al análisis. Este flujo sigue el paradigma ETL (\emph{Extract, Transform, Load}), ampliamente documentado en la literatura de ingeniería de datos \parencite{Kimball2013}.
+
+\section{Sistemas de soporte a la decisión y toma de decisiones basada en datos}
+
+Los Sistemas de Soporte a la Decisión (DSS, por sus siglas en inglés) son herramientas de software que asisten a personas o equipos en la toma de decisiones complejas, combinando datos, modelos analíticos e interfaces de usuario. A diferencia de los sistemas de reporting tradicionales, los DSS no solo presentan información sino que guían activamente el proceso de decisión.
+
+Investigaciones en el campo de las ciencias del comportamiento y la economía conductual demuestran que los seres humanos toman mejores decisiones cuando reciben recomendaciones concretas y contextualizadas en lugar de conjuntos de datos que requieren interpretación propia. Este fenómeno es especialmente relevante en contextos de alta carga cognitiva o baja experiencia analítica, como es el caso de los propietarios de PyMEs de e-commerce.
+
+El presente proyecto incorpora este principio al comparar la capacidad de respuesta de usuarios ante recomendaciones directas versus dashboards descriptivos tradicionales, con el objetivo de validar empíricamente que las recomendaciones accionables generan decisiones más rápidas y de mayor calidad \parencite{Power2002, Kahneman2011}.
+
+\section{Feedback loop y mejora continua de las recomendaciones}
+
+Un componente diferenciador del sistema propuesto es la incorporación de un mecanismo de retroalimentación continua. Cuando un usuario recibe una recomendación, el sistema registra si la acción fue ejecutada. En una etapa posterior, evalúa el impacto de dicha acción sobre las métricas relevantes (ventas, rotación de stock, ticket promedio, entre otras). A partir de este análisis, el sistema actualiza la priorización de recomendaciones futuras: aquellas que demostraron impacto positivo aumentan su relevancia, mientras que las que no generaron el efecto esperado son revisadas o reemplazadas.
+
+Este enfoque responde al paradigma de aprendizaje por refuerzo aplicado a sistemas de recomendación, y permite que el sistema se adapte progresivamente al comportamiento y contexto específico de cada comercio, mejorando su precisión a lo largo del tiempo \parencite{Sutton2018, Shani2011}.
