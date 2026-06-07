@@ -4,7 +4,7 @@
 
 El comercio electrónico en Argentina atraviesa un período de crecimiento y profesionalización sostenida. Según el informe NubeCommerce 2026 de Tiendanube, durante 2025 las tiendas del ecosistema alcanzaron casi 22 millones de órdenes, con un crecimiento del 40,2\% en facturación por encima de la inflación acumulada. La Cámara Argentina de Comercio Electrónico (CACE) reportó una facturación de \$15,3 billones en el primer semestre de 2025, con el canal digital representando el 25\% de las ventas totales del país.
 
-En este contexto, la mayoría de los comercios dispone hoy de datos operativos en volumen creciente, pero la capacidad de transformarlos en decisiones estratégicas sigue siendo escasa, especialmente en el segmento PyME.
+En este contexto, la mayoría de los comercios dispone hoy de datos operativos en volumen creciente, pero la capacidad de transformarlos en decisiones estratégicas sigue siendo escasa, especialmente en el segmento PyME, donde raramente existe un analista de datos dedicado.
 
 \section{Herramientas de analytics descriptivo: el estándar actual}
 
@@ -12,11 +12,13 @@ Las herramientas de análisis más utilizadas por los comercios de e-commerce en
 
 Google Analytics, ampliamente integrado en las principales plataformas, ofrece análisis de tráfico y comportamiento, pero no genera recomendaciones comerciales. Shopify Analytics presenta capacidades similares dentro de su ecosistema. Ninguna de estas herramientas indica al comerciante qué acción concreta debe tomar ni en qué momento.
 
-\section{Nubelytics: el competidor local más próximo}
+\section{Nubelytics: el antecedente local más próximo}
 
-En el mercado argentino, Nubelytics se posiciona como la herramienta más cercana a la propuesta del presente proyecto. La plataforma apunta a transformar datos de e-commerce en acciones concretas, con foco en la identificación de oportunidades en ventas y carritos abandonados.
+En el mercado de soluciones analíticas de América Latina, Nubelytics se posiciona como el antecedente directo más próximo al presente proyecto. Se trata de una plataforma orientada al segmento de comercios minoristas y PyMEs que opera de manera nativa e integrada dentro de la tienda de aplicaciones de Tiendanube. Su propuesta de valor central radica en procesar datos de ventas, visitas y campañas digitales mediante Inteligencia Artificial para transformarlos en alertas y oportunidades de optimización comerciales en lenguaje natural, mitigando la dependencia de hojas de cálculo complejas.
 
-Sin embargo, su enfoque se centra principalmente en métricas de conversión y recuperación de ventas perdidas, sin abordar de forma integral la gestión de inventario, la estacionalidad por rubro ni un sistema de retroalimentación sobre la efectividad de las recomendaciones ejecutadas.
+Puntos de contacto: Comparte con este proyecto el público objetivo (PyMEs de la región), la plataforma base de integración (API de Tiendanube), el mecanismo de distribución (aplicación integrada en el panel de administración) y el propósito de democratizar el uso de IA para traducir datos transaccionales en acciones comerciales concretas.
+
+Puntos de divergencia: El alcance de Nubelytics está fuertemente orientado hacia la analítica de conversión digital, el rendimiento de pauta publicitaria (Meta y Google Ads) y el comportamiento del embudo de ventas en línea. El presente proyecto diverge al plantear un enfoque operativo holístico que vincula estrechamente las ventas con la gestión inteligente de inventarios y la estacionalidad propia del rubro comercial. Asimismo, Nubelytics carece de un sistema de retroalimentación algorítmica activa que evalúe el impacto posterior de las acciones ejecutadas por el usuario, y no contempla la validación del comportamiento del comerciante ante recomendaciones directas en comparación con los esquemas descriptivos tradicionales.
 
 \section{Herramientas internacionales con analytics prescriptivo}
 
@@ -24,36 +26,86 @@ A nivel internacional existen soluciones que se acercan al nivel prescriptivo, a
 
 \subsection{Zebra Technologies / Reflexis}
 
-Es una plataforma de analytics prescriptivo orientada al retail que genera recomendaciones específicas del tipo ``aplicá un descuento del 15\% en el producto X durante las próximas dos semanas''. Su enfoque es el más cercano conceptualmente al presente proyecto, pero está diseñada para cadenas de retail de escala empresarial, con costos y complejidad de implementación inaccesibles para PyMEs.
+Es una suite corporativa de analítica prescriptiva orientada a la gestión operativa de grandes cadenas de retail físico global. El sistema procesa volúmenes masivos de datos transaccionales y de inventario para coordinar en tiempo real las tareas del personal en el salón de ventas.
+
+Puntos de contacto: Se comparte la hipótesis central de que las recomendaciones prescriptivas directas y automatizadas superan la eficiencia de los tableros descriptivos tradicionales para movilizar la acción comercial.
+
+Puntos de divergencia: Zebra amarra su software a un ecosistema cerrado de hardware propietario (lectores industriales y antenas RFID) para optimizar el retail físico masivo. El presente prototipo es un sistema agnóstico de hardware diseñado exclusivamente para flujos de datos de e-commerce, orientado al segmento PyME local.
 
 \subsection{Conjura}
 
-Es una plataforma de analytics para e-commerce que conecta datos de ventas, publicidad, clientes e inventario para generar insights accionables. Está orientada a marcas de tamaño medio a grande, opera principalmente en inglés y dentro del ecosistema de plataformas internacionales como Shopify.
+Es una plataforma de business intelligence impulsada por IA y Machine Learning, orientada específicamente a marcas medianas y grandes del ecosistema de e-commerce global (Shopify, Amazon).
+
+Puntos de contacto: Coincide en el procesamiento automatizado de datos transaccionales de canales digitales para convertirlos en insights y recomendaciones comerciales que optimicen el rendimiento del negocio.
+
+Puntos de divergencia: Su motor algorítmico se enfoca en variables financiero-publicitarias (retorno de inversión en anuncios de Meta/Google, valor de vida del cliente digital). El presente proyecto prioriza la eficiencia operativa interna y la gestión inteligente del stock. Opera en inglés y bajo costos de escala internacional, incompatibles con la realidad de los comercios locales.
 
 \subsection{Polar Analytics}
 
-Unifica datos de múltiples fuentes y genera insights orientados a la acción, con fuerte integración en el ecosistema Shopify. No contempla las particularidades del mercado latinoamericano ni ofrece recomendaciones diferenciadas por rubro.
+Es un concentrador de inteligencia de negocios diseñado para marcas nativas digitales (D2C) de escala internacional. Su propuesta se centra en centralizar datos dispersos de ventas y adquisición de clientes en un entorno unificado.
+
+Puntos de contacto: Ambos proyectos reconocen la necesidad crítica de unificar fuentes de datos dispersas de una tienda online para mejorar la toma de decisiones comerciales.
+
+Puntos de divergencia: Polar Analytics opera bajo un paradigma puramente descriptivo, organizando la información en dashboards para que un analista humano los interprete. Este proyecto elimina esa fricción interpretativa mediante la automatización del diagnóstico, entregando la recomendación directa al administrador. No contempla las particularidades del mercado latinoamericano ni ofrece recomendaciones diferenciadas por rubro.
 
 \subsection{Klaviyo}
 
-Es una herramienta de marketing automation que incorpora recomendaciones personalizadas, pero su foco está exclusivamente en comunicaciones con clientes (email, SMS), sin abordar la gestión operativa del comercio.
+Es una plataforma de automatización de marketing y datos de clientes especializada en canales de retención y comunicación digital.
+
+Puntos de contacto: Se comparte el objetivo de potenciar las ventas mediante el uso de algoritmos de recomendación basados en hábitos de consumo.
+
+Puntos de divergencia: El alcance de Klaviyo es estrictamente externo y orientado al consumidor final (B2C), inyectando sugerencias en correos o SMS. El presente proyecto se orienta hacia adentro del negocio (B2B), actuando como sistema de soporte a las decisiones comerciales y operativas para el dueño o administrador de la tienda.
 
 \section{Análisis comparativo y brecha identificada}
 
-El relevamiento del mercado permite identificar una brecha concreta y relevante. Las herramientas disponibles en Argentina son descriptivas y no recomiendan acciones. Las herramientas internacionales con capacidades prescriptivas están orientadas a empresas de mayor escala, operan en inglés, no contemplan las particularidades del mercado local y presentan costos incompatibles con el segmento PyME.
+El relevamiento del mercado permite identificar una brecha concreta y relevante en el ecosistema de soluciones tecnológicas actual. Por un lado, las herramientas accesibles localmente operan bajo un paradigma puramente descriptivo que delega la interpretación de los datos en el usuario. Por otro lado, las plataformas internacionales con capacidades prescriptivas están diseñadas para estructuras corporativas de gran escala, operan en inglés bajo costos en moneda extranjera y están configuradas para la madurez digital de mercados anglosajones o europeos, volviéndose incompatibles con la realidad operativa del segmento PyME local.
 
-Ninguna solución identificada combina los siguientes atributos de forma simultánea:
+El siguiente cuadro comparativo sintetiza los atributos relevados entre Nubelytics, el competidor local más próximo, y el presente proyecto:
+
+\begin{table}[h]
+\centering
+\renewcommand{\arraystretch}{1.5}
+\begin{tabular}{|m{3.5cm}|m{2.5cm}|m{2.5cm}|}
+\hline
+\rowcolor[HTML]{1e3a5f}
+\textcolor{white}{\textbf{Atributo}} & \textcolor{white}{\textbf{Nubelytics}} & \textcolor{white}{\textbf{Este proyecto}} \\
+\hline
+\rowcolor[HTML]{FFFF00}
+Integración con Tiendanube & \cellcolor{white}{\checkmark\ Sí} & \cellcolor{white}{\checkmark\ Sí} \\
+\hline
+\rowcolor[HTML]{FFFF00}
+Analytics de conversión / embudo & \cellcolor{white}{\checkmark\ Sí} & \cellcolor{white}{Parcial} \\
+\hline
+\rowcolor[HTML]{FFFF00}
+Insights en lenguaje natural con IA & \cellcolor{white}{\checkmark\ Sí} & \cellcolor{white}{\checkmark\ Sí} \\
+\hline
+\rowcolor[HTML]{FFFF00}
+Gestión de inventario & \cellcolor{white}{\ding{55}\ No} & \cellcolor{white}{\checkmark\ Sí} \\
+\hline
+\rowcolor[HTML]{FFFF00}
+Estacionalidad por rubro & \cellcolor{white}{\ding{55}\ No} & \cellcolor{white}{\checkmark\ Sí} \\
+\hline
+\rowcolor[HTML]{FFFF00}
+Feedback loop sobre acciones ejecutadas & \cellcolor{white}{\ding{55}\ No} & \cellcolor{white}{\checkmark\ Sí} \\
+\hline
+\rowcolor[HTML]{FFFF00}
+Validación de efectividad de recomendaciones & \cellcolor{white}{\ding{55}\ No} & \cellcolor{white}{\checkmark\ Sí} \\
+\hline
+\end{tabular}
+\end{table}
+
+Ninguna solución identificada en el estado del arte combina los siguientes atributos de forma simultánea:
 
 \begin{enumerate}
-    \item Recomendaciones accionables priorizadas.
+    \item Recomendaciones prescriptivas y accionables que reemplacen la necesidad de interpretar tableros de control tradicionales.
 
-    \item Adaptación a rubros específicos (gastronomía, indumentaria, electrónica).
+    \item Adaptación de la lógica de negocio a rubros específicos de consumo masivo altamente presentes en el entorno urbano (gastronomía, indumentaria, electrónica).
 
-    \item Integración con la API de Tiendanube como plataforma dominante en Argentina.
+    \item Integración nativa con la API de Tiendanube como plataforma dominante en el mercado argentino.
 
-    \item Accesibilidad para comercios de pequeño y mediano tamaño.
+    \item Accesibilidad técnica y financiera para emprendimientos y comercios de pequeño y mediano tamaño en la Ciudad Autónoma de Buenos Aires.
 
-    \item Un mecanismo de retroalimentación que permita evaluar y mejorar la calidad de las recomendaciones a lo largo del tiempo.
+    \item Un mecanismo de retroalimentación en bucle cerrado (feedback loop) que permita evaluar y mejorar la calidad de las recomendaciones en función de las decisiones reales del comerciante a lo largo del tiempo.
 \end{enumerate}
 
-Esta combinación constituye la propuesta de valor diferencial del presente proyecto y fundamenta su pertinencia tanto académica como práctica.
+Esta combinación de factores constituye la propuesta de valor diferencial del presente proyecto, cubre la vacante metodológica identificada en los antecedentes y fundamenta la pertinencia tanto académica como práctica de la investigación.
