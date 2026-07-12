@@ -104,7 +104,7 @@
 %{\normalfont\ssecfnt\bfseries}{\thesubsection}{1em}{}
 
 % Se pide numeraci\'on de tablas en n\'umeros romanos
-\renewcommand{\thetable}{\thechapter.\Roman{table}}
+\renewcommand{\thetable}{\arabic{table}}
 
 %Espaciado antes y despu\'es de una figura respecto del texto
 \setlength{\textfloatsep}{5pt}
@@ -222,7 +222,9 @@
 \usepackage{hyperref}
 \hypersetup{
     colorlinks,
-    citecolor=red
+    citecolor=black,
+    linkcolor=black,
+    urlcolor=black
 }
 % Para la entrega final:
 %\usepackage[hidelinks]{hyperref}
@@ -252,26 +254,18 @@
 ]{cover/284ef8e2-6978-41c9-868c-e8f23e315f9b.pdf}
 \clearpage
 	\input{chapters/title}
-	\input{chapters/acknowledgments}
-	\newpage
-	\input{chapters/summary}
-	\newpage
-	\input{chapters/abstract}
-	\newpage
 	\tableofcontents
 	\input{chapters/chapter00}
 	\input{chapters/chapter01-marco}
 	\input{chapters/chapter02-estado}
-	\input{chapters/chapter03}
-	\input{chapters/conclusion}
 
 	\addcontentsline{toc}{chapter}{Bibliograf\'{\i}a}
 	\printbibliography{}
 
-	\appendix
-	\input{chapters/appendix/annex}
 	\newpage
-	\listoffigures
-	\newpage
+	\addcontentsline{toc}{chapter}{Lista de Tablas}
 	\listoftables
+
+	\appendix
+	\input{chapters/appendix/annex.tex}
 \end{document}

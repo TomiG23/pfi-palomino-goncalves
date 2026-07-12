@@ -46,7 +46,33 @@ El sistema propuesto contempla la integración directa con la API de Tiendanube 
 
 La decisión de centrarse en esta fuente responde al perfil del segmento PyME objetivo: comercios que operan principalmente sobre Tiendanube y que buscan una solución de integración inmediata y sin fricción técnica.
 
+\subsection{Recursos y campos consumidos}
+
+El motor de análisis del prototipo consume los siguientes recursos de la API de Tiendanube \parencite{TiendanubeAPI2024}:
+
+\subsubsection{Pedidos (\texttt{/orders})}
+
+Constituye la fuente primaria de datos transaccionales. De cada pedido se extraen los campos \texttt{created\_at}, para construir series temporales y analizar la estacionalidad de las ventas; \texttt{status} y \texttt{payment\_status}, para filtrar únicamente las transacciones efectivamente cobradas y excluir cancelaciones o pedidos pendientes; \texttt{total}, base para el cálculo de facturación acumulada y ticket promedio; \texttt{products}, que detalla por ítem el identificador de producto y variante, la cantidad comprada y el precio unitario, permitiendo calcular la velocidad de rotación individual de cada SKU; y \texttt{customer}, referencia al comprador, utilizada para medir la frecuencia de recompra y la tasa de retención.
+
+\subsubsection{Productos y variantes (\texttt{/products}, \texttt{/products/\{id\}/variants})}
+
+El recurso de productos provee el catálogo completo de la tienda. Se consume \texttt{name} y \texttt{categories} para segmentar las recomendaciones por rubro y aplicar reglas de negocio diferenciadas según la categoría comercial (gastronomía, indumentaria, electrónica). A nivel de variante, donde cada una representa una combinación única de atributos como talle, color o capacidad, se consumen: \texttt{stock}, variable central para detectar riesgos de quiebre de inventario y disparar alertas de reposición; \texttt{price}, utilizado en cálculos de rentabilidad y en la generación de recomendaciones de ajuste de precio ante cambios de temporada o caída en la rotación; y \texttt{cost}, el precio de costo cuando está disponible, que permite calcular el margen bruto por unidad.
+
+\subsubsection{Clientes (\texttt{/customers})}
+
+Complementa los datos transaccionales con el comportamiento histórico de la base de compradores. Se utilizan \texttt{total\_spent} y \texttt{orders\_count} para calcular el valor de vida del cliente (CLV) y segmentar la base según su nivel de actividad, y \texttt{last\_order\_date} para identificar clientes en riesgo de abandono y fundamentar recomendaciones de retención o reactivación.
+
 El procesamiento de los datos comprende etapas de limpieza, normalización y estructuración, previas al análisis. Este flujo sigue el paradigma ETL (\emph{Extract, Transform, Load}), ampliamente documentado en la literatura de ingeniería de datos \parencite{Kimball2013}.
+
+\section{Estrategia de datos para el prototipo}
+
+El presente prototipo adopta una estrategia de datos en dos capas complementarias, orientada a garantizar tanto la validez técnica de la integración como la representatividad de los escenarios de análisis.
+
+La primera capa consiste en la integración con una tienda de desarrollo provista por el programa de Socios Tecnológicos de Tiendanube. Al registrarse como socia tecnológica, la plataforma asigna una tienda demo con acceso completo a todas las funcionalidades y a la API real, sin costo y de forma permanente. Esta tienda permite instalar la aplicación desarrollada, autenticar el acceso mediante OAuth 2.0 y consumir los endpoints reales de \texttt{/orders}, \texttt{/products} y \texttt{/customers}, validando así que la integración funciona sobre infraestructura productiva real y no sobre una simulación.
+
+La segunda capa consiste en datos sintéticos generados programáticamente a partir del esquema oficial de la API de Tiendanube. Dado que la tienda demo no cuenta con historial transaccional acumulado, se generarán conjuntos de datos ficticios pero estructuralmente fieles a los contratos de la API, cubriendo los tres rubros objetivo del proyecto: gastronomía, indumentaria y electrónica. Estos datos permitirán simular patrones de comportamiento relevantes para el motor de análisis, tales como estacionalidad, rotación de stock y frecuencia de recompra, en volúmenes suficientes para evaluar la calidad de las recomendaciones generadas.
+
+Esta combinación permite demostrar la viabilidad técnica de la integración con datos reales, al tiempo que garantiza la disponibilidad y el control necesarios sobre los datos de prueba durante el desarrollo del prototipo.
 
 \section{Sistemas de soporte a la decisión y toma de decisiones basada en datos}
 
