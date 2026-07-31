@@ -1,0 +1,171 @@
+﻿\subsection*{B.3 Entrevista N.°~3 --- Pablo Terrera}
+\addcontentsline{toc}{subsection}{B.3 Entrevista N.° 3 --- Pablo Terrera}
+
+\noindent\textbf{Entrevistado:} Pablo Terrera\\
+\noindent\textbf{Perfil:} Dueño de MariCafé (cafetería). Perfil profesional en marketing y datos; experiencia previa en Telefónica (BI, big data). Construyó un sistema integral de analytics propio (``Maricapp'') con Lovable, Google Sheets y Gemini AI. Estudiante de Ingeniería.\\
+\noindent\textbf{Entrevistador:} Tomás Gonçalves (moderador, sin observador en esta sesión)\\
+\noindent\textbf{Fecha:} Viernes 25 de julio de 2026\\
+\noindent\textbf{Modalidad:} Videollamada (semiestructurada) --- Duración: \textasciitilde66 minutos\\
+\noindent\textbf{Plataforma del negocio:} WooCommerce (e-commerce, módulo Mercado Pago desactivado) + sistema propio Maricapp (Lovable + Google Sheets + Gemini AI) + facturador Maxi Rest
+
+\begin{framed}
+\small\noindent\textit{Nota metodológica: Esta transcripción fue limpiada a partir de una grabación de \textasciitilde66 minutos. Se eliminó charla personal previa y posterior, pasajes sobre módulos no vinculados al e-commerce (entrevistas laborales, auditorías ISO, fidelización), y detalles técnicos de implementación interna de la app (queries, migración de tablas). Se preservó todo lo relevante a la toma de decisiones basada en datos, gestión de stock, estacionalidad, herramientas de analytics, publicidad y dinámicas de PyMEs. La calidad de la transcripción automática fue baja en algunos pasajes; se reconstruyó la sintaxis preservando estrictamente el sentido original. No se agregó información que el entrevistado no haya dicho.}
+\end{framed}
+
+\subsubsection*{Bloque 0 · Introducción y rapport}
+
+\noindent\textbf{Tomás Gonçalves:} Estoy preparando mi tesis. Va a ser rápido, un par de preguntas y listo. Ingeniería en Informática.
+
+\noindent\textbf{Pablo Terrera:} ¿Y la tesis de qué sería? ¿Cuál es la hipótesis?
+
+\noindent\textbf{Tomás Gonçalves:} Mi compañera y yo estamos trabajando en una herramienta que sirve para que alguien que tenga una tienda online pueda tomar mejores decisiones. Agarra tus datos, lo implementamos con IA, y después te tira lo que nosotros llamamos recomendaciones inteligentes. Por ejemplo: la semana que viene, en base a tus ventas y todos tus datos, el martes podés poner esta promoción y tenés asegurada esta cantidad de ventas.
+
+\noindent\textbf{Pablo Terrera:} Creo que estoy haciendo yo algo más o menos parecido. Yo ya tengo un beta de análisis con IA e indicadores que te dice qué tenés que hacer. Te repasa todos los indicadores, busca los KPI, elige tantos, te sugiere un plan de acción. Está acotado porque aún no lo expandí a todos los indicadores ni le armé una tabla completa de qué sugerencias debería haber para poder convertir. En el fondo, vos tenés que guiar un poquito la IA.
+
+\noindent\textbf{Pablo Terrera:} Yo tengo una app: lo que hice fue migrar en MariCafé todo lo que era Excel y papel. Volé todo y migré todo a una app que hice con Lovable. Si querés te comparto pantalla, como un entorno real de una migración.
+
+\subsubsection*{Bloque 1 · Contexto del negocio y herramientas actuales}
+
+\noindent\textit{--- Demostración de Maricapp: módulos de ventas y proyección ---}
+
+\noindent\textit{[Pablo comparte pantalla mostrando su sistema Maricapp]}
+
+\noindent\textbf{Pablo Terrera:} Acá tengo módulos de ventas, proyección de fin de mes, tickets, cuántas facturas tengo pendientes. Hace un cruce de pronóstico de días con el clima. Si el clima viene estable, la proyección objetivo del día no va a variar. Dice: ``calibrado con 121 días de historia de lluvias''. Lo toma de una API, encima. Con Gemini ya te lo arregla.
+
+\noindent\textbf{Pablo Terrera:} Tengo módulos de roturas y de desperdicios también. Inventario de freezer. Evolución de ventas diarias. Comparativo intermensual (enero es un proyectado). Usa método estadístico de regresión lineal. Mix de pagos: tarjeta, débito y QR. El QR es una bolsa de gatos, pero te da control de efectivo: cuánto estás perdiendo respecto al mes pasado.
+
+\noindent\textbf{Pablo Terrera:} Tengo una gran merma por la cual tengo que salir a buscar ventas con efectivo. Hay un objetivo de efectivo y un objetivo por facturación y costos.
+
+\noindent\textit{--- Análisis de IA: resumen de indicadores ---}
+
+\noindent\textbf{Pablo Terrera:} Después tengo lo que es el análisis de IA. Atrás está escrito qué tiene que ir a buscar y me dice: ¿qué está sucediendo? Las ventas acumuladas del 25 de julio son de tal cifra, con una proyección de tanto. Te da proyección de ticket, alertas. Por ejemplo: la facturación de efectivo cayó; la facturación de apps se redujo un 36\% intermensual; Rapí y Mercado Pago Delivery también muestran bajas significativas. Oportunidades: el ticket promedio proyectado aumentó un 21\%, lo que sugiere que el cliente está gastando más por visita. Amenaza: la caída general de volumen de transacciones de los canales de entrega rápida podría indicar menor demanda.
+
+\noindent\textbf{Pablo Terrera:} Pero no es inmediato, no lo sabe. Nunca le hablé a la IA de que las apps pagan a catorce días y que tiene un costo del 30\%. Lo del 30\% lo sabe, pero hay cosas que faltan. Esto es un ticket que te cobra un centavo cada vez que lo corrés, y así analiza.
+
+\noindent\textit{--- Indicadores financieros y estructura de costos ---}
+
+\noindent\textbf{Pablo Terrera:} Los indicadores de ventas son todos estos. Hago proyección de fin de mes por medio de pago. Hago proyecciones por estacionalidad, por regresión lineal y un promedio ponderado de ambas.
+
+\noindent\textbf{Pablo Terrera:} También tengo egresos: gastos fijos, partida de salarios, cuánto de marketing, cuánto de administración, cuánto de mantenimiento. Me lo ordena por meses y después saca ventas, egresos, impuestos, EBITDA, la tasa de EBITDA y el resultado.
+
+\noindent\textbf{Pablo Terrera:} También tengo seguimiento de inflación: cargo la inflación mensual y me proyecta la variación interanual, con valores corrientes. Seguimiento semanal de ventas a semana cerrada, comparativo semanal por bloques de semana dentro de un mismo mes y contra el mes anterior. Eso sirve para ver dónde estás creciendo y es respuesta a campañas y promociones.
+
+\noindent\textit{--- E-commerce: WooCommerce y costos transaccionales ---}
+
+\noindent\textbf{Tomás Gonçalves:} Lo tenés linkeado a tu negocio.
+
+\noindent\textbf{Pablo Terrera:} Sí. Lo transaccional del e-commerce lo hago con WooCommerce. Pero ahora deshabilité el módulo de Mercado Pago en WooCommerce porque la comisión es muy alta y los pagos tardan mucho. Lo que hago es generar la transacción online de la compra (por ejemplo, una torta entera), contactamos por WhatsApp, confirmamos la orden y lo pagan en tienda física cuando retiran. Sale mucho más barato, y si es efectivo le puedo hacer un descuento del 10\%. El costo transaccional es tan alto que, como no hago delivery y tienen que venir igual, no tiene sentido.
+
+\noindent\textbf{Pablo Terrera:} Mercado Pago está con tasas del 4,8\% y liberación a diez días. Inmediato está como en 6,7\%. Altísimo. Apagué el módulo. Trabajo con el e-commerce para generar la transacción que va al cliente y a mí la copia. Los chicos cargan en Maricapp la reserva, que la ven todos los días.
+
+\subsubsection*{Bloque 2 · Gestión de inventario y stock}
+
+\noindent\textit{--- Predicción de stock y límites actuales ---}
+
+\noindent\textbf{Tomás Gonçalves:} Sobre stock, me dijiste que tenés alertas y con eso vas viendo. ¿No tenés una manera de hacer una predicción de cuánto vas a necesitar en un mes o una semana?
+
+\noindent\textbf{Pablo Terrera:} No, porque lamentablemente no tengo cargadas las ventas por producto que salen todos los días. Debería conectarlo con mi facturador, que es Maxi Rest. Exporta archivos TXT que los tengo subidos en mi Google Drive, pero debería entrar a la tabla para buscarlo. Mi mayor temor es romper algo en el facturador. Por ahora cargo las ventas, cargo los medios de pago, pero el trackeo de producto lo exporto una vez al mes y ahí tengo un semicontrol. No tengo todo el control porque no tengo lo que se vende en tiempo real.
+
+\noindent\textbf{Pablo Terrera:} Lo que se vende tiene receta, ya está asociado. Por lo cual podría predecir a partir de eso cuánto necesito. Si lograse conectar el facturador, ya podría estar en condiciones de hacer una proyección. Esa conexión para mí es un laburo de tres meses, porque la IA va a andar mal todo el tiempo seguramente: va a sobrestockear, hay cosas que no va a entender.
+
+\noindent\textit{--- Estacionalidad y variables humanas en la reposición ---}
+
+\noindent\textbf{Pablo Terrera:} Por ejemplo: vos tenés que pedir chocolate en febrero, stockearte casi en marzo, porque en marzo vuela por las Pascuas y cuando querés pedir no hay. A veces, con aumentos fuertes de lácteos, arranca primero la manteca del mercado, después siguen las cremas y después la leche. Hay cosas que la IA no tiene idea; le podés dar inputs, pero hay cosas fortuitas del mercado. A veces requiere stockearte, y eso lo sabe el ser humano: ``Che, viene aumento de leche, ya con aumento de manteca yo ya sé que tengo que stockearme de crema, pero crema tiene fecha de vencimiento de veintipico de días.''
+
+\noindent\textbf{Pablo Terrera:} Hay cosas en las que la IA va a alucinar y le falta camino. Al día de hoy, la IA se soporta en el humano. No hay forma, porque no va a leer tanto el mercado.
+
+\noindent\textbf{Tomás Gonçalves:} Me imagino que si querés hacer una promoción para Navidad o lo que sea, es más en base a la experiencia: yo sé que el año pasado vendí esta cantidad y este año lanzo algo parecido.
+
+\noindent\textbf{Pablo Terrera:} Para que pueda ser un buen pedido debería tener la regresión lineal perfecta, y es imposible. Las variables que hacen que tomemos una decisión en nuestro día a día son tantas que a veces las tenemos naturalizadas: variable de contexto inflación, variable de contexto país, variable de exportaciones, para intentar predecir tus proveedores y tus insumos. Inclusive yo le podría decir: ``Tengo catering la semana que viene, hacer tal cantidad de cosas.'' Son muchas variables en la ecuación de regresión para hacer un pedido.
+
+\noindent\textit{--- Stock mínimo garantizado y gestión de liquidez ---}
+
+\noindent\textbf{Pablo Terrera:} Yo creo que podés achicar un montón el trabajo humano operativo que no tiene valor agregado, como puede ser hacer un pedido. Yo tenía mucho stockeo al pedo en el depósito y encontré mucha ineficiencia. Si mis recursos humanos son buenos cocinando pero malos en todo lo demás, voy a intentar cubrir con IA lo que no tengan ni que pensar: vos tenés que hacer lo que dice la IA, cargás, y el sistema me dice lo que tengo que reponer.
+
+\noindent\textbf{Pablo Terrera:} Yo puedo modificar cuánto quiero mantener de mi depósito y cuánto tengo que bajar, a través de la tabla de stock mínimo garantizado. Hoy tengo el stock bajo porque no tengo capital; no quiero stockearme en mercadería porque tengo un problema de liquidez.
+
+\noindent\textbf{Pablo Terrera:} La tasa de EBITDA sirve para ver si tenés un problema de liquidez o un problema operativo. Arriba del 20\% es un problema operativo; abajo del 20\% es un problema de liquidez. Yo tengo temas de liquidez hoy, y la decisión de mantener stock bajo es en función de no perder liquidez para solventar pagos urgentes. Ahí sí la IA te puede acompañar.
+
+\noindent\textit{--- Recetario, pricing y límites del costeo ---}
+
+\noindent\textbf{Pablo Terrera:} Tengo el recetario conectado: cuando se cargan las facturas de proveedores, se actualizan los precios en las recetas. Así me doy cuenta de lo que no coincide correctamente entre productos.
+
+\noindent\textbf{Pablo Terrera:} Ahora estoy con pricing. Quiero hacer un módulo de pricing, pero es imposible que la IA me dé la estructura de datos para hacer el costo como debería ser. No me da la información de lo que entra, lo que sale, el costo variable. Yo lo tengo por receta: cuánto es de receta, cuánto es el margen. El margen, ¿quién lo pone? Yo. Pero cuánto del costo es fijo... No sé cuántos watts consume hacer dos budines al horno. En un entorno industrial tenés un equipo que se ponga a hacer los costos por watt, pero en una cafetería chica es impracticable.
+
+\subsubsection*{Bloque 3 · Análisis de ventas y decisiones comerciales}
+
+\noindent\textit{--- Proyección de ventas y estacionalidad ---}
+
+\noindent\textbf{Pablo Terrera:} El seguimiento semanal intermensual por bloques de semana sirve para ver, más o menos por lo acumulado, si estás bien o estás mal, si estás llegando bien o mal al cierre del mes. Si la semana viene muy complicada en tu proyección, ya activás tu campaña de marketing porque te vas a comer las ventas del mes.
+
+\noindent\textbf{Pablo Terrera:} Vos tenés que ver tus históricos para especular. No solo el intermensual, sino también el interanual, por estacionalidad. No es lo mismo vender el día 20 que el día 10 en Argentina con los sueldos. La proyección recién al día 10 le puedo creer, porque hasta que no acumulés datos (como la esperanza matemática), no sos muy de fiar. Por eso uso regresión lineal y también la castigo con el clima.
+
+\noindent\textit{--- Módulo de competencia y pricing competitivo ---}
+
+\noindent\textbf{Pablo Terrera:} También tengo pendiente un módulo de competencia: levantar las cartas digitales de la competencia, compararlas, ver variaciones de precio. Tengo que crear una tabla traductora de productos para que me diga cómo estoy de precio esta semana y si tengo que hacer variación. Mi estrategia de pricing es seguidora: yo no quiero aumentar primero que ellos. Entonces, tengo pistas para aumentar respecto al barrio.
+
+\subsubsection*{Bloque 4 · Puntos de dolor y visibilidad del negocio}
+
+\noindent\textit{--- El problema cultural: datos sin interpretación ---}
+
+\noindent\textbf{Tomás Gonçalves:} Algo que nos pasó con una chica que entrevistamos es que ella tiene un montón de gráficos y datos y no sabe interpretarlos. Se termina basando mucho en la experiencia; le pasa una idea random y no logra entender lo que le da la interfaz con los datos que tiene.
+
+\noindent\textbf{Pablo Terrera:} ¿De dónde sacó los gráficos? ¿Del facturador de ella?
+
+\noindent\textbf{Tomás Gonçalves:} Tenía una mezcla de Tienda Nube y Mercadolibre. Sacaba un reporte, los mezclaba en Excel y le daba cualquier cosa. No lo entendía porque tampoco tiene el conocimiento para interpretar lo que le da.
+
+\noindent\textbf{Pablo Terrera:} No lo usás, lo tenés para mostrar un gráfico. Si vos no tenés cultura de datos, de data driven, ni siquiera con la herramienta vas a avanzar. Es un trabajo cultural. Y ahí entran los perfiles comerciales también. Ese gran negocio es de módulos duales: ingenieros que puedan tener una pata comercial y comerciales que trabajen bien para los ingenieros. Si no lo usa el usuario, te querés matar. Ya lo pagó, perfecto, pero la idea es que lo use.
+
+\noindent\textbf{Pablo Terrera:} Tengo un eslogan que digo todo el tiempo: la IA es una gran herramienta para democratizar el conocimiento que tienen las multinacionales, en negocios chicos. Es una gran oportunidad. Todo lo que viste acá es lo que haría yo en Telefónica o en Movistar, pero con herramientas accesibles.
+
+\noindent\textit{--- Tienda Nube y Mercado Pago: limitaciones de las herramientas ---}
+
+\noindent\textbf{Tomás Gonçalves:} Tienda Nube, depende mucho del plan, pero el plan gratis no te ofrece nada. Son cuatro o cinco cosas: carrito abandonado, compras que tuviste, stock con indicador verde-amarillo-rojo si estás en cero, permanencia en el carrito y nada más. Cosas muy básicas. Un chico que entrevisté quería el plan más caro y eran trescientas mil pesos.
+
+\noindent\textbf{Pablo Terrera:} Para esa escala son bolsísimos. Podrían vender los módulos de KPI más allá del plan caro, porque un tipo por setenta mil pesos por mes se banca ver indicadores si quiere crecer. Tienda Nube se queda corto como compañía en marketing y desarrollo para los clientes.
+
+\noindent\textbf{Tomás Gonçalves:} Pero es el más usado acá.
+
+\noindent\textbf{Pablo Terrera:} Sí, ¿sabés por qué? Porque la logística la podés delegar con ellos. Si entra un competidor que te hace todo el esquema de logística, bajás la comisión a la mitad y tenés más información, se lo robaron. La gente no está enganchada con Tienda Nube porque sea bueno, es una solución para pequeños negocios. Mañana viene otro y se los come.
+
+\noindent\textbf{Pablo Terrera:} Las métricas de Mercado Pago son pésimas. Lo único que puedo ver es un comparativo de uso por medio de pago: tipo de pago, si la gente se financia o no. Hay gente que se financia para pagar una cafetería. Puedo obtener un perfil un poquito del nivel socioeconómico del cliente, pero no mucho más. El QR encima no te dice cómo pagaron por dentro: no sé si es crédito o débito. Hoy el QR es una bolsa de gatos.
+
+\noindent\textit{--- El miedo del usuario a migrar y perder datos ---}
+
+\noindent\textbf{Pablo Terrera:} Hablé con un consultor de BI que me planteaba: está todo muy lindo, pero si Pablo Terrera se muere mañana, toda la información está en un lugar que no puedo recuperar. En cambio, con Microsoft, pase lo que pase, siempre van a estar. Hay gente que no quiere migrarse porque tiene miedo de perder la información. Es la incertidumbre. Si vos podés predecir y cerrás el mes el día 10, le das la oportunidad al usuario de hacer algo para no chocar la nave el día 20.
+
+\noindent\textbf{Pablo Terrera:} Vos tenés que darle un módulo de exportación, un soporte de respaldo. Que sepa que siempre va a haber forma de bajar su información. Tienda Nube también: si no le ponés valor agregado a los gráficos, estás un paso atrás porque el usuario no entiende. Cuando entienda y crezca culturalmente en data driving, va a tener miedo de perder eso, porque ya es un factor clave en su toma de decisiones.
+
+\subsubsection*{Bloque 5 · Publicidad y marketing digital}
+
+\noindent\textbf{Tomás Gonçalves:} Vos estuviste en marketing. ¿Te manejás con publicidad?
+
+\noindent\textbf{Pablo Terrera:} Sí, poca por una cuestión de liquidez. Me manejé con publicidad en Instagram; hay que tener muy bien segmentado todo porque Instagram te tira basura por cualquier cosa. Google Ads es muy complicado para usuarios sin experiencia. A mí me vuelve loco. Si no es con una agencia, no lo podés escalar. Inventaron un monstruo que te lleva a invertir, ponerle play y tirar la plata, y si querés customizarlo estás horas.
+
+\noindent\textbf{Pablo Terrera:} TikTok la experiencia es más para visualizar, es contenido más que cuestión comercial; no es un espacio para vender en general. Instagram podés tirar un flyer o un reel para vender. Google es lo ideal, sobre todo Google Maps para tráfico a carrito, pero te pide mucha plata. En general, el mundo de pauta para pequeños usuarios está bastante verde.
+
+\noindent\textbf{Pablo Terrera:} Lo importante con la pauta: mejor ponerla cuando estás arrancando y ves que estás llegando al mínimo y querés escalarlo. Si la ponés de entrada ya lo condicionaste. Y tenés que saber los horarios en los que tu público va a estar. Si no le das de comer a Meta, te tira al fondo de la olla. Hay que tener cuidado con eso.
+
+\noindent\textbf{Pablo Terrera:} De Meta sacás género, edad, ubicación, interacciones. Podés ver si una pieza funciona, pero tené cuidado porque si le ponés pauta a algo orgánico que ya anda bien, lo pinchaste para abajo.
+
+\subsubsection*{Bloque 6 · Visión a futuro y cierre}
+
+\noindent\textit{--- Objetivo: IA como reemplazo de roles operativos ---}
+
+\noindent\textbf{Tomás Gonçalves:} ¿Sentís que en seis meses a un año vas a estar en una posición bastante completa con tu sistema?
+
+\noindent\textbf{Pablo Terrera:} Me faltan módulos de competencia y de salida de stock. El objetivo para 2026 es eliminar la figura de un jefe de cocina o un encargado de salón. Empoderar a la IA para que resuelva por ellos cosas operativas básicas y que los empleados se ocupen de otras cosas que no va a hacer nunca la máquina.
+
+\noindent\textbf{Pablo Terrera:} Yo veo la IA como una forma de achicar la brecha entre las grandes empresas y los negocios chicos. No hay big data para el pequeño comercio, pero tenés esto. Mi gran consejo es siempre intentar entender la visión comercial, porque si no, no te lo usan. Y el ego de un ingeniero y un administrador se eleva cuando lo usan.
+
+\noindent\textit{--- Reflexión final ---}
+
+\noindent\textbf{Pablo Terrera:} Mi perfil es comercial y datos. Esto me está llevando a un lugar de volver a retomar lo que me gustaba hacer: marketing y datos. Mi objetivo ahora es cómo logro salir a vender este sistemita, con el objetivo de democratizar el acceso a las pequeñas empresas. La brecha va a ser cada vez más grande; hay que aprovecharlo.
+
+\noindent\textbf{Pablo Terrera:} Cafetería está todo complicado. No veo viable ampliar gastronomía por los próximos dos años. Esto surgió porque estaba con poco trabajo y encontré una oportunidad.
+
+\noindent\textbf{Tomás Gonçalves:} De todas las entrevistas que hice, para mí esta fue una de las mejores. Se nota que tenés un montón de cancha y sabés un montón. Muchísima información valiosa.
+
+\noindent\textbf{Pablo Terrera:} Lo que pueda colaborar. Ponéme en la tesis; para mí es un placer.
+
+\begin{center}\textit{--- Fin de la entrevista ---}\end{center}
