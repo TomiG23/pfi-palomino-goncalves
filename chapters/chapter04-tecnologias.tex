@@ -18,8 +18,10 @@ El proyecto se estructura como un \emph{monorepo}: backend y frontend conviven e
 La alternativa de un esquema multi-repo, con versionado y ciclos de despliegue independientes para cada capa, resulta apropiada cuando ambas partes deben evolucionar y desplegarse de forma desacoplada, típicamente en el marco de un despliegue productivo con múltiples equipos. Dado que, como se mencionó, el proyecto no contempla un despliegue productivo a escala industrial sino un prototipo funcional, esa ventaja del multi-repo no aplica en este contexto, mientras que sí se mantiene el costo de coordinación que impone. En consecuencia, el monorepo resulta la opción que mejor equilibra simplicidad operativa y consistencia entre las dos capas de la aplicación.
 
 \section{Stack tecnológico}
+\label{sec:stack-tecnologico}
 
 \subsection{Frontend: React, Vite y el ecosistema de Tiendanube}
+\label{sec:frontend-react-vite}
 
 El frontend está desarrollado en React (versión \texttt{19.2.7}), servido mediante Vite (versión \texttt{8.1.1}) como herramienta de \emph{build} y servidor de desarrollo. Como se indicó, la elección de React no es opcional: Tiendanube exige este framework para las aplicaciones integradas a su panel de administración, dado que su SDK Nexo y su sistema de diseño Nimbus están construidos específicamente para él. Nexo es responsable de establecer la comunicación entre la aplicación, ejecutada dentro de un \emph{iframe}, y la ventana del panel de administración que la contiene, mientras que Nimbus provee los componentes visuales con los que la interfaz del prototipo mantiene consistencia estética con el resto del panel de Tiendanube.
 
@@ -39,6 +41,7 @@ El backend cumple dos funciones centrales. Por un lado, actúa como intermediari
 Para la capa de persistencia se seleccionó PostgreSQL como motor de base de datos relacional. Al momento de esta entrega, la base de datos aún no fue incorporada al proyecto; el prototipo opera exclusivamente contra la API de Tiendanube y datos en memoria, y la persistencia se incorporará en una etapa posterior del desarrollo. La elección de un motor relacional responde a la naturaleza de las entidades centrales del dominio ---pedidos, productos, variantes y clientes---, que presentan relaciones estructuradas y bien definidas entre sí, tal como se describió al detallar los recursos consumidos de la API de Tiendanube en el Marco Teórico. El diseño del modelo de datos correspondiente excede el alcance de la presente sección y será abordado en el capítulo dedicado a dicho modelo.
 
 \subsection{Túnel de desarrollo: ngrok}
+\label{sec:tunel-ngrok}
 
 El uso de ngrok como herramienta de túnel HTTPS es una consecuencia directa de la arquitectura de integración con Tiendanube, y se desarrolla en detalle en la Sección~\ref{sec:arquitectura-red}. Cabe adelantar que su necesidad no es una elección arbitraria de infraestructura, sino la solución a una restricción concreta: Tiendanube no admite que una aplicación de prueba se sirva desde una URL \texttt{localhost}, y requiere en su lugar una URL pública con HTTPS. ngrok resuelve esta necesidad generando, a partir del servidor de desarrollo local, una URL pública que actúa como túnel hacia dicho servidor, sin requerir desplegar la aplicación en un servidor propio durante la etapa de desarrollo.
 
