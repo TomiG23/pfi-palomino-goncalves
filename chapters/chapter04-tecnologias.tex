@@ -105,6 +105,12 @@ El acceso a la base de datos se implementa mediante Prisma como \emph{Object-Rel
 
 \noindent\textit{Fuente: elaboración propia.}
 
+El esquema se organiza en torno a \texttt{STORES} como entidad raíz de aislamiento multi-tienda: la clave foránea \texttt{store\_id} se repite en \texttt{CATEGORIES}, \texttt{PRODUCTS}, \texttt{CUSTOMERS}, \texttt{ORDERS} y \texttt{RECOMMENDATIONS}, garantizando que los datos de cada comercio conectado permanezcan separados entre sí. Sobre esa base, \texttt{PRODUCTS} se vincula con \texttt{VARIANTS} en una relación uno a muchos, reflejando la distinción entre un producto y sus combinaciones concretas de talle, color u otro atributo descripta en la Sección~\ref{sec:adquisicion-datos} del Marco Teórico, mientras que \texttt{CATEGORIES} se relaciona con \texttt{PRODUCTS} a través de la tabla intermedia \texttt{PRODUCT\_CATEGORIES} y admite una jerarquía propia mediante \texttt{parent\_id}, lo que permite segmentar las recomendaciones por rubro comercial tal como se planteó en la Sección~\ref{sec:comportamiento-consumidor}. Los pedidos, por su parte, se modelan mediante \texttt{ORDERS} y su detalle \texttt{ORDER\_ITEMS}, que referencia cada variante junto con la cantidad y el precio de la operación, y \texttt{CUSTOMERS} conserva el campo \texttt{total\_spent} provisto directamente por la API de Tiendanube y descripto en esa misma sección.
+
+Dos entidades del esquema no se limitan a replicar recursos de la API de Tiendanube, sino que materializan capacidades propias del prototipo. \texttt{RECOMMENDATIONS} implementa el mecanismo de retroalimentación presentado en la Sección~\ref{sec:feedback-loop} del Marco Teórico: el campo \texttt{executed} registra si el comerciante llevó a cabo la acción sugerida, \texttt{metric\_before} y \texttt{metric\_after} sostienen la comparación de impacto entre ventanas temporales, y \texttt{score} persiste la priorización dinámica que ese mecanismo actualiza en función de los resultados obtenidos. \texttt{EXCHANGE\_RATES}, por su parte, almacena el valor diario del dólar oficial y del dólar blue consultado ante la API pública de tipo de cambio mencionada en el Alcance del proyecto, dato de contexto auxiliar que las recomendaciones del rubro electrónica utilizan para detectar la desactualización de precios frente a movimientos cambiarios, según se caracterizó en la Sección~\ref{sec:comportamiento-consumidor}.
+
+\FloatBarrier
+
 \begin{table}[h]
 \centering
 \caption{Comparación entre modelo de datos relacional y no relacional}
