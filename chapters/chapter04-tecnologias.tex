@@ -25,11 +25,15 @@ Para cada una de las tecnologías del stack se evaluaron alternativas concretas 
 \subsection{Frontend: React, Vite y el ecosistema de Tiendanube}
 \label{sec:frontend-react-vite}
 
-El frontend está desarrollado en React (versión \texttt{19.2.7}), servido mediante Vite (versión \texttt{8.1.1}) como herramienta de \emph{build} y servidor de desarrollo. Como se indicó, la elección de React no es opcional: Tiendanube exige este framework para las aplicaciones integradas a su panel de administración, dado que su SDK Nexo y su sistema de diseño Nimbus están construidos específicamente para él. Nexo es responsable de establecer la comunicación entre la aplicación, ejecutada dentro de un \emph{iframe}, y la ventana del panel de administración que la contiene, mientras que Nimbus provee los componentes visuales con los que la interfaz del prototipo mantiene consistencia estética con el resto del panel de Tiendanube.
+El frontend está desarrollado en React (versión \texttt{19.2.7}), servido mediante Vite (versión \texttt{8.1.1}) como herramienta de \emph{build} y servidor de desarrollo. Como se indicó, la elección de React no es opcional: Tiendanube exige este framework para las aplicaciones integradas a su panel de administración, dado que su SDK Nexo y su sistema de diseño Nimbus están construidos específicamente para él. Nexo es responsable de establecer la comunicación entre la aplicación, ejecutada dentro de un \emph{iframe}, y la ventana del panel de administración que la contiene, mientras que Nimbus provee los componentes visuales con los que la interfaz del prototipo mantiene consistencia estética con el resto del panel de Tiendanube, cuyo uso Tiendanube exige explícitamente en sus aplicaciones integradas como condición de calidad y consistencia \parencite{TiendanubeAPI2024}.
 
 Sobre esa base obligatoria de React, Vite fue seleccionado como herramienta de desarrollo por sus características propias: a diferencia de herramientas de \emph{build} más antiguas, Vite sirve el código fuente mediante módulos ES nativos del navegador durante el desarrollo, lo que se traduce en un servidor de arranque prácticamente instantáneo y en actualización en caliente (\emph{Hot Module Replacement}) de los cambios, agilizando el ciclo de desarrollo iterativo propio de un prototipo.
 
 Si bien React fue impuesto por Tiendanube, la herramienta de \emph{build} no lo estaba: sobre esa decisión sí se evaluaron alternativas. La Tabla~\ref{tab:comparativo_bundler} resume la comparación realizada entre Vite, Create React App y Next.js.
+
+Vite se consolidó como la opción elegida por ser el estándar actual para proyectos de React de tipo SPA. Create React App se descartó por encontrarse discontinuado, y Next.js por aportar capacidades ---renderizado del lado del servidor y un sistema de enrutado propio--- que carecen de sentido en una aplicación que se renderiza embebida dentro del \emph{iframe} del panel de administración de Tiendanube.
+
+La integración entre Vite, Nexo y el entorno de túneles necesario para el desarrollo (descripto en la Sección~\ref{sec:arquitectura-red}) no resultó automática. Nexo fue diseñado originalmente para entornos Node.js y referencia en su código la variable global \texttt{global}, inexistente en el navegador; sin una configuración adicional, la aplicación fallaba al iniciar con el error \texttt{Uncaught ReferenceError: global is not defined}, que se traducía en una pantalla en blanco dentro del \emph{iframe}. La solución consistió en instruir a Vite, mediante la opción \texttt{define: \{ global: 'globalThis' \}}, para reemplazar en el código empaquetado todas las referencias a \texttt{global} por \texttt{globalThis}, sí disponible en los navegadores modernos. De manera similar, Vite bloquea por defecto las peticiones entrantes desde hosts externos al del propio servidor de desarrollo, lo cual entra en conflicto directo con el uso de un túnel público (Sección~\ref{sec:arquitectura-red}): al acceder a la aplicación mediante su URL pública, el navegador recibía el error \texttt{Blocked request. This host is not allowed}. Esto se resolvió habilitando explícitamente el dominio del proveedor de túnel en \texttt{server.allowedHosts}. Ambos ajustes ilustran que, más allá de la elección del framework y la herramienta de \emph{build}, buena parte del trabajo técnico consistió en conciliar un SDK pensado para Node.js con las restricciones propias del navegador y de la arquitectura de red descripta más adelante.
 
 \begin{table}[h]
 \centering
@@ -49,16 +53,16 @@ Next.js & Framework full-stack; renderizado del lado del servidor (SSR); enrutad
 \end{tabular}
 \end{table}
 
-Vite se consolidó como la opción elegida por ser el estándar actual para proyectos de React de tipo SPA. Create React App se descartó por encontrarse discontinuado, y Next.js por aportar capacidades ---renderizado del lado del servidor y un sistema de enrutado propio--- que carecen de sentido en una aplicación que se renderiza embebida dentro del \emph{iframe} del panel de administración de Tiendanube.
-
-La integración entre Vite, Nexo y el entorno de túneles necesario para el desarrollo (descripto en la Sección~\ref{sec:arquitectura-red}) no resultó automática. Nexo fue diseñado originalmente para entornos Node.js y referencia en su código la variable global \texttt{global}, inexistente en el navegador; sin una configuración adicional, la aplicación fallaba al iniciar con el error \texttt{Uncaught ReferenceError: global is not defined}, que se traducía en una pantalla en blanco dentro del \emph{iframe}. La solución consistió en instruir a Vite, mediante la opción \texttt{define: \{ global: 'globalThis' \}}, para reemplazar en el código empaquetado todas las referencias a \texttt{global} por \texttt{globalThis}, sí disponible en los navegadores modernos. De manera similar, Vite bloquea por defecto las peticiones entrantes desde hosts externos al del propio servidor de desarrollo, lo cual entra en conflicto directo con el uso de un túnel público (Sección~\ref{sec:arquitectura-red}): al acceder a la aplicación mediante su URL pública, el navegador recibía el error \texttt{Blocked request. This host is not allowed}. Esto se resolvió habilitando explícitamente el dominio del proveedor de túnel en \texttt{server.allowedHosts}. Ambos ajustes ilustran que, más allá de la elección del framework y la herramienta de \emph{build}, buena parte del trabajo técnico consistió en conciliar un SDK pensado para Node.js con las restricciones propias del navegador y de la arquitectura de red descripta más adelante.
-
 \subsection{Backend: Node.js y Express}
 \label{sec:backend-node-express}
 
 El backend está desarrollado en Node.js, en su versión 18 o superior, único requisito de versión documentado para el proyecto, utilizando Express como framework para la construcción de la API REST. Como se explicó en la Sección~\ref{sec:criterios-seleccion}, la elección de Node.js responde directamente a la necesidad de mantener un único lenguaje de programación en todo el proyecto, una vez que el frontend quedó determinado por el requisito de React de Tiendanube. Express fue seleccionado por tratarse de un framework minimalista y no dogmático, ampliamente adoptado para la construcción de API REST, que permite definir rutas y middlewares con una curva de aprendizaje reducida, adecuada al alcance de un prototipo desarrollado por un equipo de dos personas.
 
 Esta elección tampoco fue arbitraria: se evaluaron las principales alternativas del ecosistema Node.js antes de decidir. La Tabla~\ref{tab:comparativo_backend} resume la comparación.
+
+El criterio que definió la elección fue el tamaño del ecosistema y la documentación disponible, junto con el hecho de que Express no impone una estructura particular al proyecto. El rendimiento no constituyó un factor determinante, dado que no representaba una preocupación para un prototipo, y la arquitectura más robusta de NestJS se descartó por introducir una complejidad que no se traducía en un beneficio concreto para el alcance definido.
+
+El backend cumple dos funciones centrales. Por un lado, actúa como intermediario autenticado entre el frontend y la API de Tiendanube: es quien retiene las credenciales de la aplicación (\texttt{Client ID} y \texttt{Client Secret}) y ejecuta el intercambio OAuth 2.0 descripto en la Sección~\ref{sec:estrategia-datos-ref}, de modo que dichas credenciales nunca se exponen al frontend ni al \emph{iframe} embebido en el navegador del usuario. Por otro lado, expone los \emph{webhooks} de privacidad que Tiendanube exige a toda aplicación integrada a su ecosistema (\texttt{/api/webhooks/store-redact}, \texttt{customers-redact} y \texttt{customers-data-request}), mediante los cuales la plataforma notifica solicitudes de eliminación de datos en cumplimiento de normativas de protección de datos personales.
 
 \begin{table}[h]
 \centering
@@ -80,15 +84,17 @@ Koa & Diseño moderno; manejo de middleware más limpio & Ecosistema y comunidad
 \end{tabular}
 \end{table}
 
-El criterio que definió la elección fue el tamaño del ecosistema y la documentación disponible, junto con el hecho de que Express no impone una estructura particular al proyecto. El rendimiento no constituyó un factor determinante, dado que no representaba una preocupación para un prototipo, y la arquitectura más robusta de NestJS se descartó por introducir una complejidad que no se traducía en un beneficio concreto para el alcance definido.
-
-El backend cumple dos funciones centrales. Por un lado, actúa como intermediario autenticado entre el frontend y la API de Tiendanube: es quien retiene las credenciales de la aplicación (\texttt{Client ID} y \texttt{Client Secret}) y ejecuta el intercambio OAuth 2.0 descripto en la Sección~\ref{sec:estrategia-datos-ref}, de modo que dichas credenciales nunca se exponen al frontend ni al \emph{iframe} embebido en el navegador del usuario. Por otro lado, expone los \emph{webhooks} de privacidad que Tiendanube exige a toda aplicación integrada a su ecosistema (\texttt{/api/webhooks/store-redact}, \texttt{customers-redact} y \texttt{customers-data-request}), mediante los cuales la plataforma notifica solicitudes de eliminación de datos en cumplimiento de normativas de protección de datos personales.
-
 \subsection{Persistencia: PostgreSQL}
 
-Para la capa de persistencia se seleccionó PostgreSQL como motor de base de datos relacional. Al momento de esta entrega, la base de datos aún no fue incorporada al proyecto; el prototipo opera exclusivamente contra la API de Tiendanube y datos en memoria, y la persistencia se incorporará en una etapa posterior del desarrollo.
+Para la capa de persistencia se seleccionó PostgreSQL como motor de base de datos relacional. La base de datos fue incorporada al proyecto para la presente entrega: el prototipo persiste en PostgreSQL tanto los datos obtenidos de la tienda de desarrollo a través de la API de Tiendanube como el conjunto de datos generado mediante el script de generación aleatoria controlada descripto en la Sección 2.6, siguiendo el modelo de datos presentado en la Figura 5.X. El esquema implementado replica las entidades documentadas en el Marco Teórico (tiendas, productos, variantes, clientes y pedidos), preservando las relaciones e integridad referencial entre ellas.
 
 Antes de definir el motor específico, se evaluó el enfoque relacional frente al no relacional. Se optó por un modelo relacional porque los datos del dominio son inherentemente relacionales: los pedidos se componen de ítems que referencian variantes, las cuales pertenecen a su vez a productos, y los clientes se vinculan a sus pedidos, tal como se describió al detallar los recursos consumidos de la API de Tiendanube en el Marco Teórico. Estas relaciones, que requieren integridad referencial, se modelan de forma natural en un motor relacional, tal como reflejará el diagrama de base de datos del proyecto. La Tabla~\ref{tab:comparativo_db_enfoque} resume esta primera comparación.
+
+Una vez definido el enfoque relacional, se compararon los motores disponibles. La Tabla~\ref{tab:comparativo_db_motor} resume la comparación entre PostgreSQL, MySQL y SQLite.
+
+Conviene precisar que PostgreSQL y MySQL resultaban ambos válidos para el proyecto: la elección del primero no responde a una deficiencia del segundo, sino a su soporte de tipos JSONB y a ser el estándar más habitual en el stack de Node.js moderno.
+
+El acceso a la base de datos se implementa mediante Prisma como \emph{Object-Relational Mapping} (ORM). Esta elección responde a los mismos criterios que guiaron la selección del resto del stack (Sección~\ref{sec:criterios-seleccion}): al tratarse de un equipo reducido de dos personas, Prisma permite definir el esquema de datos de forma declarativa en un único archivo, generar automáticamente un cliente tipado en JavaScript y gestionar las migraciones de forma reproducible, evitando la escritura manual de SQL y la duplicación de herramientas entre las capas del proyecto. El esquema de Prisma refleja directamente el modelo de datos presentado en la Figura 5.X.
 
 \begin{table}[h]
 \centering
@@ -106,7 +112,14 @@ No relacional (MongoDB) & Flexible para datos no estructurados; permite escalado
 \end{tabular}
 \end{table}
 
-Una vez definido el enfoque relacional, se compararon los motores disponibles. La Tabla~\ref{tab:comparativo_db_motor} resume la comparación entre PostgreSQL, MySQL y SQLite.
+\subsection{Túnel de desarrollo: ngrok}
+\label{sec:tunel-ngrok}
+
+El uso de ngrok como herramienta de túnel HTTPS es una consecuencia directa de la arquitectura de integración con Tiendanube, y se desarrolla en detalle en la Sección~\ref{sec:arquitectura-red}. Cabe adelantar que su necesidad no es una elección arbitraria de infraestructura, sino la solución a una restricción concreta: Tiendanube no admite que una aplicación de prueba se sirva desde una URL \texttt{localhost}, y requiere en su lugar una URL pública con HTTPS. ngrok resuelve esta necesidad generando, a partir del servidor de desarrollo local, una URL pública que actúa como túnel hacia dicho servidor, sin requerir desplegar la aplicación en un servidor propio durante la etapa de desarrollo.
+
+Esta elección se comparó puntualmente frente a Vercel, plataforma ya conocida por el equipo. Ambas herramientas, sin embargo, resuelven problemas distintos: ngrok es un túnel de desarrollo que expone un entorno local ya en ejecución, mientras que Vercel es una plataforma de despliegue que publica una aplicación empaquetada. La Tabla~\ref{tab:comparativo_tunel} resume esta comparación.
+
+Lo que definió la elección fue que ngrok resuelve la necesidad concreta de exponer el entorno local sin implicar un despliegue productivo, explícitamente fuera del alcance del proyecto según lo establecido en el Alcance. La limitación inicial de la URL cambiante entre sesiones, propia del uso por defecto del plan gratuito, se resolvió mediante el dominio fijo gratuito que ngrok ofrece, lo cual elimina la necesidad de reconfigurar manualmente la URL en la sección ``Aplicación de Prueba'' del panel de Partners de Tiendanube en cada reinicio del túnel. Vercel no queda descartado de forma definitiva: al no ser una alternativa peor sino una herramienta con otro propósito, se mantiene como opción a reevaluar para publicar la aplicación terminada de cara a la defensa del proyecto.
 
 \begin{table}[h]
 \centering
@@ -126,17 +139,6 @@ SQLite & Configuración nula; adecuado para prototipos muy pequeños & No apto p
 \end{tabular}
 \end{table}
 
-Conviene precisar que PostgreSQL y MySQL resultaban ambos válidos para el proyecto: la elección del primero no responde a una deficiencia del segundo, sino a su soporte de tipos JSONB y a ser el estándar más habitual en el stack de Node.js moderno.
-
-Resta definir si el acceso a la base de datos se realizará mediante un \emph{Object-Relational Mapping} (ORM) o mediante SQL directo; a la fecha de esta entrega, esta decisión permanece abierta. La opción que se perfila como más probable es la incorporación de un ORM como Prisma, por su carácter declarativo y su adopción extendida en el ecosistema de Node.js, aunque no debe interpretarse como una decisión ya tomada. El diseño del modelo de datos correspondiente excede el alcance de la presente sección y será abordado en el capítulo dedicado a dicho modelo.
-
-\subsection{Túnel de desarrollo: ngrok}
-\label{sec:tunel-ngrok}
-
-El uso de ngrok como herramienta de túnel HTTPS es una consecuencia directa de la arquitectura de integración con Tiendanube, y se desarrolla en detalle en la Sección~\ref{sec:arquitectura-red}. Cabe adelantar que su necesidad no es una elección arbitraria de infraestructura, sino la solución a una restricción concreta: Tiendanube no admite que una aplicación de prueba se sirva desde una URL \texttt{localhost}, y requiere en su lugar una URL pública con HTTPS. ngrok resuelve esta necesidad generando, a partir del servidor de desarrollo local, una URL pública que actúa como túnel hacia dicho servidor, sin requerir desplegar la aplicación en un servidor propio durante la etapa de desarrollo.
-
-Esta elección se comparó puntualmente frente a Vercel, plataforma ya conocida por el equipo. Ambas herramientas, sin embargo, resuelven problemas distintos: ngrok es un túnel de desarrollo que expone un entorno local ya en ejecución, mientras que Vercel es una plataforma de despliegue que publica una aplicación empaquetada. La Tabla~\ref{tab:comparativo_tunel} resume esta comparación.
-
 \begin{table}[h]
 \centering
 \caption{Comparación entre ngrok y Vercel para exponer el entorno de desarrollo}
@@ -153,12 +155,22 @@ Vercel & Plataforma de despliegue: publica la aplicación en una URL pública y 
 \end{tabular}
 \end{table}
 
-Lo que definió la elección fue que ngrok resuelve la necesidad concreta de exponer el entorno local sin implicar un despliegue productivo, explícitamente fuera del alcance del proyecto según lo establecido en el Alcance. La limitación inicial de la URL cambiante entre sesiones, propia del uso por defecto del plan gratuito, se resolvió mediante el dominio fijo gratuito que ngrok ofrece, lo cual elimina la necesidad de reconfigurar manualmente la URL en la sección ``Aplicación de Prueba'' del panel de Partners de Tiendanube en cada reinicio del túnel. Vercel no queda descartado de forma definitiva: al no ser una alternativa peor sino una herramienta con otro propósito, se mantiene como opción a reevaluar para publicar la aplicación terminada de cara a la defensa del proyecto.
-
 \section{Arquitectura de red}
 \label{sec:arquitectura-red}
 
 La arquitectura de red del prototipo está determinada por el hecho de que la aplicación no se accede de forma directa, sino que se embebe como un \emph{iframe} dentro del panel de administración de Tiendanube, servido este último desde los servidores de la plataforma bajo HTTPS. Los navegadores modernos bloquean por política de \emph{contenido mixto} la carga de un \emph{iframe} servido por HTTP dentro de una página servida por HTTPS; en consecuencia, la aplicación embebida debe estar disponible también bajo una URL pública con HTTPS, incluso durante el desarrollo, donde de otro modo bastaría con \texttt{localhost}. Esta restricción es la que motiva el uso de ngrok, introducido en la sección anterior.
+
+La Figura~\ref{fig:arquitectura-red} sintetiza el flujo completo de comunicación en el entorno de desarrollo, detallado a continuación paso a paso.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=\textwidth]{./images/diagrama_arquitectura_red.jpg}
+    \caption{Arquitectura de red del prototipo en el entorno de desarrollo.}
+    \label{fig:arquitectura-red}
+\end{figure}
+
+\vspace{6pt}
+\noindent\textit{Fuente: elaboración propia.}
 
 El flujo completo de comunicación, en el entorno de desarrollo, puede describirse en los siguientes pasos:
 
