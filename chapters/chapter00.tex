@@ -35,6 +35,8 @@ El proyecto contempla el diseño y desarrollo de un prototipo funcional con cobe
     \item Construcción de una interfaz web responsiva integrada al panel de administración de Tiendanube mediante iframe (Aplicación Integrada), que presente recomendaciones accionables optimizadas para diversos dispositivos.
 
     \item Implementación de un mecanismo de retroalimentación para evaluar el impacto de las recomendaciones ejecutadas.
+
+    \item Consulta diaria a una API pública de tipo de cambio (dólar oficial/blue) como dato de contexto auxiliar para las recomendaciones del rubro electrónica, distinguida de una integración de plataforma: se trata de una única llamada de solo lectura sin autenticación, sin relación de negocio con el proveedor externo, y no reemplaza ni complementa la fuente principal de datos transaccionales, que continúa siendo exclusivamente la API de Tiendanube.
 \end{enumerate}
 
 \subsection{Componentes Excluidos}

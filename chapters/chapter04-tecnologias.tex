@@ -86,7 +86,7 @@ Koa & Diseño moderno; manejo de middleware más limpio & Ecosistema y comunidad
 
 \subsection{Persistencia: PostgreSQL}
 
-Para la capa de persistencia se seleccionó PostgreSQL como motor de base de datos relacional. La base de datos fue incorporada al proyecto para la presente entrega: el prototipo persiste en PostgreSQL tanto los datos obtenidos de la tienda de desarrollo a través de la API de Tiendanube como el conjunto de datos generado mediante el script de generación aleatoria controlada descripto en la Sección 2.6, siguiendo el modelo de datos presentado en la Figura 5.X. El esquema implementado replica las entidades documentadas en el Marco Teórico (tiendas, productos, variantes, clientes y pedidos), preservando las relaciones e integridad referencial entre ellas.
+Para la capa de persistencia se seleccionó PostgreSQL como motor de base de datos relacional. La base de datos fue incorporada al proyecto para la presente entrega: el prototipo persiste en PostgreSQL tanto los datos obtenidos de la tienda de desarrollo a través de la API de Tiendanube como el conjunto de datos generado mediante el script de generación aleatoria controlada descripto en la Sección 2.6, siguiendo el modelo de datos presentado en la Figura~\ref{fig:erd-diagram}. El esquema implementado replica las entidades documentadas en el Marco Teórico (tiendas, productos, variantes, clientes y pedidos), preservando las relaciones e integridad referencial entre ellas.
 
 Antes de definir el motor específico, se evaluó el enfoque relacional frente al no relacional. Se optó por un modelo relacional porque los datos del dominio son inherentemente relacionales: los pedidos se componen de ítems que referencian variantes, las cuales pertenecen a su vez a productos, y los clientes se vinculan a sus pedidos, tal como se describió al detallar los recursos consumidos de la API de Tiendanube en el Marco Teórico. Estas relaciones, que requieren integridad referencial, se modelan de forma natural en un motor relacional, tal como reflejará el diagrama de base de datos del proyecto. La Tabla~\ref{tab:comparativo_db_enfoque} resume esta primera comparación.
 
@@ -94,7 +94,16 @@ Una vez definido el enfoque relacional, se compararon los motores disponibles. L
 
 Conviene precisar que PostgreSQL y MySQL resultaban ambos válidos para el proyecto: la elección del primero no responde a una deficiencia del segundo, sino a su soporte de tipos JSONB y a ser el estándar más habitual en el stack de Node.js moderno.
 
-El acceso a la base de datos se implementa mediante Prisma como \emph{Object-Relational Mapping} (ORM). Esta elección responde a los mismos criterios que guiaron la selección del resto del stack (Sección~\ref{sec:criterios-seleccion}): al tratarse de un equipo reducido de dos personas, Prisma permite definir el esquema de datos de forma declarativa en un único archivo, generar automáticamente un cliente tipado en JavaScript y gestionar las migraciones de forma reproducible, evitando la escritura manual de SQL y la duplicación de herramientas entre las capas del proyecto. El esquema de Prisma refleja directamente el modelo de datos presentado en la Figura 5.X.
+El acceso a la base de datos se implementa mediante Prisma como \emph{Object-Relational Mapping} (ORM). Esta elección responde a los mismos criterios que guiaron la selección del resto del stack (Sección~\ref{sec:criterios-seleccion}): al tratarse de un equipo reducido de dos personas, Prisma permite definir el esquema de datos de forma declarativa en un único archivo, generar automáticamente un cliente tipado en JavaScript y gestionar las migraciones de forma reproducible, evitando la escritura manual de SQL y la duplicación de herramientas entre las capas del proyecto. El esquema de Prisma refleja directamente el modelo de datos presentado en la Figura~\ref{fig:erd-diagram}.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=\textwidth]{./images/erd_diagram.png}
+    \caption{Diagrama entidad-relación (ERD) del modelo de datos del prototipo.}
+    \label{fig:erd-diagram}
+\end{figure}
+
+\noindent\textit{Fuente: elaboración propia.}
 
 \begin{table}[h]
 \centering
@@ -164,7 +173,7 @@ La Figura~\ref{fig:arquitectura-red} sintetiza el flujo completo de comunicació
 
 \begin{figure}[ht]
     \centering
-    \includegraphics[width=\textwidth]{./images/diagrama_arquitectura_red.jpg}
+    \includegraphics[width=\textwidth]{./images/diagrama_arquitectura_red.png}
     \caption{Arquitectura de red del prototipo en el entorno de desarrollo.}
     \label{fig:arquitectura-red}
 \end{figure}
