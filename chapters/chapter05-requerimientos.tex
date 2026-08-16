@@ -357,6 +357,20 @@ Los casos de uso formalizan las interacciones entre los actores y el sistema. Se
     \item \textbf{API de proveedor de IA:} Sistema externo que traduce las recomendaciones estructuradas a mensajes en lenguaje natural.
 \end{itemize}
 
+La Figura~\ref{fig:flujo-diagram} sintetiza el flujo completo del proceso, desde la ingesta de datos crudos de Tiendanube hasta la evaluación de impacto de una recomendación ejecutada, que los ocho casos de uso presentados a continuación detallan de forma individual.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.6\textwidth]{./images/flujo_diagram.png}
+    \caption{Diagrama de flujo del proceso de generación y evaluación de recomendaciones.}
+    \label{fig:flujo-diagram}
+\end{figure}
+
+\vspace{6pt}
+\noindent\textit{Fuente: elaboración propia.}
+
+El flujo se inicia con la ingesta y el proceso ETL de los datos crudos de Tiendanube (CU-02, Sección~\ref{sec:cu-02}), que quedan persistidos en la base de datos relacional. A partir del rubro identificado (RF-06), el motor de reglas evalúa las cuatro señales centrales del prototipo —quiebre de stock, caída de rotación, precio desactualizado y cliente inactivo—, que alimentan el módulo de scoring dinámico y la posterior generación de la recomendación en lenguaje natural (CU-03, Sección~\ref{sec:cu-03}). Una vez presentada al comerciante y, opcionalmente, ejecutada y registrada (CU-05, Sección~\ref{sec:cu-05}), el sistema evalúa su impacto comparando métricas antes y después de la acción, y retroalimenta el score de recomendaciones futuras (CU-06, Sección~\ref{sec:cu-06}), cerrando el mecanismo de retroalimentación descripto en la Sección~\ref{sec:feedback-loop} del Marco Teórico.
+
 \subsection{CU-01: Autenticar tienda}
 \label{sec:cu-01}
 
@@ -691,3 +705,95 @@ HU-11 (Tipo de cambio, electrónica) & RF-20, RF-06 & CU-08, CU-03, CU-04 \\
 \hline
 
 \end{longtable}
+
+\section{Diseño de la Interfaz: Mockups}
+\label{sec:diseno-interfaz-mockups}
+
+Una vez formalizados los requerimientos funcionales, las historias de usuario y los casos de uso en las secciones anteriores, se diseñaron mockups de alta fidelidad que traducen esa especificación a pantallas concretas. Estos mockups anticipan la experiencia del comerciante dentro del panel de recomendaciones antes de iniciar la implementación, permitiendo validar el flujo de interacción y la redacción de los mensajes en lenguaje natural (RF-19, RNF-09) sin el costo de construir la interfaz real.
+
+\subsection{Mockups}
+\label{sec:mockups}
+
+Los mockups son representaciones visuales de alta fidelidad de la interfaz, previas al desarrollo, que permiten evaluar la disposición de los elementos, el flujo entre pantallas y la claridad del mensaje antes de invertir tiempo de implementación. Su función principal es detectar ambigüedades o pasos faltantes en las historias de usuario (Sección~\ref{sec:historias-usuario}) mientras el costo de corrección todavía es bajo.
+
+Dado que la aplicación se embebe en el panel de administración de Tiendanube, la paleta de colores, la tipografía y los componentes visuales están determinados por el sistema de diseño Nimbus, cuyo uso Tiendanube exige a las aplicaciones integradas para mantener consistencia estética con el resto del panel (RNF-03, Sección~\ref{sec:frontend-react-vite}). Lo que sí quedó a criterio del equipo fue la selección de qué componentes de ese sistema utilizar en cada pantalla, cómo organizarlos y en qué momento del flujo mostrarlos.
+
+\subsection{Panel de Recomendaciones}
+\label{sec:mockup-panel-recomendaciones}
+
+El panel de recomendaciones es la interfaz principal del prototipo: el espacio donde el comerciante consulta las oportunidades detectadas por el motor de análisis (CU-04, Sección~\ref{sec:cu-04}), revisa el detalle de una recomendación puntual, la marca como ejecutada (CU-05, Sección~\ref{sec:cu-05}) y, transcurrida la ventana de evaluación, consulta su impacto (CU-06, Sección~\ref{sec:cu-06}). Los mockups a continuación recorren ese ciclo completo en orden cronológico, desde el primer procesamiento de los datos de la tienda hasta la visualización del impacto de una acción ya ejecutada.
+
+\subsubsection{Análisis inicial de la tienda}
+\label{sec:mockup-analisis-inicial}
+
+La primera vez que un comerciante instala la aplicación, el sistema todavía no cuenta con recomendaciones generadas: recién está ejecutando la ingesta y el procesamiento de los datos de la tienda descriptos en el CU-02 (Sección~\ref{sec:cu-02}). Esta pantalla comunica ese estado de espera mediante un indicador de progreso y un mensaje que aclara que el proceso puede demorar unos minutos y que no requiere ninguna acción del usuario, evitando que el comerciante interprete la demora inicial como un error de la aplicación.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.7\textwidth]{./images/mockup_analisis_inicial.jpeg}
+    \caption{Pantalla de análisis inicial de los datos de la tienda.}
+    \label{fig:mockup-analisis-inicial}
+\end{figure}
+
+\vspace{6pt}
+\noindent\textit{Fuente: elaboración propia.}
+
+\subsubsection{Sin recomendaciones activas}
+\label{sec:mockup-sin-recomendaciones}
+
+Una vez completado el procesamiento, es posible que el motor de análisis no detecte ninguna señal accionable para el período evaluado, tal como contempla el flujo alternativo 3a del CU-04 (Sección~\ref{sec:cu-04}). En ese caso, el panel muestra un estado vacío que evita dejar al comerciante frente a una pantalla en blanco sin explicación, aclarando que las recomendaciones aparecerán automáticamente ni bien el sistema detecte una oportunidad en la tienda.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.7\textwidth]{./images/mockup_sin_recomendaciones.png}
+    \caption{Estado vacío del panel cuando no hay recomendaciones activas.}
+    \label{fig:mockup-sin-recomendaciones}
+\end{figure}
+
+\vspace{6pt}
+\noindent\textit{Fuente: elaboración propia.}
+
+\subsubsection{Listado de recomendaciones}
+\label{sec:mockup-listado-recomendaciones}
+
+Cuando existen recomendaciones activas, el panel las presenta como un conjunto de tarjetas filtrables por nivel de prioridad (\enquote{Urgente}, \enquote{Atención}, \enquote{Oportunidad}), en línea con el mecanismo de scoring dinámico descripto en RF-16. Cada tarjeta identifica el rubro o segmento de la señal detectada (gastronomía, indumentaria, electrónica o clientes), incluye la etiqueta \enquote{Generado por IA} en referencia al mensaje en lenguaje natural producido según RF-19, y expone una acción concreta acorde al tipo de recomendación (\enquote{Reponer stock}, \enquote{Ver opciones}, \enquote{Activar}, \enquote{Enviar cupón}), materializando el carácter accionable exigido en RF-07. Las recomendaciones ya marcadas como ejecutadas se distinguen con la etiqueta \enquote{Ejecutada} y redirigen a la vista de impacto en lugar de a una acción pendiente.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.75\textwidth]{./images/mockup_listado_recomendaciones.png}
+    \caption{Listado de recomendaciones activas del panel.}
+    \label{fig:mockup-listado-recomendaciones}
+\end{figure}
+
+\vspace{6pt}
+\noindent\textit{Fuente: elaboración propia.}
+
+\subsubsection{Detalle de una recomendación}
+\label{sec:mockup-detalle-recomendacion}
+
+Al seleccionar una tarjeta del listado, el comerciante accede al detalle de esa recomendación puntual. La sección \enquote{Por qué te lo recomendamos} explicita, en lenguaje natural, la señal de datos que motivó la sugerencia —en el ejemplo de la Figura~\ref{fig:mockup-detalle-recomendacion}, un riesgo de quiebre de stock según la lógica de HU-01 (Sección~\ref{sec:hu-01})—, mientras que las métricas concretas que sustentan esa señal (stock actual, demanda proyectada, días hasta el quiebre) se muestran por separado para que el comerciante pueda verificarlas sin depender exclusivamente del texto generado. El botón \enquote{Marcar como ejecutada} habilita el registro de feedback descripto en el CU-05 (Sección~\ref{sec:cu-05}).
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.65\textwidth]{./images/mockup_detalle_recomendacion.png}
+    \caption{Detalle de una recomendación individual.}
+    \label{fig:mockup-detalle-recomendacion}
+\end{figure}
+
+\vspace{6pt}
+\noindent\textit{Fuente: elaboración propia.}
+
+\subsubsection{Impacto de una recomendación ejecutada}
+\label{sec:mockup-impacto-recomendacion}
+
+Transcurrida la ventana de evaluación de la recomendación ejecutada, el comerciante puede consultar su impacto (CU-06, Sección~\ref{sec:cu-06}) mediante una comparación \enquote{Antes} / \enquote{Después} de la métrica relevante. La pantalla incluye de forma explícita la aclaración de que se trata de una correlación indicativa y no de una relación de causalidad comprobada, en cumplimiento de RNF-13, satisfaciendo además la necesidad de validación expresada por los comerciantes entrevistados que condicionaron su disposición a pagar por la herramienta a poder verificar resultados concretos (HU-08, Sección~\ref{sec:hu-08}).
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.65\textwidth]{./images/mockup_impacto_recomendacion.png}
+    \caption{Vista de impacto de una recomendación marcada como ejecutada.}
+    \label{fig:mockup-impacto-recomendacion}
+\end{figure}
+
+\vspace{6pt}
+\noindent\textit{Fuente: elaboración propia.}
