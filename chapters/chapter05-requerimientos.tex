@@ -586,6 +586,18 @@ Postcondiciones & El score de la recomendación se actualiza en función del res
 
 \noindent 2a. No hay datos suficientes en el período posterior (por ejemplo, la tienda no tuvo ventas): el sistema marca la evaluación como inconclusa y no modifica el score.
 
+La Figura~\ref{fig:seq-feedback-loop} consolida en un diagrama de secuencia la interacción completa entre el comerciante, el frontend, el backend y la base de datos a lo largo del ciclo de retroalimentación que describen CU-05 y CU-06: desde que el comerciante marca una recomendación como ejecutada hasta que, una vez transcurrida la ventana temporal de evaluación, el sistema compara las métricas del período posterior contra el anterior, clasifica el impacto, actualiza el score dinámico del tipo de recomendación y expone la comparación al comerciante como correlación indicativa (RNF-13).
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=\textwidth]{./images/diagramaSecuenciaDecidata.png}
+    \caption{Diagrama de secuencia del ciclo de retroalimentación: registro de ejecución y evaluación de impacto (CU-05 y CU-06).}
+    \label{fig:seq-feedback-loop}
+\end{figure}
+
+\vspace{6pt}
+\noindent\textit{Fuente: elaboración propia.}
+
 \subsection{CU-07: Procesar webhook de privacidad}
 \label{sec:cu-07}
 
