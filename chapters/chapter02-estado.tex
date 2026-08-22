@@ -60,35 +60,41 @@ Puntos de divergencia: El alcance de Klaviyo es estrictamente externo y orientad
 
 El relevamiento del mercado permite identificar una brecha concreta y relevante en el ecosistema de soluciones tecnológicas actual. Por un lado, las herramientas accesibles localmente operan bajo un paradigma puramente descriptivo que delega la interpretación de los datos en el usuario. Por otro lado, las plataformas internacionales con capacidades prescriptivas están diseñadas para estructuras corporativas de gran escala, operan en inglés bajo costos en moneda extranjera y están configuradas para la madurez digital de mercados anglosajones o europeos, volviéndose incompatibles con la realidad operativa del segmento PyME local.
 
-El siguiente cuadro comparativo sintetiza los atributos relevados entre Nubelytics, el competidor local más próximo, y el presente proyecto:
+La Tabla~\ref{tab:comparativo_nubelytics} sintetiza los atributos relevados a lo largo de este capítulo para los cinco competidores identificados ---Nubelytics (Sección 3.3), Zebra Technologies / Reflexis (Sección 3.4.1), Conjura (Sección 3.4.2), Polar Analytics (Sección 3.4.3) y Klaviyo (Sección 3.4.4)--- junto con el presente proyecto. Cada celda se completó exclusivamente a partir de lo relevado en la sección correspondiente a esa solución; cuando el material disponible no permitió determinar con certeza el estado de un atributo, se indica ``No documentado'' en lugar de presumirlo.
 
 \begin{table}[h]
 \centering
-\caption{Cuadro comparativo entre Nubelytics y el presente proyecto}
+\caption{Cuadro comparativo entre los competidores relevados en el Estado del Arte y el presente proyecto}
 \label{tab:comparativo_nubelytics}
 \renewcommand{\arraystretch}{1.3}
-\begin{tabular}{|m{4cm}|m{2.5cm}|m{2.5cm}|}
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{|m{2.9cm}|m{1.75cm}|m{1.75cm}|m{1.75cm}|m{1.75cm}|m{1.75cm}|m{2cm}|}
 \hline
-\textbf{Atributo} & \textbf{Nubelytics} & \textbf{Este proyecto} \\
+\textbf{Atributo} & \textbf{Nubelytics} & \textbf{Zebra / Reflexis} & \textbf{Conjura} & \textbf{Polar Analytics} & \textbf{Klaviyo} & \textbf{Este proyecto} \\
 \hline
-Integración con Tiendanube & Sí & Sí \\
+Integración con Tiendanube & Sí & No & No & No documentado & No documentado & Sí \\
 \hline
-Analytics de conversión / embudo & Sí & Parcial \\
+Analytics de conversión / embudo & Sí & No documentado & Parcial & No documentado & No documentado & Parcial \\
 \hline
-Insights en lenguaje natural con IA & Sí & Sí \\
+Insights en lenguaje natural con IA & Sí & No documentado & Parcial & No & Parcial & Sí \\
 \hline
-Gestión de inventario & No & Sí \\
+Gestión de inventario & No & Sí & No & No documentado & No documentado & Sí \\
 \hline
-Estacionalidad por rubro & No & Sí \\
+Estacionalidad por rubro & No & No documentado & No documentado & No & No documentado & Sí \\
 \hline
-Feedback loop sobre acciones ejecutadas & No & Sí \\
+Feedback loop sobre acciones ejecutadas & No & No documentado & No documentado & No documentado & No documentado & Sí \\
 \hline
-Validación de efectividad de recomendaciones & No & Sí \\
+Validación de efectividad de recomendaciones & No & No documentado & No documentado & No documentado & No documentado & Sí \\
+\hline
+Accesible para PyMEs argentinas (costo e idioma) & Sí & No & No & No & No & Sí \\
+\hline
+Integración nativa con plataforma de e-commerce local & Sí & No & No & No documentado & No documentado & Sí \\
 \hline
 \end{tabular}
 \end{table}
 
-Ninguna solución identificada en el estado del arte combina los siguientes atributos de forma simultánea:
+Como refleja la comparación anterior, ninguna de las soluciones relevadas combina los siguientes atributos de forma simultánea:
 
 \begin{enumerate}
     \item Recomendaciones prescriptivas y accionables que reemplacen la necesidad de interpretar tableros de control tradicionales.

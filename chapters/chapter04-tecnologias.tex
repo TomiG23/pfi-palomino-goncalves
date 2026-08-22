@@ -170,6 +170,39 @@ Vercel & Plataforma de despliegue: publica la aplicación en una URL pública y 
 \end{tabular}
 \end{table}
 
+\subsection{Generación de mensajes en lenguaje natural: proveedor de IA}
+\label{sec:generacion-mensajes-ia}
+
+El motor de reglas del CU-03 (Sección~\ref{sec:cu-03}) produce cada recomendación como un dato estructurado: un tipo de recomendación, el producto o variante involucrado y un conjunto de métricas asociadas. Ese formato es apto para persistir, priorizar y comparar recomendaciones internamente, pero no es el que un comerciante sin formación técnica ni analítica espera encontrar al abrir el panel de la aplicación (RNF-09). El sistema debe entonces traducir cada recomendación estructurada a un mensaje en lenguaje natural, claro y accionable, mediante una llamada desde el backend a la API externa de un proveedor de inteligencia artificial (RF-19). Esta sección desarrolla la selección de dicho proveedor.
+
+Para resolver esta necesidad se evaluaron tres modelos de lenguaje de bajo costo, orientados a tareas simples de generación de texto: GPT-4o-mini de OpenAI, Claude Haiku 4.5 de Anthropic y Gemini 2.5 Flash-Lite de Google. Los tres pertenecen a la categoría de modelos livianos dentro del catálogo de sus respectivos proveedores, apropiada para la tarea concreta que debe resolver el prototipo: redactar un párrafo breve a partir de datos ya estructurados, no razonar sobre información ambigua ni ejecutar tareas complejas de múltiples pasos. Los criterios de evaluación fueron el costo por llamada en el volumen propio de un prototipo, la latencia, la disponibilidad de un SDK oficial para Node.js ---lenguaje del backend, según lo establecido en la Sección~\ref{sec:backend-node-express}--- y la calidad de la documentación disponible. La Tabla~\ref{tab:comparativo_llm} resume la comparación realizada.
+
+\begin{table}[h]
+\centering
+\caption{Comparación de proveedores de IA para la generación de mensajes en lenguaje natural}
+\label{tab:comparativo_llm}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{|m{2.3cm}|m{4.4cm}|m{4.4cm}|m{3.4cm}|}
+\hline
+\textbf{Opción} & \textbf{Ventajas} & \textbf{Consideraciones} & \textbf{Decisión} \\
+\hline
+GPT-4o-mini (OpenAI) & Costo por token entre los más bajos del mercado (USD~0,15 por millón de tokens de entrada y USD~0,60 por millón de tokens de salida); SDK oficial \texttt{openai} para Node.js, maduro y ampliamente documentado; baja latencia \parencite{OpenAIPricing2026} & Modelo de propósito general, sin especialización en redacción; su ventaja frente a las otras opciones es principalmente de costo y documentación & \textbf{Elegido.} Combina el menor costo total, la documentación más completa dentro del ecosistema Node.js y una capacidad más que suficiente para la tarea \\
+\hline
+Claude Haiku 4.5 (Anthropic) & SDK oficial \texttt{@anthropic-ai/sdk} para Node.js, bien documentado; calidad de redacción elevada; baja latencia \parencite{AnthropicPricing2026} & Costo por token sensiblemente mayor (USD~1,00 por millón de tokens de entrada y USD~5,00 por millón de tokens de salida), entre 6 y 8 veces el de GPT-4o-mini, sin que la tarea aproveche esa capacidad adicional & Descartado: el costo adicional no se traduce en un beneficio concreto para redactar un párrafo simple a partir de datos ya estructurados \\
+\hline
+Gemini 2.5 Flash-Lite (Google) & Costo por token levemente inferior al de GPT-4o-mini (USD~0,10 por millón de tokens de entrada y USD~0,40 por millón de tokens de salida); baja latencia \parencite{GoogleGeminiPricing2026} & SDK oficial de adopción más reciente que el de OpenAI o Anthropic; el catálogo de modelos Gemini registró discontinuaciones frecuentes en el último año, lo que introduce incertidumbre de mantenimiento para un equipo de dos personas & Descartado: el ahorro adicional sobre GPT-4o-mini es marginal en el volumen de un prototipo y no compensa la mayor inestabilidad del catálogo de modelos \\
+\hline
+\end{tabular}
+\end{table}
+
+La elección se inclinó por GPT-4o-mini por la combinación de un costo extremadamente bajo para el volumen de llamadas de un prototipo, un SDK oficial (\texttt{openai}) bien documentado para Node.js, baja latencia y una capacidad de generación de texto más que suficiente para la tarea concreta que debe resolver: redactar un mensaje breve a partir de datos ya estructurados, sin que se requiera el razonamiento complejo propio de un modelo \emph{frontier}. A esto se suma que el procesamiento es por lotes y no en tiempo real (RNF-11): dado que las recomendaciones se generan de forma periódica en el flujo del CU-03 y no en respuesta directa a una acción del comerciante, la aplicación no resulta sensible a la latencia de la manera en que lo sería una interfaz conversacional interactiva, lo que reduce aún más el peso de ese criterio en la decisión final.
+
+Un aspecto central de esta integración es qué información viaja hacia el proveedor externo. El backend no envía datos personales de clientes: ni nombres, ni direcciones de correo electrónico, ni montos de compra individuales forman parte de la solicitud. Lo que se envía a la API de OpenAI es exclusivamente el dato estructurado de la recomendación ya generada por el motor de reglas: el tipo de recomendación (reposición, promoción, ajuste de precio o retención de cliente), el nombre del producto o variante involucrado, y las métricas agregadas correspondientes ---stock actual, velocidad de rotación, variación porcentual de precio o días transcurridos sin actualización, según el tipo de señal---. El prompt construido por el backend incorpora, además, el rubro comercial de la tienda (RF-06), utilizado únicamente para ajustar el tono y el vocabulario del mensaje generado a las particularidades de ese rubro. Ninguno de estos datos permite identificar a un cliente individual de la tienda.
+
+El flujo técnico completo, ya introducido como parte del flujo principal del CU-03 (Sección~\ref{sec:cu-03}), puede resumirse en cuatro pasos: el motor de reglas genera la recomendación estructurada; el backend construye, a partir de esos datos, un prompt en lenguaje natural; el backend envía ese prompt a la API de OpenAI mediante el SDK \texttt{openai}; y, una vez recibida la respuesta, el backend persiste el mensaje resultante en el campo \texttt{message} de la entidad \texttt{RECOMMENDATIONS} (Figura~\ref{fig:erd-diagram}), junto con el resto de los datos de la recomendación. El flujo alternativo 6a del propio CU-03 contempla el caso en que la API no responde o devuelve un error: en ese escenario, el sistema recurre a una plantilla de texto predefinida como respaldo, de modo que la falla de un servicio externo no impide la generación de la recomendación.
+
+La clave de acceso (API key) de OpenAI se almacena exclusivamente en el backend, como variable de entorno, siguiendo el mismo criterio de seguridad aplicado al \texttt{Client Secret} de Tiendanube (RNF-05, RNF-14; Sección~\ref{sec:backend-node-express}). Al igual que ese secreto, la API key nunca se expone al frontend ni al \emph{iframe} embebido en el navegador del comerciante: toda comunicación con el proveedor de IA se origina y resuelve del lado del servidor.
+
 \section{Arquitectura de red}
 \label{sec:arquitectura-red}
 
