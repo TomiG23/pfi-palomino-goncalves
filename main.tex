@@ -103,8 +103,8 @@
 %\titleformat{\subsection}
 %{\normalfont\ssecfnt\bfseries}{\thesubsection}{1em}{}
 
-% Se pide numeraci\'on de tablas en n\'umeros romanos
-\renewcommand{\thetable}{\arabic{table}}
+% Numeraci\'on de tablas por cap\'{\i}tulo (Tabla 6.1, Tabla 6.2, ...), igual que las figuras.
+\renewcommand{\thetable}{\thechapter.\arabic{table}}
 
 %Espaciado antes y despu\'es de una figura respecto del texto
 \setlength{\textfloatsep}{5pt}
@@ -259,6 +259,7 @@
 	\input{chapters/chapter01-marco}
 	\input{chapters/chapter02-estado}
 	\input{chapters/chapter03-analisis-estrategico}
+	\input{chapters/chapter05-requerimientos}
 	\input{chapters/chapter04-tecnologias}
 
 	\addcontentsline{toc}{chapter}{Bibliograf\'{\i}a}
