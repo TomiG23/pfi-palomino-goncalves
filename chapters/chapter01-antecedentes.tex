@@ -1,0 +1,236 @@
+\chapter{Antecedentes}
+\label{cha:antecedentes}
+
+Este capítulo reúne los fundamentos sobre los que se apoya el resto del documento y se organiza en dos partes. El Marco Teórico (Sección~\ref{sec:marco-teorico}) presenta los conceptos necesarios para comprender la propuesta: el problema de los datos sin interpretación, los niveles de madurez analítica, los sistemas de recomendación y de soporte a la decisión, y la estrategia de adquisición de datos del prototipo. El Estado del Arte (Sección~\ref{sec:estado-arte}) releva las soluciones existentes en el mercado local e internacional y las compara con el presente proyecto para identificar la brecha que este busca cubrir.
+
+\section{Marco Teórico}
+\label{sec:marco-teorico}
+
+Esta sección desarrolla los conceptos que fundamentan el diseño del prototipo. Parte del problema que motiva el proyecto, la brecha entre la disponibilidad de datos y la capacidad de acción, y avanza luego sobre los niveles de madurez del analytics, los sistemas de recomendación, las particularidades de cada rubro comercial, la adquisición y el procesamiento de los datos, la estrategia de datos adoptada para el prototipo, los sistemas de soporte a la decisión y el mecanismo de retroalimentación que permite mejorar las recomendaciones a lo largo del tiempo.
+
+\subsection{El problema de los datos sin interpretación en el e-commerce de emprendedores}
+\label{sec:problema-datos}
+
+El crecimiento sostenido del comercio electrónico en Argentina ha generado un volumen creciente de datos operativos en las tiendas online de emprendedores. Sin embargo, disponer de datos no equivale a disponer de conocimiento accionable. La mayoría de las herramientas disponibles para este segmento presentan la información en forma de cuadros de mando descriptivos: gráficos de columnas, gráficos circulares y métricas de resumen como facturación total o cantidad de clientes alcanzados.
+
+Este tipo de visualización requiere que el usuario posea habilidades analíticas, visión estratégica y conocimiento del negocio para derivar conclusiones y ejecutar acciones concretas. En la práctica, los propietarios de tiendas online, especialmente emprendedores que no cuentan con analistas dedicados, actúan frecuentemente por intuición ante situaciones que podrían abordarse de forma anticipada y fundamentada: cuándo reponer stock, cuándo lanzar una promoción, cuándo ajustar precios ante un cambio de temporada o un riesgo de vencimiento de mercadería.
+
+Esta brecha entre la disponibilidad de datos y la capacidad de acción constituye el problema central que motiva el presente proyecto \parencite{Davenport2007, Provost2013}.
+
+\subsection{Business Intelligence: del analytics descriptivo al prescriptivo}
+\label{sec:business-intelligence}
+
+El campo del Business Intelligence (BI) clasifica los sistemas de análisis de datos en cuatro niveles de madurez creciente:
+
+\begin{enumerate}
+    \item \textbf{Analytics descriptivo:} Responde a la pregunta ``¿qué ocurrió?'' y constituye la base de la mayoría de los dashboards comerciales actuales.
+
+    \item \textbf{Analytics diagnóstico:} Responde a ``¿por qué ocurrió?'', incorporando análisis de causas y correlaciones.
+
+    \item \textbf{Analytics predictivo:} Responde a ``¿qué es probable que ocurra?'' mediante modelos estadísticos y de aprendizaje automático.
+
+    \item \textbf{Analytics prescriptivo:} Responde a ``¿qué debería hacerse?'' y representa el nivel más avanzado, combinando predicciones con reglas de negocio y objetivos concretos para generar recomendaciones específicas y priorizadas.
+\end{enumerate}
+
+El presente proyecto se posiciona en el nivel prescriptivo: no busca mostrar qué vendió un comercio ni predecir cuánto venderá, sino recomendar acciones concretas con potencial impacto medido. Este enfoque implica superar las limitaciones de las herramientas descriptivas dominantes en el mercado local y acercar capacidades analíticas avanzadas a usuarios sin formación técnica especializada \parencite{Lepenioti2020, Negash2004}.
+
+\subsection{Sistemas de recomendación}
+\label{sec:sistemas-recomendacion}
+
+Los sistemas de recomendación son componentes de software diseñados para sugerir ítems, acciones o decisiones relevantes a un usuario en función de datos disponibles. En el contexto del e-commerce, estos sistemas se han desarrollado principalmente para recomendar productos a consumidores finales. Sin embargo, su aplicación para recomendar acciones estratégicas a los propietarios de las tiendas representa un campo menos explorado y de alto valor potencial.
+
+Existen tres enfoques principales. El \emph{filtrado basado en contenido} analiza las características de los propios datos (por ejemplo, velocidad de rotación de un producto) para generar recomendaciones. El \emph{filtrado colaborativo} identifica patrones comunes entre múltiples usuarios o entidades similares. Los \emph{sistemas híbridos} combinan ambos enfoques para mejorar la precisión y la cobertura de las recomendaciones. \parencite{Ricci2015, Adomavicius2005}.
+
+El motor de análisis del presente proyecto adopta un enfoque híbrido. Por un lado, incorpora reglas de negocio predefinidas que responden a situaciones conocidas y recurrentes: si un producto recién incorporado agota su stock en poco tiempo, el sistema recomienda reposición inmediata; si un producto de temporada muestra caída en su rotación, el sistema sugiere una promoción o reducción de precio. Por otro lado, el sistema incorpora un componente dinámico basado en un mecanismo de scoring con actualización basada en outcomes, que permite personalizar y priorizar las recomendaciones según el comportamiento histórico de cada tienda y cada rubro.
+
+\subsection{Comportamiento del consumidor y particularidades por rubro}
+\label{sec:comportamiento-consumidor}
+
+El e-commerce no es un fenómeno homogéneo. Los patrones de compra, los ciclos de reposición y las variables críticas para la toma de decisiones varían significativamente según el rubro. El presente proyecto focaliza su análisis en tres categorías que se encuentran entre las de mayor volumen en el mercado argentino: gastronomía, indumentaria y electrónica.
+
+En \emph{gastronomía}, las variables críticas incluyen la rotación de los productos, medida como la ausencia de ventas registradas durante un período configurable desde su alta en el catálogo, la estacionalidad semanal y horaria de la demanda, y la necesidad de anticipar aumentos de consumo en fechas específicas. En \emph{indumentaria}, predominan los ciclos estacionales marcados (verano/invierno), la gestión de talles y variantes, y la sensibilidad al precio durante períodos de liquidación. En \emph{electrónica}, el factor determinante es la desactualización de precios, medida como el tiempo transcurrido desde la última modificación del precio de una variante, en un mercado donde el retraso en el ajuste de precios frente a cambios de costos o de contexto económico puede erosionar el margen de forma significativa.
+
+Reconocer estas diferencias es fundamental para que el motor de análisis genere recomendaciones contextualizadas y evite aplicar criterios genéricos que resulten irrelevantes o contraproducentes para cada tipo de comercio \parencite{CACE2025, Tiendanube2026}.
+
+\subsection{Adquisición y procesamiento de datos}
+\label{sec:adquisicion-datos}
+
+El sistema propuesto contempla la integración directa con la API de Tiendanube como única fuente de ingesta de datos. Esta plataforma, líder de e-commerce en Argentina y América Latina, permite acceder en tiempo real a datos de ventas, inventario, clientes y productos de cada tienda conectada.
+
+La decisión de centrarse en esta fuente responde al perfil del segmento objetivo: emprendedores que operan principalmente sobre Tiendanube y que buscan una solución de integración inmediata y sin fricción técnica.
+
+\subsubsection{Recursos y campos consumidos}
+\label{sec:recursos-campos}
+
+El motor de análisis del prototipo consume los siguientes recursos de la API de Tiendanube \parencite{TiendanubeAPI2024}:
+
+\paragraph{Tienda (\texttt{/\{store\_id\}/store})}
+
+Durante la autenticación, una vez completado el flujo OAuth~2.0 descripto en la Sección~\ref{sec:estrategia-datos-ref}, el backend consulta el recurso \texttt{Store} mediante \texttt{GET /\{store\_id\}/store}, utilizando el \texttt{store\_id} y el \texttt{access\_token} obtenidos en ese mismo flujo. De este recurso se consume el campo \texttt{name}, que la API devuelve localizado, es decir, con un valor por cada idioma configurado en la tienda, y que permite identificar al comercio dentro del prototipo para asociarle sus métricas operativas.
+
+\paragraph{Pedidos (\texttt{/orders})}
+
+Constituye la fuente primaria de datos transaccionales. De cada pedido se extraen los campos \texttt{created\_at}, para construir series temporales y analizar la estacionalidad de las ventas; \texttt{status} y \texttt{payment\_status}, para filtrar únicamente las transacciones efectivamente cobradas y excluir cancelaciones o pedidos pendientes; \texttt{total}, base para el cálculo de facturación acumulada y ticket promedio; \texttt{products}, que detalla por ítem el identificador de producto y variante, la cantidad comprada y el precio unitario, permitiendo calcular la velocidad de rotación individual de cada SKU; y \texttt{customer}, referencia al comprador, utilizada para medir la frecuencia de recompra y la tasa de retención.
+
+\paragraph{Productos y variantes (\texttt{/products}, \texttt{/products/\{id\}/variants})}
+
+El recurso de productos provee el catálogo completo de la tienda. Se consumen \texttt{name} y \texttt{categories} para segmentar las recomendaciones por rubro y aplicar reglas de negocio diferenciadas según la categoría comercial (gastronomía, indumentaria, electrónica), y \texttt{attributes}, que define los nombres de las dimensiones que distinguen a las variantes del producto (por ejemplo, talle o color). A nivel de variante, donde cada una representa una combinación única de esos atributos, se consumen: \texttt{stock}, variable central para detectar riesgos de quiebre de inventario y disparar alertas de reposición; \texttt{stock\_management}, que indica si la tienda gestiona el stock de la variante, de modo que, cuando su valor es \texttt{false}, el stock se considera infinito y no corresponde evaluar riesgo de quiebre; \texttt{price}, utilizado en cálculos de rentabilidad y en la generación de recomendaciones de ajuste de precio ante cambios de temporada o caída en la rotación; \texttt{cost}, el precio de costo cuando está disponible, que permite calcular el margen bruto por unidad; \texttt{sku}, el código de identificación de la variante definido por el comercio; y \texttt{values}, los valores concretos que toma la variante para cada atributo (por ejemplo, talle M y color negro).
+
+Además de estos campos, el sistema registra para cada variante un campo \texttt{updated\_at} que no proviene de la API de Tiendanube: se trata de un \emph{timestamp} local que el propio prototipo registra al sincronizar la variante.
+
+\paragraph{Clientes (\texttt{/customers})}
+
+Complementa los datos transaccionales con el comportamiento histórico de la base de compradores. Se utiliza \texttt{total\_spent}, campo provisto directamente por la API, para calcular el valor de vida del cliente (CLV) y segmentar la base según su nivel de actividad. Los campos \texttt{orders\_count} y \texttt{last\_order\_date}, en cambio, no forman parte del recurso \texttt{Customer} de la API de Tiendanube \parencite{TiendanubeAPI2024} y se derivan localmente a partir de los pedidos ya persistidos en la base de datos propia del prototipo: \texttt{orders\_count} se obtiene contando la cantidad de registros de la entidad \texttt{ORDERS} asociados a cada cliente, y \texttt{last\_order\_date} se obtiene como el máximo valor de \texttt{created\_at} entre esos mismos registros. Esta estrategia evita depender del campo \texttt{last\_order\_id} que sí expone la API, el cual solo referencia el identificador de la última orden y requeriría una consulta adicional a \texttt{GET /orders/\{id\}} para obtener su fecha, y aprovecha en cambio los datos que el sistema ya sincronizó, calculando ambos valores de forma local cada vez que se registra un nuevo pedido. Estos dos indicadores derivados permiten identificar clientes en riesgo de abandono y fundamentar recomendaciones de retención o reactivación.
+
+El procesamiento de los datos comprende etapas de limpieza, normalización y estructuración, previas al análisis. Este flujo sigue el paradigma ETL (\emph{Extract, Transform, Load}), ampliamente documentado en la literatura de ingeniería de datos \parencite{Kimball2013}.
+
+\subsection{Estrategia de datos para el prototipo}
+\label{sec:estrategia-datos-ref}
+
+El presente prototipo adopta una estrategia de datos en dos capas complementarias, orientada a garantizar tanto la validez técnica de la integración como la representatividad de los escenarios de análisis.
+
+La primera capa consiste en la integración con una tienda de desarrollo provista por el programa de Socios Tecnológicos de Tiendanube. Al registrarse como socia tecnológica, la plataforma asigna una tienda demo con acceso completo a todas las funcionalidades y a la API real, sin costo y de forma permanente. Esta tienda permite instalar la aplicación desarrollada, autenticar el acceso mediante OAuth 2.0 y consumir los endpoints reales de \texttt{/orders}, \texttt{/products} y \texttt{/customers}, validando así que la integración funciona sobre infraestructura productiva real y no sobre una simulación.
+
+La segunda capa consiste en un conjunto de datos generado mediante un script propio de generación aleatoria controlada, y no mediante inteligencia artificial. Este script no invoca ningún modelo generativo: aplica distribuciones de probabilidad y reglas de negocio codificadas manualmente (estacionalidad por rubro, velocidad de rotación, frecuencia de recompra) sobre el esquema oficial de la API de Tiendanube, y utiliza una semilla (\emph{seed}) de números pseudoaleatorios para determinar los valores concretos de cada registro. El uso de una semilla fija hace que el proceso sea determinístico y reproducible: la misma semilla siempre genera el mismo dataset, lo que permite versionar y auditar los datos de prueba. Al mismo tiempo, la semilla es un parámetro configurable: distintas semillas, combinadas con distribuciones calibradas sobre patrones reales de consumo por rubro (gastronomía, indumentaria, electrónica), permiten generar múltiples escenarios de prueba plausibles sin depender de que la tienda demo acumule historial transaccional propio. Este enfoque, generación algorítmica con semilla y no generación asistida por IA, evita introducir en el dataset los sesgos o inconsistencias propios de un modelo de lenguaje, y mantiene el control total del equipo sobre la lógica que produce cada dato.
+
+Esta combinación permite demostrar la viabilidad técnica de la integración con datos reales, al tiempo que garantiza la disponibilidad y el control necesarios sobre los datos de prueba durante el desarrollo del prototipo.
+
+\subsection{Sistemas de soporte a la decisión y toma de decisiones basada en datos}
+\label{sec:dss}
+
+Los Sistemas de Soporte a la Decisión (DSS, por sus siglas en inglés) son herramientas de software que asisten a personas o equipos en la toma de decisiones complejas, combinando datos, modelos analíticos e interfaces de usuario. A diferencia de los sistemas de reporting tradicionales, los DSS no solo presentan información sino que guían activamente el proceso de decisión.
+
+Investigaciones en el campo de las ciencias del comportamiento y la economía conductual demuestran que los seres humanos toman mejores decisiones cuando reciben recomendaciones concretas y contextualizadas en lugar de conjuntos de datos que requieren interpretación propia. Este fenómeno es especialmente relevante en contextos de alta carga cognitiva o baja experiencia analítica, como es el caso de los emprendedores de e-commerce.
+
+El presente proyecto incorpora este principio al comparar la capacidad de respuesta de usuarios ante recomendaciones directas versus dashboards descriptivos tradicionales, con el objetivo de validar empíricamente que las recomendaciones accionables generan decisiones más rápidas y de mayor calidad \parencite{Power2002, Kahneman2011}.
+
+\subsection{Feedback loop y mejora continua de las recomendaciones}
+\label{sec:feedback-loop}
+
+Un componente diferenciador del sistema propuesto es la incorporación de un mecanismo de retroalimentación continua. Cuando un usuario recibe una recomendación, el sistema registra si la acción fue ejecutada. En una etapa posterior, mide el impacto de dicha acción sobre las métricas relevantes comparando el comportamiento del producto en la ventana temporal posterior a la acción versus un período equivalente anterior, presentado como correlación indicativa y no como causalidad probada.
+
+A partir de este análisis, el sistema actualiza la priorización de recomendaciones futuras mediante un mecanismo de scoring con actualización basada en outcomes: las recomendaciones que demostraron impacto positivo aumentan su relevancia, mientras que las que no generaron el efecto esperado son revisadas o reemplazadas. Este enfoque permite que el sistema se adapte progresivamente al comportamiento y contexto específico de cada comercio, mejorando su precisión a lo largo del tiempo \parencite{Sutton2018, Shani2011}.
+
+\section{Estado del Arte}
+\label{sec:estado-arte}
+
+Esta sección releva el contexto del comercio electrónico argentino y las herramientas analíticas disponibles para los comercios que operan en él. Se describen primero las herramientas de analytics descriptivo de uso extendido, luego Nubelytics como el antecedente local más próximo y, finalmente, un conjunto de soluciones internacionales con capacidades prescriptivas. La sección cierra con un análisis comparativo que sintetiza la brecha identificada.
+
+\subsection{Contexto del mercado}
+\label{sec:contexto-mercado}
+
+El comercio electrónico en Argentina atraviesa un período de crecimiento y profesionalización sostenida. Según el informe NubeCommerce 2026 de Tiendanube, durante 2025 las tiendas del ecosistema alcanzaron casi 22 millones de órdenes, con un crecimiento del 40,2\% en facturación por encima de la inflación acumulada \parencite{Tiendanube2026}. La Cámara Argentina de Comercio Electrónico (CACE) reportó una facturación de \$15,3 billones en el primer semestre de 2025, con el canal digital representando el 25\% de las ventas totales del país \parencite{CACE2025}.
+
+En este contexto, la mayoría de los comercios dispone hoy de datos operativos en volumen creciente, pero la capacidad de transformarlos en decisiones estratégicas sigue siendo escasa, especialmente entre los emprendedores, que raramente cuentan con un analista de datos dedicado.
+
+\subsection{Herramientas de analytics descriptivo: el estándar actual}
+\label{sec:analytics-descriptivo}
+
+Las herramientas de análisis más utilizadas por los comercios de e-commerce en Argentina pertenecen al nivel descriptivo. Tiendanube ofrece funcionalidades nativas de estadísticas en sus planes pagos, incluyendo desglose de ventas, comportamiento de productos y métricas de clientes \parencite{TiendanubeEstadisticas2025}. Sin embargo, esta información se presenta en forma de reportes y gráficos que requieren interpretación por parte del usuario.
+
+Google Analytics, ampliamente integrado en las principales plataformas, ofrece análisis de tráfico y comportamiento, pero no genera recomendaciones comerciales \parencite{GoogleAnalytics2025}. Shopify Analytics presenta capacidades similares dentro de su ecosistema \parencite{ShopifyAnalytics2025}. Ninguna de estas herramientas indica al comerciante qué acción concreta debe tomar ni en qué momento.
+
+\subsection{Nubelytics: el antecedente local más próximo}
+\label{sec:nubelytics}
+
+En el mercado de soluciones analíticas de América Latina, Nubelytics se posiciona como el antecedente directo más próximo al presente proyecto. Se trata de una plataforma orientada al segmento de comercios minoristas y PyMEs que opera de manera nativa e integrada dentro de la tienda de aplicaciones de Tiendanube. Su propuesta de valor central radica en procesar datos de ventas, visitas y campañas digitales mediante Inteligencia Artificial para transformarlos en alertas y oportunidades de optimización comerciales en lenguaje natural, mitigando la dependencia de hojas de cálculo complejas \parencite{Nubelytics2025}.
+
+Puntos de contacto: Nubelytics se orienta a comercios minoristas y PyMEs de la región \parencite{Nubelytics2025}, un segmento que se superpone parcialmente con los emprendedores a los que se dirige el presente proyecto. Comparte, además, la plataforma base de integración (API de Tiendanube), el mecanismo de distribución (aplicación integrada en el panel de administración) y el propósito de democratizar el uso de IA para traducir datos transaccionales en acciones comerciales concretas.
+
+Puntos de divergencia: El alcance de Nubelytics está fuertemente orientado hacia la analítica de conversión digital, el rendimiento de pauta publicitaria (Meta y Google Ads) y el comportamiento del embudo de ventas en línea. El presente proyecto diverge al plantear un enfoque operativo holístico que vincula estrechamente las ventas con la gestión inteligente de inventarios y la estacionalidad propia del rubro comercial. Asimismo, Nubelytics carece de un sistema de retroalimentación algorítmica activa que evalúe el impacto posterior de las acciones ejecutadas por el usuario, y no contempla la validación del comportamiento del comerciante ante recomendaciones directas en comparación con los esquemas descriptivos tradicionales.
+
+\subsection{Herramientas internacionales con analytics prescriptivo}
+\label{sec:herramientas-internacionales}
+
+A nivel internacional existen soluciones que se acercan al nivel prescriptivo, aunque presentan barreras significativas para su adopción por parte de los emprendedores argentinos.
+
+\subsubsection{Zebra Technologies / Reflexis}
+\label{sec:zebra}
+
+Es una suite corporativa de analítica prescriptiva orientada a la gestión operativa de grandes cadenas de retail físico global. El sistema procesa volúmenes masivos de datos transaccionales y de inventario para coordinar en tiempo real las tareas del personal en el salón de ventas \parencite{ZebraReflexis2024}.
+
+Puntos de contacto: Se comparte la hipótesis central de que las recomendaciones prescriptivas directas y automatizadas superan la eficiencia de los tableros descriptivos tradicionales para movilizar la acción comercial.
+
+Puntos de divergencia: Zebra amarra su software a un ecosistema cerrado de hardware propietario (lectores industriales y antenas RFID) para optimizar el retail físico masivo. El presente prototipo es un sistema agnóstico de hardware diseñado exclusivamente para flujos de datos de e-commerce, orientado a los emprendedores locales.
+
+\subsubsection{Conjura}
+\label{sec:conjura}
+
+Es una plataforma de business intelligence impulsada por IA y Machine Learning, orientada específicamente a marcas medianas y grandes del ecosistema de e-commerce global (Shopify, Amazon) \parencite{Conjura2025}.
+
+Puntos de contacto: Coincide en el procesamiento automatizado de datos transaccionales de canales digitales para convertirlos en insights y recomendaciones comerciales que optimicen el rendimiento del negocio.
+
+Puntos de divergencia: Su motor algorítmico se enfoca en variables financiero-publicitarias (retorno de inversión en anuncios de Meta/Google, valor de vida del cliente digital). El presente proyecto prioriza la eficiencia operativa interna y la gestión inteligente del stock. Opera en inglés y bajo costos de escala internacional, incompatibles con la realidad de los comercios locales.
+
+\subsubsection{Polar Analytics}
+\label{sec:polar}
+
+Es un concentrador de inteligencia de negocios diseñado para marcas nativas digitales (D2C) de escala internacional. Su propuesta se centra en centralizar datos dispersos de ventas y adquisición de clientes en un entorno unificado \parencite{PolarAnalytics2025}.
+
+Puntos de contacto: Ambos proyectos reconocen la necesidad crítica de unificar fuentes de datos dispersas de una tienda online para mejorar la toma de decisiones comerciales.
+
+Puntos de divergencia: Polar Analytics opera bajo un paradigma puramente descriptivo, organizando la información en dashboards para que un analista humano los interprete. Este proyecto elimina esa fricción interpretativa mediante la automatización del diagnóstico, entregando la recomendación directa al administrador. No contempla las particularidades del mercado latinoamericano ni ofrece recomendaciones diferenciadas por rubro.
+
+\subsubsection{Klaviyo}
+\label{sec:klaviyo}
+
+Es una plataforma de automatización de marketing y datos de clientes especializada en canales de retención y comunicación digital \parencite{Klaviyo2025}.
+
+Puntos de contacto: Se comparte el objetivo de potenciar las ventas mediante el uso de algoritmos de recomendación basados en hábitos de consumo.
+
+Puntos de divergencia: El alcance de Klaviyo es estrictamente externo y orientado al consumidor final (B2C), inyectando sugerencias en correos o SMS. El presente proyecto se orienta hacia adentro del negocio (B2B), actuando como sistema de soporte a las decisiones comerciales y operativas para el dueño o administrador de la tienda.
+
+\subsection{Análisis comparativo y brecha identificada}
+\label{sec:analisis-comparativo}
+
+El relevamiento del mercado permite identificar una brecha concreta y relevante en el ecosistema de soluciones tecnológicas actual. Por un lado, las herramientas accesibles localmente operan bajo un paradigma puramente descriptivo que delega la interpretación de los datos en el usuario. Por otro lado, las plataformas internacionales con capacidades prescriptivas están diseñadas para estructuras corporativas de gran escala, operan en inglés bajo costos en moneda extranjera y están configuradas para la madurez digital de mercados anglosajones o europeos, volviéndose incompatibles con la realidad operativa de los emprendedores locales.
+
+La Tabla~\ref{tab:comparativo_nubelytics} sintetiza los atributos relevados a lo largo de esta sección para los cinco competidores identificados ---Nubelytics (Sección~\ref{sec:nubelytics}), Zebra Technologies / Reflexis (Sección~\ref{sec:zebra}), Conjura (Sección~\ref{sec:conjura}), Polar Analytics (Sección~\ref{sec:polar}) y Klaviyo (Sección~\ref{sec:klaviyo})--- junto con el presente proyecto. Cada celda se completó exclusivamente a partir de lo relevado en la sección correspondiente a esa solución; cuando el material disponible no permitió determinar con certeza el estado de un atributo, se indica ``No documentado'' en lugar de presumirlo.
+
+\begin{table}[h]
+\centering
+\caption{Cuadro comparativo entre los competidores relevados en el Estado del Arte y el presente proyecto}
+\label{tab:comparativo_nubelytics}
+\renewcommand{\arraystretch}{1.3}
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{|m{2.9cm}|m{1.75cm}|m{1.75cm}|m{1.75cm}|m{1.75cm}|m{1.75cm}|m{2cm}|}
+\hline
+\textbf{Atributo} & \textbf{Nubelytics} & \textbf{Zebra / Reflexis} & \textbf{Conjura} & \textbf{Polar Analytics} & \textbf{Klaviyo} & \textbf{Este proyecto} \\
+\hline
+Integración con Tiendanube & Sí & No & No & No documentado & No documentado & Sí \\
+\hline
+Analytics de conversión / embudo & Sí & No documentado & Parcial & No documentado & No documentado & Parcial \\
+\hline
+Insights en lenguaje natural con IA & Sí & No documentado & Parcial & No & Parcial & Sí \\
+\hline
+Gestión de inventario & No & Sí & No & No documentado & No documentado & Sí \\
+\hline
+Estacionalidad por rubro & No & No documentado & No documentado & No & No documentado & Sí \\
+\hline
+Feedback loop sobre acciones ejecutadas & No & No documentado & No documentado & No documentado & No documentado & Sí \\
+\hline
+Validación de efectividad de recomendaciones & No & No documentado & No documentado & No documentado & No documentado & Sí \\
+\hline
+Accesible para emprendedores argentinos (costo e idioma) & Sí & No & No & No & No & Sí \\
+\hline
+Integración nativa con plataforma de e-commerce local & Sí & No & No & No documentado & No documentado & Sí \\
+\hline
+\end{tabular}
+\end{table}
+
+Como refleja la comparación anterior, ninguna de las soluciones relevadas combina los siguientes atributos de forma simultánea:
+
+\begin{enumerate}
+    \item Recomendaciones prescriptivas y accionables que reemplacen la necesidad de interpretar tableros de control tradicionales.
+
+    \item Adaptación de la lógica de negocio a rubros específicos de consumo masivo altamente presentes en el entorno urbano (gastronomía, indumentaria, electrónica).
+
+    \item Integración nativa con la API de Tiendanube como plataforma dominante en el mercado argentino.
+
+    \item Accesibilidad técnica y financiera para emprendedores de la Ciudad Autónoma de Buenos Aires.
+
+    \item Un mecanismo de retroalimentación en bucle cerrado (feedback loop) que permita evaluar y mejorar la calidad de las recomendaciones en función de las decisiones reales del comerciante a lo largo del tiempo.
+\end{enumerate}
+
+Esta combinación de factores constituye la propuesta de valor diferencial del presente proyecto, cubre la vacante metodológica identificada en los antecedentes y fundamenta la pertinencia tanto académica como práctica de la investigación.
