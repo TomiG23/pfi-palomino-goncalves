@@ -1,7 +1,7 @@
 \chapter{Requerimientos del Sistema}
 \label{cha:requerimientos}
 
-El presente capítulo formaliza los requerimientos del prototipo a partir de tres fuentes complementarias: las definiciones de alcance establecidas en la sección 1.3, los recursos técnicos de la API de Tiendanube documentados en la sección 2.5, y las necesidades concretas relevadas durante las entrevistas con comerciantes PyME del segmento objetivo (Anexo B). La especificación se organiza en cuatro niveles: requerimientos funcionales, requerimientos no funcionales, historias de usuario con criterios de aceptación, y casos de uso formales.
+El presente capítulo formaliza los requerimientos del prototipo a partir de tres fuentes complementarias: las definiciones de alcance establecidas en la sección~\ref{sec:alcance}, los recursos técnicos de la API de Tiendanube documentados en la sección~\ref{sec:adquisicion-datos}, y las necesidades concretas relevadas durante las entrevistas con emprendedores del segmento objetivo (Anexos~\ref{anx:entrevista-fernandez} a~\ref{anx:entrevista-shakira}). La especificación se organiza en cuatro niveles: requerimientos funcionales, requerimientos no funcionales, historias de usuario con criterios de aceptación, y casos de uso formales.
 
 \section{Requerimientos Funcionales}
 \label{sec:requerimientos-funcionales}
@@ -28,64 +28,64 @@ Los requerimientos funcionales describen las capacidades que el sistema debe ofr
 \hline
 \endlastfoot
 
-RF-01 & El sistema debe autenticar la conexión con una tienda de Tiendanube mediante el protocolo OAuth 2.0, obteniendo y almacenando el token de acceso necesario para consumir la API. & Sección 2.6 \\
+RF-01 & El sistema debe autenticar la conexión con una tienda de Tiendanube mediante el protocolo OAuth 2.0, obteniendo y almacenando el token de acceso necesario para consumir la API. & Sección~\ref{sec:estrategia-datos-ref} \\
 \hline
 
-RF-02 & El sistema debe consumir datos de pedidos desde el endpoint \texttt{/orders} de la API de Tiendanube, extrayendo los campos \texttt{created\_at}, \texttt{status}, \texttt{payment\_status}, \texttt{total}, \texttt{products} y \texttt{customer}. & Sección 2.5.1.1 \\
+RF-02 & El sistema debe consumir datos de pedidos desde el endpoint \texttt{/orders} de la API de Tiendanube, extrayendo los campos \texttt{created\_at}, \texttt{status}, \texttt{payment\_status}, \texttt{total}, \texttt{products} y \texttt{customer}. & Sección~\ref{sec:recursos-campos} \\
 \hline
 
-RF-03 & El sistema debe consumir datos de productos y variantes desde los endpoints \texttt{/products} y \texttt{/products/\{id\}/variants}, extrayendo \texttt{name}, \texttt{categories}, \texttt{attributes}, \texttt{stock}, \texttt{stock\_management}, \texttt{price}, \texttt{cost}, \texttt{values} y \texttt{updated\_at}. & Sección 2.5.1.2 \\
+RF-03 & El sistema debe consumir datos de productos y variantes desde los endpoints \texttt{/products} y \texttt{/products/\{id\}/variants}, extrayendo, a nivel de producto, \texttt{name}, \texttt{categories} y \texttt{attributes}, y, a nivel de variante, \texttt{stock}, \texttt{stock\_management}, \texttt{price}, \texttt{cost}, \texttt{sku} y \texttt{values}. Adicionalmente, el sistema debe registrar en cada variante un \emph{timestamp} local (\texttt{updated\_at}) que se actualiza solo cuando la sincronización detecta un cambio de precio. & Sección~\ref{sec:recursos-campos} \\
 \hline
 
-RF-04 \textit{(corregido)} & El sistema debe consumir el campo \texttt{total\_spent} desde el endpoint \texttt{/customers} de la API de Tiendanube. Los campos \texttt{orders\_count} y \texttt{last\_order\_date} no forman parte de este recurso y se calculan localmente: \texttt{orders\_count} mediante el conteo de registros de la entidad \texttt{ORDERS} asociados al cliente, y \texttt{last\_order\_date} como el valor máximo de \texttt{created\_at} entre esos mismos registros. & Sección 2.5.1.3 \\
+RF-04 & El sistema debe consumir el campo \texttt{total\_spent} desde el endpoint \texttt{/customers} de la API de Tiendanube. Los campos \texttt{orders\_count} y \texttt{last\_order\_date} no forman parte de este recurso y se calculan localmente: \texttt{orders\_count} mediante el conteo de registros de la entidad \texttt{ORDERS} asociados al cliente, y \texttt{last\_order\_date} como el valor máximo de \texttt{created\_at} entre esos mismos registros. & Sección~\ref{sec:recursos-campos} \\
 \hline
 
-RF-05 & El sistema debe filtrar únicamente las transacciones efectivamente cobradas, excluyendo cancelaciones y pedidos pendientes, mediante los campos \texttt{status} y \texttt{payment\_status}. & Sección 2.5.1.1 \\
+RF-05 & El sistema debe filtrar únicamente las transacciones efectivamente cobradas, excluyendo cancelaciones y pedidos pendientes, mediante los campos \texttt{status} y \texttt{payment\_status}. & Sección~\ref{sec:recursos-campos} \\
 \hline
 
-RF-06 \textit{(corregido)} & El sistema debe identificar el rubro comercial de la tienda conectada (gastronomía, indumentaria o electrónica) a partir del campo \texttt{type} del recurso \texttt{Store} de la API de Tiendanube, utilizando las categorías de productos de la tienda como criterio de respaldo cuando dicho campo no resulte concluyente. & Sección 2.4; Sección 2.5.1 \\
+RF-06 & El sistema debe identificar el rubro comercial de la tienda conectada (gastronomía, indumentaria o electrónica) a partir de las categorías de sus productos, y registrarlo en el campo local \texttt{type} de la tienda, que no proviene de la API de Tiendanube. Cuando las categorías no resulten concluyentes, el sistema debe asignar el valor \texttt{general}. & Sección~\ref{sec:comportamiento-consumidor}; Sección~\ref{sec:recursos-campos} \\
 \hline
 
-RF-07 & El sistema debe generar recomendaciones prescriptivas accionables, expresadas en lenguaje natural, que indiquen al comerciante una acción concreta a ejecutar (por ejemplo: reponer un producto, lanzar una promoción, ajustar un precio). & Secciones 1.1, 2.2 \\
+RF-07 & El sistema debe generar recomendaciones prescriptivas accionables, expresadas en lenguaje natural, que indiquen al comerciante una acción concreta a ejecutar (por ejemplo: reponer un producto, lanzar una promoción, ajustar un precio). & Secciones~\ref{sec:objetivo-general} y~\ref{sec:business-intelligence} \\
 \hline
 
-RF-08 \textit{(corregido)} & El sistema debe detectar riesgos de quiebre de inventario calculando la velocidad de rotación de cada producto/variante y comparándola con el stock actual, generando alertas de reposición cuando el stock se encuentre por debajo de un umbral dinámico. Esta regla solo se evalúa cuando el campo \texttt{stock\_management} de la variante sea \texttt{true}; si es \texttt{false}, el stock es infinito y no corresponde generar alerta de quiebre. & Sección 2.5.1.2; Entrevistas B.1, B.4, B.5 \\
+RF-08 & El sistema debe detectar riesgos de quiebre de inventario calculando la velocidad de rotación de cada producto/variante y comparándola con el stock actual, generando alertas de reposición cuando el stock se encuentre por debajo de un umbral dinámico. Esta regla solo se evalúa cuando el campo \texttt{stock\_management} de la variante sea \texttt{true}; si es \texttt{false}, el stock es infinito y no corresponde generar alerta de quiebre. & Sección~\ref{sec:recursos-campos}; Anexos~\ref{anx:entrevista-fernandez}, \ref{anx:entrevista-fabbi} y~\ref{anx:entrevista-shakira} \\
 \hline
 
-RF-09 & El sistema debe identificar patrones de estacionalidad en las ventas mediante el análisis de series temporales construidas a partir de \texttt{created\_at}. & Sección 2.4 \\
+RF-09 & El sistema debe identificar patrones de estacionalidad en las ventas mediante el análisis de series temporales construidas a partir de \texttt{created\_at}. & Sección~\ref{sec:comportamiento-consumidor} \\
 \hline
 
-RF-10 \textit{(corregido)} & El sistema debe detectar productos cuya rotación decae respecto al período anterior y generar recomendaciones de promoción o reducción de precio, diferenciadas según el rubro comercial: en gastronomía, mediante ausencia de ventas desde el alta del producto (proxy de rotación); en electrónica, mediante el tiempo transcurrido desde la última actualización de precio de la variante (campo \texttt{updated\_at}). & Sección 2.3, 2.4; Entrevista B.2 \\
+RF-10 & El sistema debe detectar productos cuya rotación decae respecto al período anterior y generar recomendaciones de promoción o reducción de precio, diferenciadas según el rubro comercial: en gastronomía, mediante ausencia de ventas desde el alta del producto (proxy de rotación); en electrónica, mediante el tiempo transcurrido desde la última actualización de precio de la variante (campo \texttt{updated\_at}). & Secciones~\ref{sec:sistemas-recomendacion} y~\ref{sec:comportamiento-consumidor}; Anexo~\ref{anx:entrevista-cejas} \\
 \hline
 
-RF-11 & El sistema debe calcular métricas de rendimiento por producto, incluyendo velocidad de rotación, facturación acumulada y margen bruto (cuando el campo \texttt{cost} esté disponible). & Sección 2.5.1.2 \\
+RF-11 & El sistema debe calcular métricas de rendimiento por producto, incluyendo velocidad de rotación, facturación acumulada y margen bruto (cuando el campo \texttt{cost} esté disponible). & Sección~\ref{sec:recursos-campos} \\
 \hline
 
-RF-12 & El sistema debe segmentar la base de clientes según su nivel de actividad, calculando el valor de vida del cliente (CLV) a partir de \texttt{total\_spent} y \texttt{orders\_count} (este último calculado según RF-04). & Sección 2.5.1.3 \\
+RF-12 & El sistema debe segmentar la base de clientes según su nivel de actividad, calculando el valor de vida del cliente (CLV) a partir de \texttt{total\_spent} y \texttt{orders\_count} (este último calculado según RF-04). & Sección~\ref{sec:recursos-campos} \\
 \hline
 
-RF-13 & El sistema debe identificar clientes en riesgo de abandono basándose en \texttt{last\_order\_date} (calculado según RF-04) y generar recomendaciones de retención o reactivación. & Sección 2.5.1.3 \\
+RF-13 & El sistema debe identificar clientes en riesgo de abandono basándose en \texttt{last\_order\_date} (calculado según RF-04) y generar recomendaciones de retención o reactivación. & Sección~\ref{sec:recursos-campos} \\
 \hline
 
-RF-14 & El sistema debe permitir al usuario registrar si ejecutó una recomendación recibida, almacenando la fecha y el tipo de acción realizada. & Sección 2.8 \\
+RF-14 & El sistema debe permitir al usuario registrar si ejecutó una recomendación recibida, almacenando la fecha y el tipo de acción realizada. & Sección~\ref{sec:feedback-loop} \\
 \hline
 
-RF-15 & El sistema debe medir el impacto de las recomendaciones ejecutadas comparando las métricas relevantes del producto en la ventana temporal posterior a la acción versus un período equivalente anterior, presentando el resultado como correlación indicativa. & Sección 2.8 \\
+RF-15 & El sistema debe medir el impacto de las recomendaciones ejecutadas comparando las métricas relevantes del producto en la ventana temporal posterior a la acción versus un período equivalente anterior, presentando el resultado como correlación indicativa. & Sección~\ref{sec:feedback-loop} \\
 \hline
 
-RF-16 & El sistema debe actualizar la priorización de recomendaciones futuras mediante un mecanismo de scoring con actualización basada en outcomes: las recomendaciones con impacto positivo aumentan su relevancia; las que no generaron el efecto esperado son revisadas o reemplazadas. & Sección 2.8 \\
+RF-16 & El sistema debe actualizar la priorización de recomendaciones futuras mediante un mecanismo de scoring con actualización basada en outcomes: las recomendaciones con impacto positivo aumentan su relevancia; las que no generaron el efecto esperado son revisadas o reemplazadas. & Sección~\ref{sec:feedback-loop} \\
 \hline
 
-RF-17 & El sistema debe presentar las recomendaciones en una interfaz web integrada al panel de administración de Tiendanube mediante iframe (Aplicación Integrada). & Sección 1.3.1 \\
+RF-17 & El sistema debe presentar las recomendaciones en una interfaz web integrada al panel de administración de Tiendanube mediante iframe (Aplicación Integrada). & Sección~\ref{sec:componentes-incluidos} \\
 \hline
 
-RF-18 & El sistema debe exponer los webhooks de privacidad exigidos por Tiendanube: \texttt{/api/webhooks/store-redact}, \texttt{customers-redact} y \texttt{customers-data-request}. & Sección 6.3.2 \\
+RF-18 & El sistema debe exponer los webhooks de privacidad exigidos por Tiendanube: \texttt{/api/webhooks/store-redact}, \texttt{customers-redact} y \texttt{customers-data-request}. & Sección~\ref{sec:backend-node-express} \\
 \hline
 
-RF-19 & El sistema debe traducir cada recomendación generada por el motor de análisis a un mensaje en lenguaje natural mediante una llamada a una API externa de un proveedor de inteligencia artificial, ejecutada desde el backend. El mensaje resultante se almacena junto con la recomendación para su presentación en la interfaz. & Sección 2.2; Entrevistas B.1, B.2, B.5 \\
+RF-19 & El sistema debe traducir cada recomendación generada por el motor de análisis a un mensaje en lenguaje natural mediante una llamada a una API externa de un proveedor de inteligencia artificial, ejecutada desde el backend. El mensaje resultante se almacena junto con la recomendación para su presentación en la interfaz. & Sección~\ref{sec:generacion-mensajes-ia}; Anexos~\ref{anx:entrevista-fernandez}, \ref{anx:entrevista-cejas} y~\ref{anx:entrevista-shakira} \\
 \hline
 
-RF-20 & El sistema debe consultar diariamente el valor de referencia del tipo de cambio USD/ARS mediante una API pública externa, almacenando un registro histórico. Para tiendas cuya moneda principal (\texttt{main\_currency}) sea ARS, el sistema debe generar una recomendación de revisión de precios cuando se detecte una variación del tipo de cambio superior a un umbral configurable desde la última actualización de precio de una variante. & Sección 2.4; Entrevista B.5 \\
+RF-20 & El sistema debe consultar diariamente el valor de referencia del tipo de cambio USD/ARS mediante una API pública externa, almacenando un registro histórico. Para tiendas cuya moneda principal (\texttt{main\_currency}) sea ARS, el sistema debe generar una recomendación de revisión de precios cuando se detecte una variación del tipo de cambio superior a un umbral configurable desde la última actualización de precio de una variante. & Sección~\ref{sec:comportamiento-consumidor}; Anexo~\ref{anx:entrevista-shakira} \\
 \hline
 
 \end{longtable}
@@ -115,49 +115,56 @@ Los requerimientos no funcionales especifican restricciones técnicas, atributos
 \hline
 \endlastfoot
 
-RNF-01 & El frontend debe estar desarrollado en React, conforme al requisito impuesto por Tiendanube para aplicaciones integradas a su panel de administración. & Restricción de plataforma & Sección 6.1 \\
+RNF-01 & El sistema debe implementar su frontend en React, conforme al requisito impuesto por Tiendanube para aplicaciones integradas a su panel de administración. & Restricción de plataforma & Sección~\ref{sec:criterios-seleccion} \\
 \hline
 
-RNF-02 & La comunicación entre la aplicación (iframe) y la ventana del panel de administración debe realizarse mediante el SDK \texttt{@tiendanube/nexo}. & Restricción de plataforma & Sección 6.3.1 \\
+RNF-02 & El sistema debe comunicar la aplicación embebida (iframe) con la ventana del panel de administración mediante el SDK \texttt{@tiendanube/nexo}. & Restricción de plataforma & Sección~\ref{sec:frontend-react-vite} \\
 \hline
 
-RNF-03 & La interfaz debe utilizar el sistema de diseño Nimbus de Tiendanube para mantener consistencia visual con el panel de administración, en cumplimiento del requisito que Tiendanube impone a las aplicaciones integradas. & Usabilidad & Sección 6.3.1 \\
+RNF-03 & El sistema debe utilizar en su interfaz el sistema de diseño Nimbus de Tiendanube para mantener consistencia visual con el panel de administración, en cumplimiento del requisito que Tiendanube impone a las aplicaciones integradas. & Usabilidad & Sección~\ref{sec:frontend-react-vite} \\
 \hline
 
-RNF-04 & La aplicación embebida debe estar disponible bajo una URL pública con HTTPS, incluso durante el desarrollo. & Seguridad & Sección 6.4 \\
+RNF-04 & El sistema debe servir la aplicación embebida bajo una URL pública con HTTPS, incluso durante el desarrollo. & Seguridad & Sección~\ref{sec:arquitectura-red} \\
 \hline
 
-RNF-05 & El \texttt{Client Secret} de la aplicación no debe exponerse al frontend ni al iframe del navegador del usuario; debe permanecer exclusivamente en el backend. & Seguridad & Sección 6.3.2 \\
+RNF-05 & El sistema debe mantener el \texttt{Client Secret} de la aplicación exclusivamente en el backend y resolver del lado del servidor toda operación que lo requiera. & Seguridad & Sección~\ref{sec:backend-node-express} \\
 \hline
 
-RNF-06 & El backend debe ejecutarse sobre Node.js en su versión 18 o superior. & Tecnología & Sección 6.3.2 \\
+RNF-06 & El sistema debe ejecutar su backend sobre Node.js en su versión 18 o superior. & Tecnología & Sección~\ref{sec:backend-node-express} \\
 \hline
 
-RNF-07 & La capa de persistencia debe utilizar PostgreSQL como motor de base de datos relacional, con acceso mediante Prisma como ORM. & Tecnología & Sección 6.3.3 \\
+RNF-07 & El sistema debe persistir sus datos en PostgreSQL como motor de base de datos relacional, con acceso mediante Prisma como ORM. & Tecnología & Sección~\ref{sec:persistencia} \\
 \hline
 
-RNF-08 & La interfaz web debe ser responsiva, optimizada para diversos dispositivos. & Usabilidad & Sección 1.3.1 \\
+RNF-08 & El sistema debe presentar una interfaz web responsiva, optimizada para diversos dispositivos. & Usabilidad & Sección~\ref{sec:componentes-incluidos} \\
 \hline
 
-RNF-09 & Las recomendaciones deben presentarse en lenguaje natural, comprensible para usuarios sin formación técnica ni analítica. & Usabilidad & Entrevistas B.1, B.2, B.5 \\
+RNF-09 & El sistema debe presentar las recomendaciones en lenguaje natural, comprensible para usuarios sin formación técnica ni analítica. & Usabilidad & Anexos~\ref{anx:entrevista-fernandez}, \ref{anx:entrevista-cejas} y~\ref{anx:entrevista-shakira} \\
 \hline
 
-RNF-10 & El sistema debe operar como prototipo funcional; no se contempla despliegue productivo a escala industrial. & Alcance & Sección 1.3.2 \\
+RNF-10 & El sistema debe operar como prototipo funcional, acotado a la escala de validación del proyecto, sin despliegue productivo a escala industrial. & Alcance & Sección~\ref{sec:componentes-excluidos} \\
 \hline
 
-RNF-11 & El procesamiento de datos será por lotes (batch); no se contempla procesamiento en tiempo real. & Alcance & Sección 1.3.2 \\
+RNF-11 & El sistema debe procesar los datos por lotes (batch), de forma periódica, sin requerir procesamiento en tiempo real. & Alcance & Sección~\ref{sec:componentes-excluidos} \\
 \hline
 
-RNF-12 & La API de Tiendanube es la única fuente de datos transaccionales y de negocio del sistema; no se contemplan integraciones con otras plataformas de e-commerce. Quedan exceptuadas de esta restricción las consultas auxiliares de solo lectura a servicios externos que no constituyen una integración de plataforma (RF-19, RF-20). & Alcance & Sección 1.3.2 \\
+RNF-12 & El sistema debe utilizar la API de Tiendanube como única fuente de datos transaccionales y de negocio, sin integraciones con otras plataformas de e-commerce. Quedan exceptuadas de esta restricción las consultas auxiliares de solo lectura a servicios externos que no constituyen una integración de plataforma (RF-19, RF-20). & Alcance & Sección~\ref{sec:componentes-excluidos} \\
 \hline
 
-RNF-13 & El impacto de las recomendaciones debe presentarse como correlación indicativa y no como causalidad probada. & Integridad analítica & Sección 2.8 \\
+RNF-13 & El sistema debe presentar el impacto de las recomendaciones como correlación indicativa y no como causalidad probada. & Integridad analítica & Sección~\ref{sec:feedback-loop} \\
 \hline
 
-RNF-14 & La clave de acceso (API key) del proveedor de inteligencia artificial no debe exponerse al frontend ni al iframe del navegador del usuario; debe permanecer exclusivamente en el backend, siguiendo el mismo criterio de seguridad aplicado al \texttt{Client Secret} de Tiendanube (RNF-05). & Seguridad & Sección 6.3.5 \\
+RNF-14 & El sistema debe mantener la clave de acceso (API key) del proveedor de inteligencia artificial exclusivamente en el backend y originar desde el servidor toda comunicación con dicho proveedor, siguiendo el mismo criterio de seguridad aplicado al \texttt{Client Secret} de Tiendanube (RNF-05). & Seguridad & Sección~\ref{sec:generacion-mensajes-ia} \\
 \hline
 
-RNF-15 & El conjunto de datos utilizado para complementar la tienda de desarrollo debe generarse mediante un script de generación aleatoria controlada con semilla (\emph{seed}), sin utilizar modelos de inteligencia artificial generativa para su creación. & Integridad de datos & Sección 2.6 \\
+RNF-15 & El sistema debe generar el conjunto de datos utilizado para complementar la tienda de desarrollo mediante un script determinístico de generación aleatoria controlada con semilla (\emph{seed}), sin intervención de modelos de inteligencia artificial generativa. & Integridad de datos & Sección~\ref{sec:estrategia-datos-ref} \\
+\hline
+
+RNF-16 & El sistema debe responder las consultas del panel de recomendaciones con un tiempo de respuesta de hasta 1000~ms en el percentil 95, medido sobre el conjunto de datos de referencia en el entorno de desarrollo. % VERIFICAR: 1000 ms es el extremo conservador del rango sugerido (500--1000 ms); medir el p95 de los endpoints del panel con el dataset sintético (seed fija). Debe coincidir con el objetivo específico 1.
+& Rendimiento & Sección~\ref{sec:objetivos-especificos} \\
+\hline
+
+RNF-17 & El sistema debe alcanzar una cobertura de código mínima del 85\% en líneas, sentencias, funciones y ramas, mediante pruebas unitarias y de integración, tanto en el backend como en el frontend. & Mantenibilidad & Sección~\ref{sec:meta-cobertura} \\
 \hline
 
 \end{longtable}
@@ -165,14 +172,14 @@ RNF-15 & El conjunto de datos utilizado para complementar la tienda de desarroll
 \section{Historias de Usuario}
 \label{sec:historias-usuario}
 
-Las historias de usuario describen funcionalidades desde la perspectiva del usuario final. Cada historia se deriva de necesidades concretas identificadas durante las entrevistas con comerciantes PyME (Anexo B) y se vincula explícitamente con los requerimientos funcionales que cubre. Incluye criterios de aceptación que permiten verificar su implementación.
+Las historias de usuario describen funcionalidades desde la perspectiva del usuario final. Cada historia se deriva de necesidades concretas identificadas durante las entrevistas con emprendedores (Anexos~\ref{anx:entrevista-fernandez} a~\ref{anx:entrevista-shakira}) y se vincula explícitamente con los requerimientos funcionales que cubre. Incluye criterios de aceptación que permiten verificar su implementación.
 
 \subsection{HU-01 --- Alerta de stock bajo}
 \label{sec:hu-01}
 
 Como dueño/a de una tienda en Tiendanube, quiero recibir una alerta cuando un producto está próximo a quedarse sin stock, para poder reponer insumos o mercadería antes de perder ventas.
 
-\noindent\textbf{Evidencia empírica:} al ser consultada sobre si Tiendanube le avisaba con anticipación antes de quedarse sin stock de una prenda, Delfina Fernández respondió: \enquote{No, no, no. Eso no} (Anexo B, Entrevista B.1); la única notificación que recibe es posterior al quiebre, cuando el stock ya llegó a cero. Julián Fabbi describió una dinámica similar: \enquote{No te avisa más nada que el colorcito, y cuando te quedás sin stock sí te llega un mensajito} (Anexo B, Entrevista B.4).
+\noindent\textbf{Evidencia empírica:} al ser consultada sobre si Tiendanube le avisaba con anticipación antes de quedarse sin stock de una prenda, Delfina Fernández respondió: \enquote{No, no, no. Eso no} (Anexo~\ref{anx:entrevista-fernandez}); la única notificación que recibe es posterior al quiebre, cuando el stock ya llegó a cero. Julián Fabbi describió una dinámica similar: \enquote{No te avisa más nada que el colorcito, y cuando te quedás sin stock sí te llega un mensajito} (Anexo~\ref{anx:entrevista-fabbi}).
 
 \noindent\textbf{Criterios de aceptación:}
 \begin{itemize}
@@ -189,7 +196,7 @@ Como dueño/a de una tienda en Tiendanube, quiero recibir una alerta cuando un p
 
 Como dueño/a de un emprendimiento de producción artesanal, quiero que el sistema me indique qué productos conviene tener preparados antes del fin de semana, para anticiparme a la demanda esperada y no producir reactivamente.
 
-\noindent\textbf{Evidencia empírica:} Delfina Fernández expresó que una funcionalidad de este tipo \enquote{estaría buenísimo, porque más que nada a mí me sirve por el material. Nunca sé si comprar más o si me los voy a quedar sin vender} (Anexo B, Entrevista B.1). Su modelo de producción manual hace que la anticipación sea crítica: bordar una remera lleva tiempo y no puede reaccionar a la demanda en tiempo real.
+\noindent\textbf{Evidencia empírica:} Delfina Fernández expresó que una funcionalidad de este tipo \enquote{estaría buenísimo, porque más que nada a mí me sirve por el material. Nunca sé si comprar más o si me los voy a quedar sin vender} (Anexo~\ref{anx:entrevista-fernandez}). Su modelo de producción manual hace que la anticipación sea crítica: bordar una remera lleva tiempo y no puede reaccionar a la demanda en tiempo real.
 
 \noindent\textbf{Criterios de aceptación:}
 \begin{itemize}
@@ -200,12 +207,12 @@ Como dueño/a de un emprendimiento de producción artesanal, quiero que el siste
 
 \noindent\textbf{Requerimientos cubiertos:} RF-09, RF-07, RF-08.
 
-\subsection{HU-03 --- Detección de producto con rotación decreciente \textit{(corregida)}}
+\subsection{HU-03 --- Detección de producto con rotación decreciente}
 \label{sec:hu-03}
 
 Como dueño/a de una tienda de indumentaria, quiero saber cuándo un producto de temporada está perdiendo rotación, para decidir si lanzar una promoción, hacer un combo o reducir el precio antes de que quede sin vender.
 
-\noindent\textbf{Evidencia empírica:} Morena Cejas relató que se quedó con stock de bermudas al pasar la temporada de calor y tuvo que armar combos con remeras para liquidarlas (Anexo B, Entrevista B.2). La decisión fue reactiva y basada en intuición; una alerta temprana habría permitido actuar antes.
+\noindent\textbf{Evidencia empírica:} Morena Cejas relató que se quedó con stock de bermudas al pasar la temporada de calor y tuvo que armar combos con remeras para liquidarlas (Anexo~\ref{anx:entrevista-cejas}). La decisión fue reactiva y basada en intuición; una alerta temprana habría permitido actuar antes.
 
 \noindent\textbf{Criterios de aceptación:}
 \begin{itemize}
@@ -219,9 +226,9 @@ Como dueño/a de una tienda de indumentaria, quiero saber cuándo un producto de
 \subsection{HU-04 --- Visibilidad de productos más vendidos}
 \label{sec:hu-04}
 
-Como comerciante PyME, quiero conocer cuáles son los productos que más se venden, para enfocar mis esfuerzos de reposición, contenido y publicidad.
+Como emprendedor/a, quiero conocer cuáles son los productos que más se venden, para enfocar mis esfuerzos de reposición, contenido y publicidad.
 
-\noindent\textbf{Evidencia empírica:} Julián Fabbi indicó que lo que más le gustaría saber es \enquote{qué vende más. De todos los artículos que tengo cargados en la tienda, ¿cuál es el que más ventas tuvo?} (Anexo B, Entrevista B.4). Delfina Fernández también expresó interés en saber a qué producto correspondían las visitas únicas que le mostraba Tiendanube (Anexo B, Entrevista B.1), si bien esta última señal (visitas) no está disponible en la API pública consumida por el prototipo y queda fuera de su alcance actual.
+\noindent\textbf{Evidencia empírica:} Julián Fabbi indicó que lo que más le gustaría saber es \enquote{qué vende más. De todos los artículos que tengo cargados en la tienda, ¿cuál es el que más ventas tuvo?} (Anexo~\ref{anx:entrevista-fabbi}). Delfina Fernández también expresó interés en saber a qué producto correspondían las visitas únicas que le mostraba Tiendanube (Anexo~\ref{anx:entrevista-fernandez}), si bien esta última señal (visitas) no está disponible en la API pública consumida por el prototipo y queda fuera de su alcance actual.
 
 \noindent\textbf{Criterios de aceptación:}
 \begin{itemize}
@@ -237,7 +244,7 @@ Como comerciante PyME, quiero conocer cuáles son los productos que más se vend
 
 Como dueño/a de un emprendimiento de indumentaria estampada, quiero recibir una alerta cuando mis precios llevan demasiado tiempo sin actualizarse, para evitar vender sin margen de ganancia.
 
-\noindent\textbf{Evidencia empírica:} Shakira relató haber vendido \$35 millones de pesos esencialmente al costo por no haber actualizado los precios a tiempo frente a la suba del dólar y de los insumos: \enquote{Me di cuenta tarde} (Anexo B, Entrevista B.5). Al preguntarle qué funcionalidad le resultaría más valiosa, respondió: \enquote{Si pudiera tener una alerta automática que me diga 'tus precios no se actualizaron en X días y el costo de los insumos subió', eso sería ideal} (Anexo B, Entrevista B.5).
+\noindent\textbf{Evidencia empírica:} Shakira relató haber vendido \$35 millones de pesos esencialmente al costo por no haber actualizado los precios a tiempo frente a la suba del dólar y de los insumos: \enquote{Me di cuenta tarde} (Anexo~\ref{anx:entrevista-shakira}). Al preguntarle qué funcionalidad le resultaría más valiosa, respondió: \enquote{Si pudiera tener una alerta automática que me diga 'tus precios no se actualizaron en X días y el costo de los insumos subió', eso sería ideal} (Anexo~\ref{anx:entrevista-shakira}).
 
 \noindent\textbf{Criterios de aceptación:}
 \begin{itemize}
@@ -251,9 +258,9 @@ Como dueño/a de un emprendimiento de indumentaria estampada, quiero recibir una
 \subsection{HU-06 --- Recomendación de promoción por fecha clave}
 \label{sec:hu-06}
 
-Como comerciante PyME, quiero que el sistema me sugiera activar promociones antes de fechas de alto tráfico comercial (Hot Sale, Black Friday, Navidad, eventos sectoriales), para capitalizar los picos de demanda estacionales con anticipación.
+Como emprendedor/a, quiero que el sistema me sugiera activar promociones antes de fechas de alto tráfico comercial (Hot Sale, Black Friday, Navidad, eventos sectoriales), para capitalizar los picos de demanda estacionales con anticipación.
 
-\noindent\textbf{Evidencia empírica:} Julián Fabbi reportó que sus mejores períodos de venta coincidieron deliberadamente con Navidad y la Feria del Libro, pero que la misma estrategia falló a mitad de año sin entender bien por qué (Anexo B, Entrevista B.4). Morena Cejas también identificó las efemérides comerciales como los momentos de mayor venta (Anexo B, Entrevista B.2). Shakira confirmó que el Hot Sale y el Black Friday son sus dos picos más grandes (Anexo B, Entrevista B.5).
+\noindent\textbf{Evidencia empírica:} Julián Fabbi reportó que sus mejores períodos de venta coincidieron deliberadamente con Navidad y la Feria del Libro, pero que la misma estrategia falló a mitad de año sin entender bien por qué (Anexo~\ref{anx:entrevista-fabbi}). Morena Cejas también identificó las efemérides comerciales como los momentos de mayor venta (Anexo~\ref{anx:entrevista-cejas}). Shakira confirmó que el Hot Sale y el Black Friday son sus dos picos más grandes (Anexo~\ref{anx:entrevista-shakira}).
 
 \noindent\textbf{Criterios de aceptación:}
 \begin{itemize}
@@ -269,7 +276,7 @@ Como comerciante PyME, quiero que el sistema me sugiera activar promociones ante
 
 Como usuario del sistema, quiero poder marcar que ejecuté una recomendación recibida, para que el sistema evalúe su impacto y ajuste la calidad de las recomendaciones futuras.
 
-\noindent\textbf{Evidencia empírica:} el mecanismo de retroalimentación fue identificado en el estado del arte (sección 3.5) como uno de los cinco atributos diferenciales del proyecto frente a Nubelytics y las herramientas internacionales relevadas.
+\noindent\textbf{Evidencia empírica:} el mecanismo de retroalimentación fue identificado en el estado del arte (sección~\ref{sec:analisis-comparativo}) como uno de los cinco atributos diferenciales del proyecto frente a Nubelytics y las herramientas internacionales relevadas.
 
 \noindent\textbf{Criterios de aceptación:}
 \begin{itemize}
@@ -285,7 +292,7 @@ Como usuario del sistema, quiero poder marcar que ejecuté una recomendación re
 
 Como dueño/a de una tienda, quiero ver si una recomendación que ejecuté tuvo impacto positivo en las métricas del producto, para confiar progresivamente en las sugerencias del sistema.
 
-\noindent\textbf{Evidencia empírica:} Shakira condicionó su disposición a pagar a poder verificar el valor en la práctica: \enquote{Necesito ver que realmente sirve antes de comprometerme} (Anexo B, Entrevista B.5). Morena Cejas lo expresó de forma más directa: \enquote{Si me sirve en ventas, y esta herramienta realmente me ayuda a vender, la pago} (Anexo B, Entrevista B.2).
+\noindent\textbf{Evidencia empírica:} Shakira condicionó su disposición a pagar a poder verificar el valor en la práctica: \enquote{Necesito ver que realmente sirve antes de comprometerme} (Anexo~\ref{anx:entrevista-shakira}). Morena Cejas lo expresó de forma más directa: \enquote{Si me sirve en ventas, y esta herramienta realmente me ayuda a vender, la pago} (Anexo~\ref{anx:entrevista-cejas}).
 
 \noindent\textbf{Criterios de aceptación:}
 \begin{itemize}
@@ -296,18 +303,18 @@ Como dueño/a de una tienda, quiero ver si una recomendación que ejecuté tuvo 
 
 \noindent\textbf{Requerimientos cubiertos:} RF-15, RF-16.
 
-\subsection{HU-09 --- Recomendaciones diferenciadas por rubro \textit{(corregida)}}
+\subsection{HU-09 --- Recomendaciones diferenciadas por rubro}
 \label{sec:hu-09}
 
 Como dueño/a de un negocio gastronómico, quiero que las recomendaciones consideren las particularidades operativas de mi rubro (rotación de productos y estacionalidad horaria de la demanda), para recibir sugerencias relevantes a mi contexto y no recomendaciones genéricas pensadas para otro tipo de comercio.
 
-\noindent\textbf{Evidencia empírica:} Pablo Terrera, dueño de una cafetería, describió en detalle las particularidades de la gestión gastronómica: anticipación de compras por fechas (chocolate en febrero para Pascuas), variaciones de costos de insumos lácteos y la necesidad de stockearse antes de un aumento (Anexo B, Entrevista B.3). Estas dinámicas son radicalmente distintas a las de indumentaria o electrónica, validando la necesidad de diferenciación.
+\noindent\textbf{Evidencia empírica:} Pablo Terrera, dueño de una cafetería, describió en detalle las particularidades de la gestión gastronómica: anticipación de compras por fechas (chocolate en febrero para Pascuas), variaciones de costos de insumos lácteos y la necesidad de stockearse antes de un aumento (Anexo~\ref{anx:entrevista-terrera}). Estas dinámicas son radicalmente distintas a las de indumentaria o electrónica, validando la necesidad de diferenciación.
 
 \noindent\textbf{Criterios de aceptación:}
 \begin{itemize}
     \item El sistema aplica reglas de negocio diferenciadas según el rubro detectado: en gastronomía, prioriza la ausencia de ventas desde el alta de un producto como proxy de rotación y la estacionalidad horaria/semanal; en indumentaria, los ciclos estacionales y la gestión de talles; en electrónica, el tiempo transcurrido desde la última actualización de precio de cada variante.
     \item Una misma señal de datos (por ejemplo, caída de rotación) genera recomendaciones distintas según el rubro.
-    \item El rubro se determina según RF-06 (campo \texttt{type} del recurso \texttt{Store}, con categorías de productos como respaldo).
+    \item El rubro se determina según RF-06, a partir de las categorías de productos de la tienda, y se registra en el campo local \texttt{type}.
 \end{itemize}
 
 \noindent\textbf{Requerimientos cubiertos:} RF-06, RF-10.
@@ -317,7 +324,7 @@ Como dueño/a de un negocio gastronómico, quiero que las recomendaciones consid
 
 Como comerciante, quiero identificar clientes que no realizan compras hace un tiempo prolongado, para ejecutar acciones de retención o reactivación antes de perderlos definitivamente.
 
-\noindent\textbf{Evidencia empírica:} si bien ningún entrevistado mencionó esta funcionalidad de forma explícita, la capacidad de segmentar clientes y detectar abandono se deriva del marco teórico (sección 2.5.1.3) y constituye una aplicación directa de \texttt{last\_order\_date} y \texttt{orders\_count}, calculados según RF-04.
+\noindent\textbf{Evidencia empírica:} si bien ningún entrevistado mencionó esta funcionalidad de forma explícita, la capacidad de segmentar clientes y detectar abandono se deriva del marco teórico (sección~\ref{sec:recursos-campos}) y constituye una aplicación directa de \texttt{last\_order\_date} y \texttt{orders\_count}, calculados según RF-04.
 
 \noindent\textbf{Criterios de aceptación:}
 \begin{itemize}
@@ -333,7 +340,7 @@ Como comerciante, quiero identificar clientes que no realizan compras hace un ti
 
 Como dueño/a de una tienda de electrónica que factura en pesos argentinos, quiero recibir una alerta cuando el tipo de cambio haya variado significativamente desde la última actualización de mis precios, para poder ajustarlos antes de perder margen frente a la suba del dólar.
 
-\noindent\textbf{Evidencia empírica:} si bien esta historia no proviene de una entrevista específica del rubro electrónica, se deriva del mismo problema estructural relatado por Shakira para indumentaria (Anexo B, Entrevista B.5): la pérdida de margen por desactualización de precios frente a variaciones cambiarias es una dinámica compartida por cualquier rubro con insumos dolarizados, y electrónica es el caso paradigmático en el mercado argentino (Sección 2.4).
+\noindent\textbf{Evidencia empírica:} si bien esta historia no proviene de una entrevista específica del rubro electrónica, se deriva del mismo problema estructural relatado por Shakira para indumentaria (Anexo~\ref{anx:entrevista-shakira}): la pérdida de margen por desactualización de precios frente a variaciones cambiarias es una dinámica compartida por cualquier rubro con insumos dolarizados, y electrónica es el caso paradigmático en el mercado argentino (Sección~\ref{sec:comportamiento-consumidor}).
 
 \noindent\textbf{Criterios de aceptación:}
 \begin{itemize}
@@ -351,7 +358,7 @@ Los casos de uso formalizan las interacciones entre los actores y el sistema. Se
 
 \noindent\textbf{Actores identificados:}
 \begin{itemize}
-    \item \textbf{Comerciante PyME:} Usuario principal. Propietario o administrador de una tienda en Tiendanube que accede a la aplicación desde el panel de administración para consultar recomendaciones y registrar acciones.
+    \item \textbf{Comerciante:} Usuario principal. Propietario o administrador de una tienda en Tiendanube que accede a la aplicación desde el panel de administración para consultar recomendaciones y registrar acciones.
     \item \textbf{Sistema (motor de análisis):} Actor automatizado que consume datos, ejecuta el análisis prescriptivo y genera recomendaciones sin intervención del usuario.
     \item \textbf{API de Tiendanube:} Sistema externo que provee los datos transaccionales, de productos y de clientes.
     \item \textbf{API de proveedor de IA:} Sistema externo que traduce las recomendaciones estructuradas a mensajes en lenguaje natural.
@@ -376,12 +383,14 @@ El flujo se inicia con la ingesta y el proceso ETL de los datos crudos de Tienda
 
 \begin{table}[h]
 \centering
+\caption{Especificación del caso de uso CU-01: Autenticar tienda}
+\label{tab:cu-01}
 \renewcommand{\arraystretch}{1.3}
 \begin{tabular}{|m{3cm}|m{11.3cm}|}
 \hline
 \textbf{Campo} & \textbf{Descripción} \\
 \hline
-Actor principal & Comerciante PyME \\
+Actor principal & Comerciante \\
 \hline
 Actores secundarios & API de Tiendanube \\
 \hline
@@ -410,11 +419,13 @@ Postcondiciones & La tienda queda asociada al sistema con un token de acceso vá
 
 \noindent 7a. El intercambio OAuth falla por error de red o credenciales inválidas: el sistema muestra un error y sugiere reintentar.
 
-\subsection{CU-02: Consumir y procesar datos de la tienda \textit{(corregido)}}
+\subsection{CU-02: Consumir y procesar datos de la tienda}
 \label{sec:cu-02}
 
 \begin{table}[h]
 \centering
+\caption{Especificación del caso de uso CU-02: Consumir y procesar datos de la tienda}
+\label{tab:cu-02}
 \renewcommand{\arraystretch}{1.3}
 \begin{tabular}{|m{3cm}|m{11.3cm}|}
 \hline
@@ -446,13 +457,15 @@ Postcondiciones & Los datos de pedidos, productos, variantes y clientes están a
 
 \noindent 2a/3a/4a. Un endpoint devuelve error (token expirado, límite de tasa, error de servidor): el sistema registra el error y reintenta con backoff exponencial. Si persiste, notifica al usuario.
 
-\noindent 6a \textit{(corregido)}. Los datos son insuficientes (tienda sin historial transaccional): el sistema opera con el conjunto de datos generado mediante el script de generación aleatoria controlada con semilla, según la estrategia descripta en la Sección 2.6.
+\noindent 6a. Los datos son insuficientes (tienda sin historial transaccional): el sistema opera con el conjunto de datos generado mediante el script de generación aleatoria controlada con semilla, según la estrategia descripta en la Sección~\ref{sec:estrategia-datos-ref}.
 
-\subsection{CU-03: Generar recomendaciones prescriptivas \textit{(corregido)}}
+\subsection{CU-03: Generar recomendaciones prescriptivas}
 \label{sec:cu-03}
 
 \begin{table}[h]
 \centering
+\caption{Especificación del caso de uso CU-03: Generar recomendaciones prescriptivas}
+\label{tab:cu-03}
 \renewcommand{\arraystretch}{1.3}
 \begin{tabular}{|m{3cm}|m{11.3cm}|}
 \hline
@@ -482,7 +495,7 @@ Postcondiciones & Se generan una o más recomendaciones priorizadas, con su mens
 
 \noindent\textbf{Flujos alternativos:}
 
-\noindent 1a. No es posible determinar el rubro (campo \texttt{type} ausente y categorías inconclusas): el sistema aplica reglas genéricas y señala la limitación al usuario.
+\noindent 1a. Las categorías de productos no permiten determinar el rubro: el campo \texttt{type} de la tienda toma el valor \texttt{general}, el sistema aplica reglas genéricas y el prompt enviado al proveedor de IA indica que no se suponga ningún rubro específico al redactar el mensaje.
 
 \noindent 3a. No se detecta ninguna señal accionable: el sistema informa al usuario que no hay recomendaciones nuevas para el período.
 
@@ -493,12 +506,14 @@ Postcondiciones & Se generan una o más recomendaciones priorizadas, con su mens
 
 \begin{table}[h]
 \centering
+\caption{Especificación del caso de uso CU-04: Consultar recomendaciones}
+\label{tab:cu-04}
 \renewcommand{\arraystretch}{1.3}
 \begin{tabular}{|m{3cm}|m{11.3cm}|}
 \hline
 \textbf{Campo} & \textbf{Descripción} \\
 \hline
-Actor principal & Comerciante PyME \\
+Actor principal & Comerciante \\
 \hline
 Precondiciones & La tienda está autenticada. Existen recomendaciones generadas. \\
 \hline
@@ -525,12 +540,14 @@ Postcondiciones & El comerciante visualiza las recomendaciones priorizadas en la
 
 \begin{table}[h]
 \centering
+\caption{Especificación del caso de uso CU-05: Registrar ejecución de una recomendación (feedback)}
+\label{tab:cu-05}
 \renewcommand{\arraystretch}{1.3}
 \begin{tabular}{|m{3cm}|m{11.3cm}|}
 \hline
 \textbf{Campo} & \textbf{Descripción} \\
 \hline
-Actor principal & Comerciante PyME \\
+Actor principal & Comerciante \\
 \hline
 Precondiciones & Existe al menos una recomendación activa presentada al usuario. \\
 \hline
@@ -559,6 +576,8 @@ Postcondiciones & La recomendación queda registrada como ejecutada con su fecha
 
 \begin{table}[h]
 \centering
+\caption{Especificación del caso de uso CU-06: Evaluar impacto de una recomendación ejecutada}
+\label{tab:cu-06}
 \renewcommand{\arraystretch}{1.3}
 \begin{tabular}{|m{3cm}|m{11.3cm}|}
 \hline
@@ -603,6 +622,8 @@ La Figura~\ref{fig:seq-feedback-loop} consolida en un diagrama de secuencia la i
 
 \begin{table}[h]
 \centering
+\caption{Especificación del caso de uso CU-07: Procesar webhook de privacidad}
+\label{tab:cu-07}
 \renewcommand{\arraystretch}{1.3}
 \begin{tabular}{|m{3cm}|m{11.3cm}|}
 \hline
@@ -630,6 +651,8 @@ Postcondiciones & El sistema procesa la solicitud de eliminación de datos confo
 
 \begin{table}[h]
 \centering
+\caption{Especificación del caso de uso CU-08: Consultar tipo de cambio diario}
+\label{tab:cu-08}
 \renewcommand{\arraystretch}{1.3}
 \begin{tabular}{|m{3cm}|m{11.3cm}|}
 \hline

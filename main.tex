@@ -52,7 +52,7 @@
 % \parbox[b] es para poner texto sobre el bottom
 \newpagestyle{ruled}{
 	\sethead{\includegraphics[width=3.7cm]{./images/UADE_LARGE}}
-			{\parbox[b]{0.43\textwidth}{\raggedright\MakeUppercase{Recomendaciones accionables para e-commerce de PyMEs en Buenos Aires}}} % El parámetro 0.43 puede modificarse para tener más espacio en la columan del medio, y que así el título de la tesis entre mejor.
+			{\parbox[b]{0.47\textwidth}{\raggedright\MakeUppercase{Recomendaciones accionables para emprendedores de e-commerce en Buenos Aires, 2026}}} % El parámetro 0.43 puede modificarse para tener más espacio en la columan del medio, y que así el título de la tesis entre mejor.
 			{
 				\raisebox{1.5ex}{%
 					\parbox[b]{0.26\textwidth}{\raggedleft
@@ -103,8 +103,8 @@
 %\titleformat{\subsection}
 %{\normalfont\ssecfnt\bfseries}{\thesubsection}{1em}{}
 
-% Numeraci\'on de tablas por cap\'{\i}tulo (Tabla 6.1, Tabla 6.2, ...), igual que las figuras.
-\renewcommand{\thetable}{\thechapter.\arabic{table}}
+% Numeraci\'on de tablas: n\'umero de cap\'{\i}tulo en ar\'abigo y n\'umero de tabla en romano (Tabla 3.I, Tabla 3.II, ...), seg\'un pauta de la c\'atedra.
+\renewcommand{\thetable}{\thechapter.\Roman{table}}
 
 %Espaciado antes y despu\'es de una figura respecto del texto
 \setlength{\textfloatsep}{5pt}
@@ -114,6 +114,8 @@
 \setlength{\marginparwidth}{2cm} % El margen es muy estrecho. Esto es solo para solucionar un warning
 \newcommand{\Nico}[1]{\todo[color=green!30,inline]{\textbf{Nico:} #1}}
 \newcommand{\Fermat}[1]{\todo[color=green!30]{\textbf{Fermat:} #1}}
+% Marcador de contenido pendiente. Buscar "\TODO" antes de la entrega final.
+\newcommand{\TODO}[1]{\textcolor{red}{[TODO: #1]}}
 
 %Espaciado entre referencias en la bibliograf\'{\i}a
 \usepackage{etoolbox}
@@ -132,7 +134,7 @@
 	\renewcommand{\contentsname}{\'Indice}
 	\renewcommand{\listfigurename}{Lista de Figuras}
 	\renewcommand{\listtablename}{Lista de Tablas}
-	\renewcommand{\tablename}{TABLA}
+	\renewcommand{\tablename}{Tabla}
 }
 
 % Para que el primer parrafo de un cap\'{\i}tulo tenga identado.
@@ -199,6 +201,12 @@
   {\thesubsubsection}{1em}{}
 \titlespacing*{\subsubsection}{0pt}{12pt}{6pt}
 
+% Quinto nivel (paragraph): sin numerar y fuera del \'indice, pero como bloque y no en l\'{\i}nea.
+\titleformat{\paragraph}[block]
+  {\bfseries\fontsize{14pt}{14pt}\selectfont}
+  {}{0pt}{}
+\titlespacing*{\paragraph}{0pt}{12pt}{6pt}
+
 % -> Acá se empieza a modificar el tamaño de los títulos autogenerados, como los de las listas de figuras y tablas
 \usepackage{tocloft}
 \cftsetindents{table}{0em}{4em}
@@ -255,19 +263,25 @@
 \clearpage
 	\input{chapters/title}
 	\tableofcontents
+
+	\clearpage
+	\phantomsection
+	\addcontentsline{toc}{chapter}{Lista de Figuras}
+	\listoffigures
+
+	\clearpage
+	\phantomsection
+	\addcontentsline{toc}{chapter}{Lista de Tablas}
+	\listoftables
+
 	\input{chapters/chapter00}
-	\input{chapters/chapter01-marco}
-	\input{chapters/chapter02-estado}
+	\input{chapters/chapter01-antecedentes}
 	\input{chapters/chapter03-analisis-estrategico}
 	\input{chapters/chapter05-requerimientos}
-	\input{chapters/chapter04-tecnologias}
+	\input{chapters/chapter04-metodologia}
 
 	\addcontentsline{toc}{chapter}{Bibliograf\'{\i}a}
 	\printbibliography{}
-
-	\newpage
-	\addcontentsline{toc}{chapter}{Lista de Tablas}
-	\listoftables
 
 	\appendix
 	\input{chapters/appendix/annex.tex}

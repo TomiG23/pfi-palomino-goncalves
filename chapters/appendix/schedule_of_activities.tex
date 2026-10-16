@@ -1,4 +1,5 @@
 \anexo{Cronograma de Proyecto}
+\label{anx:cronograma}
 
 \section*{A.1 Diagrama de Gantt}
 \addcontentsline{toc}{subsection}{A.1 Diagrama de Gantt}
@@ -9,21 +10,22 @@ El siguiente cronograma presenta la planificación pormenorizada del proyecto, o
     \centering
     \includegraphics[width=\textwidth]{./gantt/gantt_pfi_palominoGoncalves.jpeg}
     \caption{Cronograma de proyecto --- Diagrama de Gantt.}
+    \label{fig:gantt}
 \end{figure}
 
 \noindent\textit{Fuente: elaboración propia. El archivo editable con detalle quincenal completo se encuentra disponible en \href{https://docs.google.com/spreadsheets/d/1RAgiah4WoOmxSgkorFZD4-IMevJZzECZ6DJtNFgUqrY/edit?usp=sharing}{este enlace (Google Sheets)}.}
 
-\section*{A.2 Justificación técnica de desvíos anticipados}
-\addcontentsline{toc}{subsection}{A.2 Justificación técnica de desvíos anticipados}
+\section*{A.2 Justificación técnica de desvíos}
+\addcontentsline{toc}{subsection}{A.2 Justificación técnica de desvíos}
 
-Al momento de la presente entrega (25\%), el proyecto se encuentra dentro de los plazos planificados. No obstante, se identifican a continuación los principales riesgos de desvío temporal, junto con las estrategias de mitigación previstas para cada uno.
-
-\bigskip
-\noindent\textbf{Desvío potencial 1 --- Registro como Socia Tecnológica de Tiendanube (Tarea 7)}
-
-El proceso de registro en el programa de Socios Tecnológicos de Tiendanube es un prerrequisito directo para las tareas de integración con la API (Tarea 8) y, en cascada, para el desarrollo del motor de análisis (Tarea 10) y la interfaz web (Tarea 12). En caso de que los tiempos de aprobación por parte de Tiendanube superen los estimados, se adelantará el desarrollo del dataset sintético (Tarea 9), que puede ejecutarse de forma independiente, evitando así el bloqueo de la ruta crítica del desarrollo.
+Durante el desarrollo del proyecto se presentaron dos situaciones con potencial de desvío respecto de la planificación del diagrama de Gantt. A continuación se describe cada una junto con el modo en que fue resuelta. Ninguna de ellas afectó la ruta crítica, y el proyecto se mantuvo dentro de los plazos planificados.
 
 \bigskip
-\noindent\textbf{Desvío potencial 2 --- Entrevistas con usuarios PyME (Tarea 6)}
+\noindent\textbf{Desvío 1 --- Registro como Socia Tecnológica de Tiendanube (Tarea 7)}
 
-La concreción de entrevistas con propietarios de emprendimientos y comercios de pequeño y mediano tamaño depende de la disponibilidad de terceros, lo que introduce incertidumbre en su planificación. Por esta razón, las entrevistas se planificaron para la primera quincena de julio, con margen suficiente para ser incorporadas en la entrega del 50\% en caso de no completarse en la fecha prevista.
+El registro en el programa de Socios Tecnológicos de Tiendanube constituía un prerrequisito directo para la integración con la API (Tarea 8) y, en cascada, para el desarrollo del motor de análisis (Tarea 10) y de la interfaz web (Tarea 12). Dado que los tiempos de aprobación dependían de Tiendanube y no del equipo, se había previsto como mitigación adelantar el desarrollo del dataset sintético (Tarea 9), que podía ejecutarse de forma independiente. El registro se completó sin impacto en el cronograma, y la tienda de desarrollo asignada por la plataforma permitió validar la integración de extremo a extremo, según se describe en la Sección~\ref{sec:arquitectura-red}.
+
+\bigskip
+\noindent\textbf{Desvío 2 --- Entrevistas con emprendedores (Tarea 6)}
+
+La concreción de las entrevistas dependía de la disponibilidad de terceros, lo que introducía incertidumbre en su planificación, prevista para la primera quincena de julio de 2026. Las cinco entrevistas se realizaron finalmente entre el 31 de mayo y el 27 de julio de 2026, por lo que su ejecución se extendió más allá de la quincena prevista. Este corrimiento no afectó la ruta crítica del proyecto, dado que las tareas de desarrollo técnico dependían del registro en Tiendanube (Tarea 7) y no de la finalización de las entrevistas.

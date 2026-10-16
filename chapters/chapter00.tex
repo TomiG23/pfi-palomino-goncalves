@@ -1,29 +1,47 @@
 \chapter{Introducción}
+\label{cha:introduccion}
 
-\section{Objetivo General}
+Este capítulo presenta el proyecto. En primer lugar, define el objetivo general y los objetivos específicos que orientan su desarrollo; luego delimita el alcance del prototipo funcional, detallando los componentes incluidos y excluidos, y finalmente describe la estructura del resto del documento.
 
-Desarrollar un prototipo funcional que permita transformar datos operativos de tiendas de e-commerce en recomendaciones accionables, orientado a emprendimientos y PyMEs que no cuentan con recursos para contratar analistas de negocio, con el fin de mejorar la toma de decisiones comerciales en la Ciudad Autónoma de Buenos Aires durante el año 2026.
+\section{Objetivos}
+\label{sec:objetivos}
 
-\section{Objetivos Específicos}
+Los objetivos del proyecto se expresan en dos niveles: un objetivo general, que sintetiza el propósito del prototipo, y un conjunto de objetivos específicos con umbrales cuantificables que permiten verificar su cumplimiento.
 
-El presente proyecto se plantea los siguientes objetivos específicos:
+\subsection{Objetivo General}
+\label{sec:objetivo-general}
+
+Desarrollar un prototipo funcional que permita transformar datos operativos de tiendas de e-commerce en recomendaciones accionables, orientado a emprendedores que no cuentan con recursos para contratar analistas de negocio, con el fin de mejorar la toma de decisiones comerciales en la Ciudad Autónoma de Buenos Aires durante el año 2026.
+
+\subsection{Objetivos Específicos}
+\label{sec:objetivos-especificos}
+
+El presente proyecto se plantea los siguientes objetivos específicos. Los tres primeros se verifican sobre el prototipo funcional, utilizando la tienda de desarrollo de Tiendanube y el conjunto de datos generado con semilla fija descripto en la Sección~\ref{sec:estrategia-datos-ref}; el cuarto requiere, además, la participación de usuarios del segmento objetivo.
 
 \begin{enumerate}
-    \item Optimizar la eficiencia operativa de los comercios mediante la automatización del procesamiento de datos de ventas e inventario.
+    \item Optimizar la eficiencia operativa de los comercios mediante la automatización del procesamiento de datos de ventas e inventario, de modo que el ciclo completo de ingesta, análisis y generación de recomendaciones para una tienda se complete en un máximo de 15 minutos por lote, y que la API del prototipo responda las consultas del panel con un tiempo de respuesta, en el percentil 95, de hasta 1000~ms.
+    % VERIFICAR: 15 min es el extremo conservador del rango sugerido (5--15 min por lote); medir sobre el dataset sintético de referencia (seed fija) en el entorno de desarrollo.
+    % VERIFICAR: 1000 ms es el extremo conservador del rango sugerido (500--1000 ms); medir el p95 de los endpoints del panel con el mismo dataset. Debe coincidir con RNF-16.
 
-    \item Incrementar el volumen de ventas a través de la identificación de patrones de comportamiento que deriven en estrategias comerciales precisas.
+    \item Contribuir al incremento del volumen de ventas mediante recomendaciones derivadas de patrones de comportamiento, de modo que al menos el 50\% de las recomendaciones ejecutadas muestre una variación positiva de su métrica objetivo en una ventana de 30 días posterior a la acción, presentada como correlación indicativa y no como causalidad probada (RNF-13).
+    % VERIFICAR: 50% es el extremo conservador del rango sugerido (50--70%); no hay literatura citada con una cifra local, el valor debe contrastarse con los escenarios del dataset sintético y la tienda demo (CU-06).
+    % VERIFICAR: ventana de 30 días tomada del rango sugerido (14--30 días); la ventana más amplia acumula más datos para la comparación antes/después del feedback loop.
 
-    \item Mejorar el nivel de engagement y la experiencia del usuario final mediante la generación de recomendaciones personalizadas y oportunas.
+    \item Mejorar el nivel de engagement y la experiencia del usuario final mediante recomendaciones personalizadas y oportunas, alcanzando una tasa de ejecución de al menos el 20\% sobre el total de recomendaciones presentadas, registrada mediante el mecanismo de retroalimentación (RF-14).
+    % VERIFICAR: 20% es el extremo conservador del rango sugerido (20--40%); contrastar con los registros de ejecución (campo executed de RECOMMENDATIONS).
 
-    \item Validar la utilidad del sistema comparando la capacidad de respuesta de los usuarios ante recomendaciones directas versus dashboards descriptivos tradicionales.
+    \item Validar la utilidad del sistema mediante una prueba comparativa con al menos 5 participantes del segmento objetivo, verificando una reducción de al menos el 30\% en el tiempo necesario para tomar una decisión comercial a partir de recomendaciones directas, respecto del mismo escenario presentado como dashboard descriptivo tradicional.
+    % VERIFICAR: 30% es el extremo conservador del rango sugerido (30--50%); respaldo conceptual en Kahneman2011 y Power2002, sin cifra empírica citada. Medir en la prueba comparativa.
+    % VERIFICAR: N = 5 corresponde a la cantidad de entrevistados de los Anexos B a F; confirmar disponibilidad de los participantes.
 \end{enumerate}
 
 \section{Alcance}
+\label{sec:alcance}
 
-El proyecto contempla el diseño y desarrollo de un prototipo funcional con cobertura geográfica limitada a la Ciudad Autónoma de Buenos Aires, Argentina, orientado a emprendimientos y comercios de pequeño y mediano tamaño.
-
+El proyecto contempla el diseño y desarrollo de un prototipo funcional con cobertura geográfica limitada a la Ciudad Autónoma de Buenos Aires, Argentina, orientado a emprendedores que comercializan sus productos a través de una tienda online.
 
 \subsection{Componentes Incluidos}
+\label{sec:componentes-incluidos}
 
 \begin{enumerate}
     \item Identificación del negocio para obtener y asociar sus métricas operativas.
@@ -40,6 +58,7 @@ El proyecto contempla el diseño y desarrollo de un prototipo funcional con cobe
 \end{enumerate}
 
 \subsection{Componentes Excluidos}
+\label{sec:componentes-excluidos}
 
 El foco estará en demostrar la viabilidad de generar valor comercial dentro del ecosistema de Tiendanube, priorizando la claridad y utilidad de las recomendaciones. Quedan fuera del alcance:
 
@@ -56,3 +75,18 @@ El foco estará en demostrar la viabilidad de generar valor comercial dentro del
 
     \item Publicación formal en la App Store de Tiendanube (queda como trabajo futuro).
 \end{enumerate}
+
+\subsection{Estructura del documento}
+\label{sec:estructura-documento}
+
+El resto del documento se organiza de la siguiente manera.
+
+La Sección~\ref{cha:antecedentes} presenta los antecedentes del proyecto. Se divide en el Marco Teórico (Sección~\ref{sec:marco-teorico}), que desarrolla los conceptos necesarios para comprender la propuesta, y el Estado del Arte (Sección~\ref{sec:estado-arte}), que releva las soluciones existentes en el mercado y las compara con el presente proyecto para identificar la brecha que este busca cubrir.
+
+La Sección~\ref{cha:analisis-estrategico} desarrolla el análisis estratégico y de competencias. Describe la metodología de validación empírica mediante entrevistas en profundidad, sintetiza sus hallazgos con herramientas de Design Thinking y aplica la matriz FODA cruzado, el modelo de las cinco fuerzas de Porter y el análisis Triple P para definir la estrategia comercial del proyecto.
+
+La Sección~\ref{cha:requerimientos} formaliza la especificación del prototipo: los requerimientos funcionales y no funcionales, las historias de usuario con sus criterios de aceptación, los casos de uso, la trazabilidad entre estos artefactos y el diseño de la interfaz mediante mockups.
+
+La Sección~\ref{cha:metodologia} describe la metodología de desarrollo adoptada por el equipo, la arquitectura y las tecnologías utilizadas en el prototipo, y la estrategia de validación del sistema.
+
+Por último, se incluyen la bibliografía y los anexos. El Anexo~\ref{anx:cronograma} presenta el cronograma del proyecto y la justificación de los desvíos ocurridos. Los Anexos~\ref{anx:entrevista-fernandez} a~\ref{anx:entrevista-shakira} contienen las transcripciones de las cinco entrevistas realizadas a emprendedores del segmento objetivo: Delfina Fernández (Anexo~\ref{anx:entrevista-fernandez}), Morena Cejas (Anexo~\ref{anx:entrevista-cejas}), Pablo Terrera (Anexo~\ref{anx:entrevista-terrera}), Julián Fabbi (Anexo~\ref{anx:entrevista-fabbi}) y Shakira, de After Trash (Anexo~\ref{anx:entrevista-shakira}).
