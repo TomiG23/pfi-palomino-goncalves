@@ -11,13 +11,13 @@ Desarrollar un prototipo funcional que permita transformar datos operativos de t
 El presente proyecto se plantea los siguientes objetivos específicos:
 
 \begin{enumerate}
-    \item Optimizar la eficiencia operativa de los comercios mediante la automatización del procesamiento de datos de ventas e inventario.
+    \item Optimizar la eficiencia operativa de los comercios mediante la automatización del procesamiento de datos de ventas, inventario y clientes, de modo que el análisis completo de una tienda, que comprende el pronóstico de demanda, la segmentación de clientes y el motor de reglas, se ejecute en segundo plano en menos de 10 segundos sin la redacción del modelo de lenguaje, y que el panel cargue las recomendaciones con una latencia menor a 300 milisegundos en el 95\% de las consultas.
 
-    \item Incrementar el volumen de ventas a través de la identificación de patrones de comportamiento que deriven en estrategias comerciales precisas.
+    \item Identificar patrones de demanda y de comportamiento de los clientes que sustenten las recomendaciones, con un error de pronóstico (WAPE) inferior al 30\% sobre las ventas totales de cada tienda y una segmentación de clientes con un coeficiente de silueta de al menos 0,4, medidos sobre el conjunto de datos de evaluación.
 
-    \item Mejorar el nivel de engagement y la experiencia del usuario final mediante la generación de recomendaciones personalizadas y oportunas.
+    \item Generar recomendaciones personalizadas según el rubro y los datos de cada tienda, priorizadas según los resultados de las recomendaciones anteriores y explicadas en lenguaje natural, de modo que el 100\% de las recomendaciones cuente con un texto explicativo aun cuando el modelo de lenguaje no esté disponible.
 
-    \item Validar la utilidad del sistema comparando la capacidad de respuesta de los usuarios ante recomendaciones directas versus dashboards descriptivos tradicionales.
+    \item Validar el funcionamiento del prototipo mediante pruebas automatizadas que cubran al menos el 85\% de las líneas de código de los módulos de análisis y de integración con WooCommerce, y mediante pruebas de punta a punta con las dos plataformas integradas.
 \end{enumerate}
 
 \section{Alcance}
