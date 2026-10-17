@@ -28,7 +28,9 @@ Generados en `main.tex` inmediatamente después de `\tableofcontents`:
 | Archivo | Contenido | Dueño |
 |---|---|---|
 | `chapters/chapter00.tex` | Cap. 1 Introducción | Tomi |
-| `chapters/chapter01-antecedentes.tex` | Cap. 2 Antecedentes (2.1 Marco Teórico + 2.2 Estado del Arte) | Tomi / Romi |
+| `chapters/chapter01-antecedentes.tex` | Cap. 2 Antecedentes: `\chapter` + texto introductorio + dos `\input` | Romi |
+| `chapters/chapter01-marco.tex` | 2.1 Marco Teórico (incluido desde Antecedentes) | Tomi |
+| `chapters/chapter01-estado.tex` | 2.2 Estado del Arte (incluido desde Antecedentes) | Romi |
 | `chapters/chapter03-analisis-estrategico.tex` | Cap. 3 Análisis Estratégico (entrevistas, personas, FODA, Porter, Triple P) | Tomi |
 | `chapters/chapter05-requerimientos.tex` | Cap. 4 Requerimientos (RF, RNF, HU, CU, mockups) | Romi |
 | `chapters/chapter04-metodologia.tex` | Cap. 5 Metodología de desarrollo, arquitectura, seguridad, validación | Romi |
