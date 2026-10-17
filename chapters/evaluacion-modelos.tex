@@ -1,0 +1,271 @@
+\section{Evaluación de los modelos}
+\label{sec:evaluacion-modelos}
+
+Los modelos del motor se desarrollaron y se evaluaron sobre un conjunto de datos sintético, generado por un script propio según la estrategia descripta en la Sección~\ref{sec:estrategia-datos-ref}. Métricas obtenidas solo sobre datos sintéticos no demuestran el funcionamiento del sistema con datos reales, por lo que esta sección explicita cómo se generan esos datos, qué proporción de los datos disponibles representan, qué resultados obtiene cada capa del motor sobre ellos, incluidos los casos en que el modelo no supera a las referencias, y qué partes del sistema solo pueden validarse con su uso en tiendas reales. Los resultados se midieron el 17 de octubre de 2026 sobre una base de datos local con el conjunto sintético recién generado, y cada uno puede reproducirse con un comando del repositorio del prototipo.
+
+\subsection{Generación del conjunto de datos sintético}
+\label{sec:eval-generacion}
+
+El script simula, día por día, seis meses de operación de tres tiendas, una por rubro: MariCafé (gastronomía), Lucía Bordados (indumentaria) y TecnoShop BA (electrónica), cuyos catálogos modelan las User Personas de la Sección~\ref{sec:user-persona}. Todos los valores aleatorios provienen de un generador pseudoaleatorio con una semilla fija, de modo que con la misma semilla y la misma fecha de fin se generan exactamente los mismos datos. Para verificarlo, la generación y los reportes de evaluación se ejecutaron tres veces desde una base vacía, con la semilla \texttt{decidata-pfi-uade-2026} y el período del 16 de abril al 16 de octubre de 2026 (184 días), y las tres ejecuciones produjeron resultados idénticos.
+
+La cantidad de órdenes de cada tienda en cada día $d$ resulta de multiplicar una base fija por los factores del calendario y por un ruido uniforme:
+
+\begin{equation}
+\text{órdenes}(d) = \operatorname{round}\big(b \cdot w_{\text{sem}}(d) \cdot w_{\text{mes}}(d) \cdot w_{\text{inicio}}(d) \cdot w_{\text{fecha}}(d) \cdot u\big), \qquad u \sim U(0{,}85;\ 1{,}15)
+\end{equation}
+
+\noindent donde $b$ es la base de órdenes diarias de la tienda, $w_{\text{sem}}$ y $w_{\text{mes}}$ los pesos del día de la semana y del mes, $w_{\text{inicio}}$ la suba de los primeros días del mes y $w_{\text{fecha}}$ el factor de la fecha clave, si la hay. Cada orden elige un cliente activo con probabilidad proporcional a su lealtad, y entre una y tres variantes con stock, con probabilidad proporcional a su peso de demanda y a la estacionalidad del producto. Solo las órdenes pagadas descuentan stock. A lo largo del período, el script repone el stock cuando cae por debajo del punto de pedido, ajusta los precios y registra una foto del stock y del precio de cada variante cada vez que cambian.
+
+Cada parámetro del generador tiene una de cuatro fuentes: una entrevista del Anexo B; el perfil de catálogo de la tienda, construido a partir de las User Personas y de las particularidades de cada rubro; un dato externo, como el calendario comercial o la cotización del dólar; o un supuesto de diseño, fijado por el equipo para que aparezcan los escenarios que el motor debe detectar y sin una fuente externa que lo respalde. La Tabla~\ref{tab:eval-parametros} detalla los principales.
+
+\begin{table}[!htbp]
+\centering
+\caption{Parámetros del generador sintético y su fuente}
+\label{tab:eval-parametros}
+\renewcommand{\arraystretch}{1.3}
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{|>{\raggedright\arraybackslash}m{3.4cm}|>{\raggedright\arraybackslash}m{5.2cm}|>{\raggedright\arraybackslash}m{4.2cm}|}
+\hline
+\textbf{Parámetro} & \textbf{Valor} & \textbf{Fuente} \\
+\hline
+Patrón semanal, gastronomía & Viernes a domingo $\times$1,4 a $\times$1,6; lunes a miércoles $\times$0,7 a $\times$0,8 & Entrevista E03 y catálogo \\
+\hline
+Patrón semanal, indumentaria & Sábado $\times$1,4, domingo $\times$1,3, lunes $\times$0,6 & Supuesto de diseño \\
+\hline
+Patrón semanal, electrónica & Casi plano ($\times$0,95 a $\times$1,05) & Catálogo \\
+\hline
+Suba de principio de mes, electrónica & $\times$1,25 los primeros cinco días & Supuesto de diseño \\
+\hline
+Estacionalidad mensual, gastronomía & Hasta $\times$1,4 en invierno & Supuesto de diseño \\
+\hline
+Estacionalidad por producto, indumentaria & Productos de verano en alza en verano y en baja en otoño, y a la inversa & Entrevista E02 (escenario de HU-03) \\
+\hline
+Precios desactualizados, electrónica & Tres productos dejan de actualizar su precio entre 45 y 75 días antes del fin & Entrevista E05 (escenario de HU-05) \\
+\hline
+Precios atados al dólar, electrónica & Se ajustan cuando el dólar sube 4\% o más desde el último ajuste & Catálogo \\
+\hline
+Ajuste de precios, gastronomía e indumentaria & Cada 30 $\pm$ 5 días (+4\% a +8\%) y cada 60 $\pm$ 10 días (+5\% a +12\%) & Supuesto de diseño, por la inflación \\
+\hline
+Fechas clave & Días de cada fecha del calendario de la Tabla~\ref{tab:motor-fechas} & Dato externo \\
+\hline
+Factor de cada fecha clave & $\times$1,1 a $\times$1,8, el mismo que usa el motor & Supuesto de diseño \\
+\hline
+Órdenes base por día & Gastronomía 35, indumentaria 6, electrónica 4 & Supuesto de diseño \\
+\hline
+Estado de la orden & 85\% pagada, 10\% pendiente, 5\% cancelada & Supuesto de diseño \\
+\hline
+Lealtad de los clientes & 15\% muy fieles, 45\% ocasionales, 40\% poco frecuentes & Supuesto de diseño \\
+\hline
+Abandono & La mitad de los clientes poco frecuentes deja de comprar entre los días 30 y 90 & Supuesto de diseño (escenario de HU-10) \\
+\hline
+Reposición & Punto de pedido según la demanda y una demora de 1, 7 o 14 días según el rubro; el 25\% de las variantes no se repone en los últimos días & Catálogo y supuesto de diseño (escenario de HU-01) \\
+\hline
+Tipo de cambio & Tendencia diaria de +0,08\%, ruido de $\pm$1,5\% y saltos ocasionales de 2\% a 5\%, escalada para terminar en la cotización oficial del 6 de octubre de 2026 & Supuesto de diseño anclado a un dato externo \\
+\hline
+\end{tabular}
+
+\smallskip
+\noindent\textit{Fuente: elaboración propia sobre la base del código del prototipo.}
+\end{table}
+
+Para que las afirmaciones sobre el conjunto generado no dependan de los parámetros sino de los datos, sus características se midieron sobre los datos almacenados (Tabla~\ref{tab:eval-perfil}). El patrón semanal medido difiere del configurado en a lo sumo 0,05 en cada día de la semana, y las órdenes de los días de fecha clave superan a las del resto entre un 28\% y un 41\%. MariCafé registra 47,2 órdenes por día sobre una base de 35 porque el período abarca el invierno y las fechas clave.
+
+\begin{table}[!htbp]
+\centering
+\caption{Características medidas del conjunto sintético}
+\label{tab:eval-perfil}
+\renewcommand{\arraystretch}{1.3}
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{|>{\raggedright\arraybackslash}m{4.6cm}|>{\raggedright\arraybackslash}m{2.6cm}|>{\raggedright\arraybackslash}m{2.6cm}|>{\raggedright\arraybackslash}m{2.6cm}|}
+\hline
+\textbf{Característica} & \textbf{MariCafé} & \textbf{Lucía Bordados} & \textbf{TecnoShop BA} \\
+\hline
+Órdenes & 8.685 & 1.089 & 779 \\
+\hline
+Órdenes por día (coeficiente de variación) & 47,2 (0,38) & 6,02 (0,30) & 4,23 (0,21) \\
+\hline
+Órdenes en fechas clave frente al resto & $\times$1,28 & $\times$1,35 & $\times$1,41 \\
+\hline
+Órdenes pagadas & 85,6\% & 86,9\% & 85,9\% \\
+\hline
+Variantes con ventas & 18 & 32 & 17 \\
+\hline
+Mediana de días sin ventas por variante & 2\% & 70\% & 65\% \\
+\hline
+Clientes con compras / que recompran & 247 / 97,6\% & 112 / 85,7\% & 89 / 91,0\% \\
+\hline
+Mediana del ciclo de recompra & 3 días & 10 días & 13 días \\
+\hline
+Facturación del 20\% de clientes que más compra & 40,8\% & 42,9\% & 41,8\% \\
+\hline
+Clientes inactivos según el umbral del rubro & 28,7\% & 26,8\% & 11,2\% \\
+\hline
+\end{tabular}
+
+\smallskip
+\noindent\textit{Fuente: elaboración propia sobre la base del conjunto sintético generado el 17 de octubre de 2026.}
+\end{table}
+
+Las tres tiendas cubren los dos perfiles de demanda que el motor debe manejar. La de gastronomía tiene una demanda alta y diaria, sin días sin ventas y con un patrón semanal marcado: es el caso en que el modelo de Holt-Winters dispone de datos suficientes. Las de indumentaria y electrónica tienen una demanda baja por variante, de alrededor de una unidad por día y con la mayoría de los días sin ventas: es el caso que el motor resuelve con un promedio móvil y marca como de baja confianza (Sección~\ref{sec:motor-predictiva}). Además, los catálogos contienen de forma deliberada los escenarios de las historias de usuario: el quiebre de stock (HU-01), la rotación decreciente (HU-03), el precio desactualizado (HU-05), las fechas clave (HU-06) y los clientes en riesgo (HU-10).
+
+\subsection{Proporción de datos sintéticos y reales}
+\label{sec:eval-origen}
+
+Para que la proporción de datos sintéticos pueda informarse en cualquier momento, cada tienda registra el origen de sus datos: \texttt{seed}, para las tres tiendas del conjunto sintético; \texttt{script}, para las tiendas cargadas con otros scripts de generación, como la tienda WooCommerce de desarrollo; \texttt{dev\_tiendanube}, para la tienda de desarrollo de Tiendanube, cuyos datos se cargaron a mano y por script; y \texttt{real}, el valor que recibe por defecto toda tienda que se conecta a la aplicación. Un comando del prototipo informa, para cada origen, la cantidad de tiendas, órdenes, ítems, clientes y recomendaciones simuladas. La Tabla~\ref{tab:eval-origen} muestra el resultado sobre la base de datos compartida de desarrollo.
+
+\begin{table}[!htbp]
+\centering
+\caption{Datos de la base de desarrollo según su origen}
+\label{tab:eval-origen}
+\renewcommand{\arraystretch}{1.3}
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{|>{\raggedright\arraybackslash}m{4.4cm}|>{\raggedright\arraybackslash}m{1.4cm}|>{\raggedright\arraybackslash}m{2.1cm}|>{\raggedright\arraybackslash}m{2.1cm}|>{\raggedright\arraybackslash}m{2.1cm}|}
+\hline
+\textbf{Origen} & \textbf{Tiendas} & \textbf{Órdenes} & \textbf{Ítems} & \textbf{Clientes} \\
+\hline
+Conjunto sintético (\texttt{seed}) & 3 & 10.490 (97,7\%) & 20.013 (97,6\%) & 470 (92,0\%) \\
+\hline
+Tienda WooCommerce de desarrollo (\texttt{script}) & 1 & 244 (2,3\%) & 487 (2,4\%) & 41 (8,0\%) \\
+\hline
+Tiendas reales (\texttt{real}) & 0 & 0 & 0 & 0 \\
+\hline
+\end{tabular}
+
+\smallskip
+\noindent\textit{Fuente: elaboración propia sobre la base de datos de desarrollo al 17 de octubre de 2026.}
+\end{table}
+
+El 100\% de las órdenes disponibles es sintético y ninguna proviene de la operación de una tienda real. Lo mismo ocurre con la tienda de desarrollo de Tiendanube: permite validar la integración con la API real, pero sus órdenes no corresponden a ventas reales. De las 560 recomendaciones de la base de desarrollo, 491 (87,7\%) pertenecen al historial simulado que se describe en la Sección~\ref{sec:eval-bandit}, y las 69 restantes las generó el motor sobre los mismos datos sintéticos.
+
+Se decidió no incorporar conjuntos de datos públicos de comercio electrónico. El motor opera sobre el stock de cada variante, el historial de sus precios, el rubro de la tienda y el calendario comercial argentino, y adaptar un conjunto externo que no registre esa información habría requerido completarla con supuestos propios, con lo que el problema de origen de los datos se habría trasladado en lugar de resolverse. La validación con datos reales queda, por lo tanto, como una limitación del trabajo, que se trata en la Sección~\ref{sec:eval-limitaciones}.
+
+\subsection{Pronóstico de demanda}
+\label{sec:eval-pronostico}
+
+Para cada variante, el modelo se ajusta con la historia de ventas menos los últimos 14 días y se evalúa sobre esos 14 días con el WAPE, que suma los errores absolutos y los divide por las ventas reales \parencite{Hyndman2006}. El resultado se compara con dos referencias: un pronóstico plano igual al promedio de los últimos 28 días del entrenamiento y un pronóstico semanal ingenuo que repite la última semana. La Tabla~\ref{tab:eval-wape} presenta el error a dos niveles: por variante, ponderando el error de cada una por su volumen, y para la serie total de cada tienda.
+
+\begin{table}[!htbp]
+\centering
+\caption{WAPE del pronóstico frente a las referencias}
+\label{tab:eval-wape}
+\renewcommand{\arraystretch}{1.3}
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{|>{\raggedright\arraybackslash}m{2.4cm}|>{\raggedright\arraybackslash}m{2.4cm}|>{\centering\arraybackslash}m{1.2cm}|>{\centering\arraybackslash}m{1.2cm}|>{\centering\arraybackslash}m{1.3cm}|>{\centering\arraybackslash}m{1.2cm}|>{\centering\arraybackslash}m{1.2cm}|>{\centering\arraybackslash}m{1.3cm}|}
+\hline
+\multirow{2}{*}{\textbf{Tienda}} & \multirow{2}{2.4cm}{\textbf{Variantes por modelo}} & \multicolumn{3}{c|}{\textbf{Por variante}} & \multicolumn{3}{c|}{\textbf{Total de la tienda}} \\
+\cline{3-8}
+ & & \textbf{Modelo} & \textbf{Plano} & \textbf{Semanal} & \textbf{Modelo} & \textbf{Plano} & \textbf{Semanal} \\
+\hline
+MariCafé & 18 / 0 / 0 & \textbf{48,4\%} & 51,1\% & 59,5\% & \textbf{16,6\%} & 35,8\% & 20,7\% \\
+\hline
+Lucía Bordados & 1 / 0 / 31 & \textbf{124,3\%} & 126,8\% & 142,3\% & 28,1\% & 34,7\% & \textbf{25,3\%} \\
+\hline
+TecnoShop BA & 4 / 0 / 13 & 119,3\% & \textbf{116,9\%} & 148,0\% & 27,7\% & \textbf{24,8\%} & 41,6\% \\
+\hline
+\end{tabular}
+
+\smallskip
+\noindent\textit{Nota: variantes por modelo, en el orden Holt-Winters / suavizado exponencial simple / promedio móvil. En negrita, el menor error de cada nivel.}
+
+\noindent\textit{Fuente: elaboración propia sobre la base del conjunto sintético generado el 17 de octubre de 2026.}
+\end{table}
+
+Los resultados difieren según el perfil de demanda. En gastronomía, donde todas las variantes usan Holt-Winters, el modelo supera a las dos referencias en los dos niveles, y para la serie total de la tienda reduce el error a menos de la mitad del de la referencia plana: 16,6\% frente a 35,8\%. En indumentaria y electrónica, en cambio, el modelo no aporta una mejora clara. Por variante, el error supera el 100\%: con alrededor de una unidad vendida por día y la mayoría de los días sin ventas, cualquier pronóstico diario de una variante comete un error mayor que el volumen que pronostica. A ese nivel, el modelo queda a la par de la referencia plana, apenas por debajo en indumentaria (124,3\% frente a 126,8\%) y apenas por encima en electrónica (119,3\% frente a 116,9\%), y solo supera con claridad a la referencia semanal ingenua, que repite los días sin ventas y los picos de la última semana. Para la serie total de la tienda, el error baja al rango del 25\% al 28\%, pero tampoco ahí el modelo es el mejor: en indumentaria lo supera la referencia semanal ingenua, y en electrónica, la plana. Estos resultados justifican que el motor use el promedio móvil en las variantes de demanda intermitente y marque sus pronósticos como de baja confianza: en ellas, el pronóstico sirve como estimación del volumen esperado, pero no como predicción precisa de las ventas de cada día.
+
+Con la misma historia, el motor estima el factor de las fechas clave que la tienda ya atravesó y lo usa en lugar del configurado. En el período generado, el factor estimado para el Día del Padre fue de 1,33 en MariCafé, 1,60 en Lucía Bordados y 1,71 en TecnoShop BA, frente a los configurados de 1,2, 1,4 y 1,5.
+
+\subsection{Segmentación de clientes}
+\label{sec:eval-segmentacion}
+
+La segmentación calcula los indicadores RFM de los últimos 180 días y agrupa a los clientes con \emph{k}-means para $k \in \{3, 4, 5\}$, eligiendo el $k$ con mayor coeficiente de silueta \parencite{Rousseeuw1987} (Sección~\ref{sec:segmentacion}). La Tabla~\ref{tab:eval-silueta} presenta los resultados.
+
+\begin{table}[!htbp]
+\centering
+\caption{Resultados de la segmentación de clientes}
+\label{tab:eval-silueta}
+\renewcommand{\arraystretch}{1.3}
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{|>{\raggedright\arraybackslash}m{2.4cm}|>{\centering\arraybackslash}m{1.4cm}|>{\centering\arraybackslash}m{1.1cm}|>{\centering\arraybackslash}m{3.2cm}|>{\raggedright\arraybackslash}m{4.4cm}|}
+\hline
+\textbf{Tienda} & \textbf{Clientes} & \textbf{$k$} & \textbf{Silueta ($k$=3 / 4 / 5)} & \textbf{Segmentos (clientes)} \\
+\hline
+MariCafé & 244 & 3 & \textbf{0,662} / 0,623 / 0,472 & Campeones 147, ocasionales 39, perdidos 58 \\
+\hline
+Lucía Bordados & 112 & 3 & \textbf{0,546} / 0,438 / 0,422 & Campeones 56, ocasionales 30, perdidos 26 \\
+\hline
+TecnoShop BA & 89 & 3 & \textbf{0,444} / 0,357 / 0,379 & Campeones 51, en riesgo 25, perdidos 13 \\
+\hline
+\end{tabular}
+
+\smallskip
+\noindent\textit{Fuente: elaboración propia sobre la base del conjunto sintético generado el 17 de octubre de 2026.}
+\end{table}
+
+Las siluetas, entre 0,44 y 0,66, indican grupos separados. Este resultado debe leerse con la misma cautela que el del pronóstico: el generador asigna a los clientes tres perfiles de lealtad, y que la segmentación elija tres grupos en las tres tiendas muestra que el algoritmo recupera la estructura que el generador introdujo, no que los clientes de una tienda real se agrupen de la misma forma.
+
+\subsection{Priorización con el historial simulado}
+\label{sec:eval-bandit}
+
+Para que la capa de priorización tuviera resultados de los cuales aprender desde el inicio, el script genera, para cada tienda, 90 días de recomendaciones ya cerradas: entre dos y cuatro por semana de cada tipo, cada una ejecutada por el comerciante, ejecutada según la inferencia o vencida, y las ejecutadas con su impacto ya evaluado. Todas quedan marcadas como simuladas. La probabilidad de que una recomendación de cada tipo resulte exitosa no se estima: el script la fija para cada rubro, y la Tabla~\ref{tab:eval-bandit} la compara con la media de la distribución posterior que aprendió el bandit (Sección~\ref{sec:motor-bandit}).
+
+\begin{table}[!htbp]
+\centering
+\caption{Tasa de éxito fijada en el historial simulado frente a la aprendida por el bandit}
+\label{tab:eval-bandit}
+\renewcommand{\arraystretch}{1.3}
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{|>{\raggedright\arraybackslash}m{3.6cm}|>{\centering\arraybackslash}m{2.8cm}|>{\centering\arraybackslash}m{2.8cm}|>{\centering\arraybackslash}m{2.8cm}|}
+\hline
+\textbf{Tipo de recomendación} & \textbf{Gastronomía} & \textbf{Indumentaria} & \textbf{Electrónica} \\
+\hline
+Preparación para fecha & 0,75 $\rightarrow$ 0,711 & 0,45 $\rightarrow$ 0,361 & 0,35 $\rightarrow$ 0,257 \\
+\hline
+Reposición de stock & 0,60 $\rightarrow$ 0,615 & 0,50 $\rightarrow$ 0,475 & 0,60 $\rightarrow$ 0,793 \\
+\hline
+Baja rotación & 0,35 $\rightarrow$ 0,231 & 0,60 $\rightarrow$ 0,553 & 0,40 $\rightarrow$ 0,417 \\
+\hline
+Revisión de precio & 0,50 $\rightarrow$ 0,500 & 0,35 $\rightarrow$ 0,333 & 0,75 $\rightarrow$ 0,735 \\
+\hline
+Clientes en riesgo & 0,30 $\rightarrow$ 0,385 & 0,40 $\rightarrow$ 0,417 & 0,25 $\rightarrow$ 0,333 \\
+\hline
+Promoción de fecha clave & 0,60 $\rightarrow$ 0,600 & 0,70 $\rightarrow$ 0,600 & 0,65 $\rightarrow$ 0,600 \\
+\hline
+\end{tabular}
+
+\smallskip
+\noindent\textit{Nota: en cada celda, la tasa fijada en el script $\rightarrow$ la media posterior aprendida.}
+
+\noindent\textit{Fuente: elaboración propia sobre la base del conjunto sintético generado el 17 de octubre de 2026.}
+\end{table}
+
+En gastronomía y en indumentaria, los tres tipos que el bandit prioriza son los mismos tres con mayor tasa fijada; en electrónica, la reposición de stock queda primera aunque su tasa fijada es la tercera, porque su media aprendida, 0,793, quedó por encima de esa tasa. La promoción de fecha clave cuenta con solo cinco observaciones por tienda y su media queda cerca de la distribución previa.
+
+Este resultado contiene una circularidad que debe declararse: el bandit aprendió de un historial cuyas tasas de éxito fijó el propio equipo. Que las recupere demuestra que el mecanismo de actualización y de priorización funciona como se diseñó, pero no dice nada sobre qué tipos de recomendación resultan exitosos en tiendas reales, ni sobre si el bandit mejora la priorización con el uso. La circularidad alcanza también a las tiendas que se conecten por primera vez: la distribución previa de cada rubro se calcula con los resultados de todas las tiendas de ese rubro, incluidos los del historial simulado, por lo que una tienda real comienza con una previa derivada de las tasas fijadas. El efecto está acotado, porque esa previa equivale a cuatro observaciones y la evidencia propia de la tienda pasa a dominar rápidamente, pero en una operación con tiendas reales las previas deberían calcularse excluyendo el historial simulado. Del mismo modo, la mitad de las recomendaciones simuladas de los tipos que admiten inferencia se marca como ejecutada por inferencia al azar, por lo que el historial tampoco permite evaluar la precisión de la inferencia de la ejecución.
+
+\subsection{Rendimiento}
+\label{sec:eval-rendimiento}
+
+El rendimiento se mide con un comando del prototipo que ejecuta, para cada tienda y como lo hace el proceso en segundo plano después de una sincronización, el pronóstico, la segmentación y el motor de reglas, y registra el tiempo de cada etapa, el total y la cantidad de recomendaciones generadas. Cada tienda se mide sin la redacción de Gemini, con las plantillas de respaldo, y con ella, en cuyo caso se registra cuántos textos redactó el modelo y cuántos recurrieron a la plantilla y por qué motivo. El mismo comando mide la latencia de la consulta de recomendaciones desde el panel. La medición se ejecuta sobre una rama descartable de la base de datos, con el conjunto sintético recién generado y sin otros procesos activos sobre ella.
+
+% Resultados de perf:report: se agregan cuando se complete la medición.
+
+\subsection{Limitaciones y validación con uso real}
+\label{sec:eval-limitaciones}
+
+La evaluación presentada tiene las siguientes limitaciones metodológicas:
+
+\begin{itemize}
+    \item \textbf{Las métricas se miden sobre datos que provienen de los mismos supuestos que los modelos aprenden.} El patrón semanal, la estacionalidad, las fechas clave y los perfiles de lealtad que el pronóstico y la segmentación recuperan son los que el generador introdujo. Que los recuperen muestra que los métodos funcionan sobre series y clientes con esa estructura, pero no cuánto se parece esa estructura a la de una tienda real.
+    \item \textbf{Muchos parámetros son supuestos de diseño.} Se eligieron para que aparezcan los escenarios de las historias de usuario, no se estimaron a partir de ventas reales, y algunas características resultantes son más favorables que las de una tienda típica: por ejemplo, entre el 86\% y el 98\% de los clientes vuelve a comprar, porque cada tienda tiene una base fija de entre 89 y 247 clientes con compras durante seis meses.
+    \item \textbf{Las reglas y el bandit no pueden validarse sin uso real.} El impacto de una recomendación depende de lo que haga el comerciante, y el bandit aprendió de tasas de éxito fijadas por el equipo (Sección~\ref{sec:eval-bandit}).
+    \item \textbf{La medición depende de la fecha de referencia.} Si el conjunto sintético se evalúa con la fecha del día y su última orden es anterior, los días intermedios cuentan como días sin ventas y el error crece: con doce días de diferencia, el WAPE por variante de TecnoShop BA pasó del 119\% al 462\%. Por eso, las tiendas que no son reales se evalúan con el día siguiente a su última orden como fecha de referencia.
+    \item \textbf{La escala es reducida.} Son tres tiendas de 17 a 32 variantes con ventas y de 89 a 247 clientes con compras, y los resultados, incluidos los tiempos de ejecución, valen para esa escala.
+\end{itemize}
+
+La validación con uso real requiere conectar tiendas de emprendedores que operen con la aplicación durante varias semanas. El registro del origen de los datos permite separar esas tiendas de las sintéticas, y el historial simulado está marcado como tal, de modo que las métricas pueden calcularse solo sobre datos reales. Sobre esas tiendas, la validación consistiría en: medir el WAPE del pronóstico frente a las mismas dos referencias, a medida que se acumule historia; calcular la silueta de la segmentación sobre sus clientes; medir qué proporción de las recomendaciones ejecutan los comerciantes y cuál es su impacto medido como esperado contra real; contrastar la inferencia de la ejecución con la confirmación explícita del comerciante; y observar si las distribuciones del bandit, calculadas sin el historial simulado, se alejan de las previas y mejoran el orden de las recomendaciones. Esta validación queda como trabajo futuro.
