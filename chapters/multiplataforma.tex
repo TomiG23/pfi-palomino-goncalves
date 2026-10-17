@@ -1,0 +1,92 @@
+\section{Arquitectura multiplataforma}
+\label{sec:multiplataforma}
+
+La primera versión del prototipo dependía exclusivamente de Tiendanube, una dependencia que el análisis estratégico identificó como debilidad (D2) y como poder de negociación alto del proveedor de datos (Sección~\ref{sec:porter}). Para reducirla, el sistema separa el núcleo de análisis, es decir, el motor, los modelos y el bandit, de la plataforma de comercio electrónico de la que provienen los datos, y conecta cada plataforma mediante un adaptador. Esta sección describe el modelo canónico sobre el que trabaja el núcleo, la interfaz que cumple cada adaptador, las diferencias entre las dos plataformas integradas, Tiendanube y WooCommerce, y las alternativas que se evaluaron para la segunda plataforma.
+
+\subsection{Modelo canónico}
+\label{sec:multiplataforma-canonico}
+
+El núcleo de análisis no consulta la API de ninguna plataforma: trabaja exclusivamente sobre las tablas propias del sistema, que conforman un modelo canónico común a todas ellas. Ese modelo representa tiendas, categorías, productos, variantes, clientes, órdenes y sus ítems con los mismos campos cualquiera sea su origen, y cada tienda registra la plataforma a la que pertenece. Las diferencias entre plataformas se resuelven al traducir sus datos a ese modelo, y no en el motor. Por ejemplo, el control de stock de WooCommerce, que en una variación puede heredarse del producto, se traduce al indicador de gestión de stock del modelo canónico; y los estados de las órdenes de cada plataforma se traducen a un estado de pago común, de modo que el motor filtra las órdenes pagadas con un único criterio. Las credenciales de acceso de cada tienda, distintas según la plataforma, se almacenan cifradas con AES-256-GCM.
+
+\subsection{Interfaz de adaptadores}
+\label{sec:multiplataforma-adaptadores}
+
+Cada plataforma se integra mediante un adaptador que cumple una misma interfaz, organizada en cinco grupos de operaciones:
+
+\begin{itemize}
+    \item \textbf{Autorización:} obtener la URL a la que se redirige al comerciante para autorizar la aplicación y procesar la respuesta de la plataforma con las credenciales de la tienda.
+    \item \textbf{Información de la tienda:} obtener su nombre y su moneda en formato canónico.
+    \item \textbf{Ingesta:} obtener categorías, productos con sus variantes, clientes y órdenes, opcionalmente solo los modificados desde una fecha, para la sincronización incremental.
+    \item \textbf{Webhooks:} registrar las notificaciones de cambios y verificar que cada notificación proviene de la plataforma y no fue alterada.
+    \item \textbf{Traducción:} convertir productos, clientes y órdenes del formato de la plataforma al modelo canónico.
+\end{itemize}
+
+Un registro asocia cada valor de plataforma con su adaptador. Los trabajos de sincronización, tanto la inicial como la incremental, que se repite cada seis horas, obtienen el adaptador de la tienda desde ese registro y no importan código de ninguna plataforma concreta. En consecuencia, incorporar una tercera plataforma requiere escribir su adaptador y registrarlo, sin modificar el motor, los modelos ni el bandit.
+
+\subsection{Tiendanube frente a WooCommerce}
+\label{sec:multiplataforma-comparacion}
+
+Las dos plataformas integradas difieren en la forma de autorizar la aplicación, de acceder a ella desde el panel, de notificar los cambios y de informar el rubro de la tienda. La Tabla~\ref{tab:multiplataforma-comparacion} resume esas diferencias y cómo las resuelve cada adaptador.
+
+\begin{table}[!htbp]
+\centering
+\caption{Integración con Tiendanube frente a WooCommerce}
+\label{tab:multiplataforma-comparacion}
+\renewcommand{\arraystretch}{1.3}
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{|>{\raggedright\arraybackslash}m{2.3cm}|>{\raggedright\arraybackslash}m{5.4cm}|>{\raggedright\arraybackslash}m{5.4cm}|}
+\hline
+\textbf{Aspecto} & \textbf{Tiendanube} & \textbf{WooCommerce} \\
+\hline
+Autorización & Flujo OAuth 2.0: la plataforma devuelve un código que el backend intercambia por un token de acceso \parencite{TiendanubeAPI2024} & Punto de autorización \texttt{/wc-auth/v1/authorize} con alcance de solo lectura: WooCommerce envía la clave y el secreto de consumidor al backend \parencite{WooRestAPI2026} \\
+\hline
+Credenciales guardadas & Token de acceso, cifrado & Clave y secreto de consumidor y secreto del complemento, cifrados \\
+\hline
+Acceso desde el panel & Aplicación integrada en el panel de Tiendanube; cada pedido lleva un token de sesión JWT firmado por la plataforma con el secreto de la aplicación & Complemento de WordPress que agrega el menú «Decidata», visible solo con el permiso de administrar WooCommerce, y muestra la misma aplicación en un iframe con un token firmado por la tienda que vence a los 10 minutos \\
+\hline
+Ingesta incremental & API REST de Tiendanube & API REST v3 de WooCommerce con el filtro \texttt{modified\_after} y paginación \parencite{WooRestAPI2026} \\
+\hline
+Webhooks & Registrados por el backend mediante la API; firma HMAC-SHA256 en hexadecimal en el encabezado \texttt{x-linkedstore-hmac-sha256}, con el secreto de la aplicación & Registrados por el complemento, porque las credenciales de solo lectura no permiten crearlos; firma HMAC-SHA256 en base64 en el encabezado \texttt{X-WC-Webhook-Signature} \parencite{WooRestAPI2026}, con un secreto derivado del secreto del complemento \\
+\hline
+Rubro de la tienda & La tienda ingresa sin rubro y el motor lo infiere de los nombres de categorías y productos (Sección~\ref{sec:motor-reglas}) & El comerciante lo elige en el complemento al conectar la tienda \\
+\hline
+Órdenes pagadas & Estado de pago informado por la plataforma & Órdenes en estado \emph{processing} o \emph{completed} \\
+\hline
+\end{tabular}
+
+\smallskip
+\noindent\textit{Fuente: elaboración propia sobre la base del código del prototipo y de la documentación citada.}
+\end{table}
+
+Las dos integraciones comparten el mismo frontend: el comerciante ve la misma aplicación en el panel de Tiendanube y en el de WordPress, y el backend identifica la tienda por el token con el que llega cada pedido. La diferencia principal de operación es de infraestructura: una tienda de Tiendanube está alojada por la plataforma, mientras que cada tienda WooCommerce se aloja en el servidor de su comerciante, por lo que el backend debe poder alcanzar la dirección de esa tienda. Durante el desarrollo, la tienda WooCommerce de prueba se ejecuta en un contenedor local, accesible solo desde la máquina de cada desarrollador.
+
+\subsection{Alternativas para la segunda plataforma}
+\label{sec:multiplataforma-alternativas}
+
+Para la segunda plataforma se evaluaron tres opciones, comparadas en la Tabla~\ref{tab:multiplataforma-alternativas}.
+
+\begin{table}[!htbp]
+\centering
+\caption{Alternativas evaluadas para la segunda plataforma}
+\label{tab:multiplataforma-alternativas}
+\renewcommand{\arraystretch}{1.3}
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{|>{\raggedright\arraybackslash}m{2.1cm}|>{\raggedright\arraybackslash}m{4.1cm}|>{\raggedright\arraybackslash}m{4.1cm}|>{\raggedright\arraybackslash}m{2.4cm}|}
+\hline
+\textbf{Opción} & \textbf{Ventajas} & \textbf{Consideraciones} & \textbf{Decisión} \\
+\hline
+WooCommerce & Plataforma presente en la muestra entrevistada (E03). Una tienda completa puede ejecutarse localmente, sin aprobación previa de la plataforma, lo que permite desarrollar y probar la integración. Ofrece una API REST documentada y un punto de autorización estándar, y un complemento de WordPress permite reproducir el acceso desde el panel que ofrece Tiendanube & Cada tienda se aloja en el servidor de su comerciante, por lo que el backend debe alcanzarla. Los webhooks deben registrarse desde el complemento & \textbf{Elegida.} Integrada como segunda plataforma \\
+\hline
+Shopify & Ofrece aplicaciones integradas en su panel de administración, con una experiencia similar a la de Tiendanube & Ninguno de los entrevistados la utiliza. Requiere un adaptador y una forma de acceso desde el panel propios & Trabajo futuro \\
+\hline
+Modo independiente & No depende de ninguna plataforma de comercio electrónico & Requiere registro e inicio de sesión de usuarios y una forma propia de cargar los datos, componentes excluidos del alcance, y pierde la integración en el panel que la estrategia comercial identifica como reductora de la fricción de adopción (Sección~\ref{sec:triple-p-producto}) & Trabajo futuro \\
+\hline
+\end{tabular}
+
+\smallskip
+\noindent\textit{Fuente: elaboración propia.}
+\end{table}
+
+WooCommerce se eligió porque combina presencia en el segmento relevado con la posibilidad de construir y probar la integración completa sin depender de un tercero, y porque su complemento permite conservar el mismo modo de uso que en Tiendanube: la recomendación aparece dentro del panel en el que el comerciante ya opera. La integración con Shopify y el modo independiente quedan como trabajo futuro. Para ambas, la interfaz de adaptadores reduce el trabajo a la nueva integración, sin cambios en el núcleo de análisis.
