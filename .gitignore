@@ -23,3 +23,4 @@ main.pdf
 *.synctex(busy)
 *.bcf-SAVE-ERROR
 build/*
+.DS_Store
