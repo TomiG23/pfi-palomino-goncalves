@@ -1,27 +1,15 @@
 \anexo{Brainstorming: material de la sesión}
 \label{anx:brainstorming}
 
+Este anexo presenta el material fotográfico y la tabla completa de ideas que pasaron a la matriz durante la sesión de brainstorming del 10 de octubre de 2026, descripta en la sección~\ref{sec:brainstorming}.
 
-Este anexo presenta el material fotográfico y la tabla completa de ideas producidas durante la sesión de brainstorming del 10 de octubre de 2026, descripta en la sección~\ref{sec:brainstorming}.
-
-\section*{\thechapter.1 Fotografías de la sesión}
-\addcontentsline{toc}{subsection}{\thechapter.1 Fotografías de la sesión}
-
-\begin{figure}[ht]
-    \centering
-    \includegraphics[width=0.85\textwidth]{./images/brainstoming-2.jpeg}
-    \caption{Agrupación por afinidad y votación por puntos: ideas organizadas por impacto percibido (sesión del 10 de octubre de 2026).}
-    \label{fig:brainstorming-grupos}
-\end{figure}
-
-\noindent\textit{Fuente: elaboración propia.}
-
-\FloatBarrier
+\section*{\thechapter.1 Fotografías de la matriz}
+\addcontentsline{toc}{subsection}{\thechapter.1 Fotografías de la matriz}
 
 \begin{figure}[ht]
     \centering
-    \includegraphics[width=\textwidth]{./images/brainstoming-3.jpeg}
-    \caption{Matriz impacto/esfuerzo con los cuatro cuadrantes: ideas más votadas ubicadas según impacto percibido (eje vertical) y esfuerzo técnico estimado (eje horizontal). Sesión del 10 de octubre de 2026.}
+    \includegraphics[width=\textwidth]{./images/brainstorming-3.jpeg}
+    \caption{Matriz de impacto (Alto--Bajo) y esfuerzo (Poco--Mucho) con las ideas más votadas. Sesión del 10 de octubre de 2026.}
     \label{fig:brainstorming-matriz-completa}
 \end{figure}
 
@@ -31,23 +19,34 @@ Este anexo presenta el material fotográfico y la tabla completa de ideas produc
 
 \begin{figure}[ht]
     \centering
-    \includegraphics[width=0.75\textwidth]{./images/brainstoming-1.jpeg}
-    \caption{Detalle del sector de alto esfuerzo de la matriz impacto/esfuerzo (sesión del 10 de octubre de 2026).}
-    \label{fig:brainstorming-matriz-detalle}
+    \includegraphics[width=0.85\textwidth]{./images/brainstorming-2.jpeg}
+    \caption{Acercamiento al sector de poco esfuerzo: ideas en los cuadrantes alto-poco esfuerzo y bajo-poco esfuerzo. Sesión del 10 de octubre de 2026.}
+    \label{fig:brainstorming-sector-poco}
 \end{figure}
 
 \noindent\textit{Fuente: elaboración propia.}
 
 \FloatBarrier
 
-\section*{\thechapter.2 Tabla completa de ideas}
-\addcontentsline{toc}{subsection}{\thechapter.2 Tabla completa de ideas}
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.75\textwidth]{./images/brainstorming-1.jpeg}
+    \caption{Acercamiento al sector de mucho esfuerzo: ideas en los cuadrantes alto-mucho esfuerzo y bajo-mucho esfuerzo. Sesión del 10 de octubre de 2026.}
+    \label{fig:brainstorming-sector-mucho}
+\end{figure}
 
-La Tabla~\ref{tab:brainstorming-ideas} presenta las 21 ideas producidas en la sesión, con su cuadrante en la matriz impacto/esfuerzo y su estado de implementación al cierre del proyecto.
+\noindent\textit{Fuente: elaboración propia.}
+
+\FloatBarrier
+
+\section*{\thechapter.2 Ideas más votadas en la matriz}
+\addcontentsline{toc}{subsection}{\thechapter.2 Ideas más votadas en la matriz}
+
+La Tabla~\ref{tab:brainstorming-ideas} presenta los 21 grupos de ideas más votados que pasaron a la matriz, con su cuadrante y su estado de implementación al cierre del proyecto.
 
 \begin{table}[ht]
 \centering
-\caption{Ideas de la sesión de brainstorming y estado de implementación.}
+\caption{Ideas más votadas de la sesión de brainstorming y estado de implementación.}
 \label{tab:brainstorming-ideas}
 \begin{tabular}{p{5.5cm} p{3cm} p{5.5cm}}
 \hline
@@ -57,10 +56,10 @@ La Tabla~\ref{tab:brainstorming-ideas} presenta las 21 ideas producidas en la se
 \hline
 Pedir feedback al usuario & Alto / poco esfuerzo & Implementada: marcar como ejecutada, deshacer, «No fui yo» (HU-07). \\
 Efemérides: avisos de fechas clave (Black Friday, Día de la Madre) & Alto / poco esfuerzo & Implementada: recomendación de fecha clave con calendario por rubro (HU-06). \\
-Efemérides: qué productos promocionar & Alto / medio esfuerzo & Implementada: fecha clave sobre los productos más vendidos de los últimos 28 días. \\
+Efemérides: qué productos promocionar & Alto / mucho esfuerzo & Implementada: fecha clave sobre los productos más vendidos de los últimos 28 días. \\
 Promos & Alto / poco esfuerzo & Implementada: rotación en caída y fechas clave sugieren promociones. \\
 Segmentar clientes en alto, medio y bajo & Alto / poco esfuerzo & Implementada: segmentación RFM con \emph{k}-means y CLV (HU-10). \\
-Explicar por qué la recomendación & Alto / medio esfuerzo & Implementada: campo «Por qué te lo recomendamos» y explicación de la priorización en el detalle. \\
+Explicar por qué la recomendación & Alto / mucho esfuerzo & Implementada: campo «Por qué te lo recomendamos» y explicación de la priorización en el detalle. \\
 Productos estacionales & Medio / mucho esfuerzo & Implementada: pronóstico Holt-Winters con estacionalidad y preparación anticipada (HU-02). \\
 Mostrar casos de éxito & Alto / poco esfuerzo & Implementada: vista de impacto esperado versus real (HU-08). \\
 Detectar si el emprendedor implementó la recomendación & Alto / poco esfuerzo & Implementada: inferencia automática de la ejecución a partir de snapshots de stock y precio (HU-07). \\
@@ -69,22 +68,19 @@ Detectar si el emprendedor implementó la recomendación & Alto / poco esfuerzo 
 \hline
 Diferenciar notificaciones de recomendaciones & Alto / poco esfuerzo & Parcial: niveles urgente, atención y oportunidad, sin separación visual entre avisos y sugerencias. \\
 Pop-up para preguntar si le sirvió & Alto / poco esfuerzo & Parcial: impacto medido automáticamente; falta consulta activa al emprendedor. \\
-Botón para realizar la acción desde la tarjeta & Alto / medio esfuerzo & Parcial: CTA en cada tarjeta; sin integración de escritura hacia la plataforma (trabajo futuro: «acciones con un clic»). \\
+Botón para realizar la acción desde la tarjeta & Alto / mucho esfuerzo & Parcial: CTA en cada tarjeta; sin integración de escritura hacia la plataforma (trabajo futuro: «acciones con un clic»). \\
 Dar solo recomendaciones que generen buen margen & Alto / mucho esfuerzo & Parcial: el bandit prioriza lo que funcionó; falta filtro por margen (requiere el costo del producto). \\
 No hablar en imperativo & Alto / poco esfuerzo & Parcial: el LLM redacta los mensajes; aplicación efectiva depende del \emph{system prompt} de Gemini. \\
 Adaptar el tono al rubro & Alto / poco esfuerzo & Parcial: el LLM recibe el rubro como contexto; aplicación efectiva depende del \emph{system prompt} de Gemini. \\
 \hline
-\multicolumn{3}{l}{\textit{Trabajo futuro}} \\
+\multicolumn{3}{l}{\textit{Trabajo futuro o descartadas}} \\
 \hline
-Mostrar un estado general (pérdidas y ganancias acumuladas) & Alto / mucho esfuerzo & Trabajo futuro: viable solo como impacto acumulado de recomendaciones; sin ese encuadre replica dashboards descriptivos. \\
+Mostrar un estado general (pérdidas y ganancias acumuladas) & Alto / mucho esfuerzo & Trabajo futuro: viable solo como impacto acumulado de recomendaciones ejecutadas. \\
 Feedback de acciones ejecutadas fuera de la plataforma & Alto / mucho esfuerzo & Trabajo futuro: no observable desde la API de la plataforma. \\
 Productos en tendencia del rubro que la tienda no tiene & Alto / mucho esfuerzo & Trabajo futuro: requiere fuentes de datos de mercado externas, fuera del alcance actual. \\
 Enviar reporte mensual & Bajo / poco esfuerzo & Trabajo futuro: bajo impacto percibido en la matriz. \\
 Dar recomendaciones al cierre de cada semana & Bajo / poco esfuerzo & Trabajo futuro: bajo impacto percibido en la matriz. \\
-\hline
-\multicolumn{3}{l}{\textit{Descartadas}} \\
-\hline
-Cambio de tendencia en reseñas negativas & Bajo / mucho esfuerzo & Descartada: la API de Tiendanube no expone reseñas de forma nativa; impacto percibido bajo. \\
+Cambio de tendencia en reseñas negativas & Bajo / mucho esfuerzo & Descartada: la API de Tiendanube no expone reseñas de forma nativa; impacto bajo. \\
 \hline
 \end{tabular}
 \end{table}
