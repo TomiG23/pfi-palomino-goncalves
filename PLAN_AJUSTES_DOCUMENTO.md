@@ -15,18 +15,27 @@
 - Tomi escribe las Conclusiones (T-D6) cuando Romi le avisa que subió R-D6.
 - Romi hace la pasada final (R-D7) cuando Tomi le avisa que subió T-D6.
 
+
+**Estado del repo al 16/10, 22:40 (después de R-D1)**
+- El PR #4 de Tomi ya había agrupado Marco Teórico y Estado del Arte en un capítulo «Antecedentes» (`chapter01-antecedentes.tex`) y renombrado el capítulo de tecnologías a `chapter04-metodologia.tex`. C-15 y el renombre de C-13 están **hechos**: la pasada final solo los verifica.
+- Para que Tomi y Romi no editen el mismo archivo, `chapter01-antecedentes.tex` se divide en dos archivos incluidos (`chapter01-marco.tex` y `chapter01-estado.tex`), sin cambiar la estructura del capítulo. Lo hace Romi antes de R-D2 (ver «R-D1b»).
+- El resumen, el abstract y los agradecimientos están vacíos («Completar»). Se escriben en la pasada final.
+- La carátula de `cover/` es un PDF: Romi la revisa a mano y, si tiene el título viejo o los datos de la tutora, la regenera por fuera.
+
 ## Dueños
 
 | Parte del documento | Dueño |
 |---|---|
 | Preámbulo, `main.tex`, carátula, encabezado, índices | Romi |
 | Cap. 1 Introducción | Tomi |
-| Cap. 2 Marco Teórico | Tomi |
-| Cap. 3 Estado del Arte | Romi |
+| Cap. «Antecedentes» (`chapter01-antecedentes.tex`): encabezado e introducción del capítulo | Romi |
+| Marco Teórico (`chapter01-marco.tex`, incluido desde Antecedentes) | Tomi |
+| Estado del Arte (`chapter01-estado.tex`, incluido desde Antecedentes) | Romi |
 | Cap. 4 Análisis estratégico (entrevistas, personas, FODA, Porter, Triple P) | Tomi |
 | Anexos de entrevistas | Tomi |
 | Cap. 5 Requerimientos (RF, RNF, HU, CU, trazabilidad, mockups) | Romi |
-| Cap. 6 Tecnologías y arquitectura (todo lo que existe hoy, incluida la sección del proveedor de IA) | Romi |
+| Cap. Metodología (`chapter04-metodologia.tex`, todo lo que existe hoy, incluida la sección del proveedor de IA) | Romi |
+| Resumen, abstract y agradecimientos (`summary.tex`, `abstract.tex`, `acknowledgments.tex`) | Romi (en la pasada final) |
 | Anexo A Cronograma | Romi |
 | Archivos nuevos: `brainstorming.tex`, `anexo-brainstorming.tex`, `negocio-modelo.tex` | Romi |
 | Archivos nuevos: `negocio-financiero.tex`, `motor-ia.tex`, `multiplataforma.tex`, `evaluacion-modelos.tex`, `conclusiones.tex` | Tomi |
@@ -88,14 +97,29 @@ Tareas:
 Criterios de aceptación: el PDF compila y ESTRUCTURA.md está subido.
 ```
 
+### R-D1b — Separar Antecedentes en dos archivos (antes de R-D2, 5 minutos)
+
+```
+[Reglas]
+Contexto: chapter01-antecedentes.tex contiene las secciones Marco Teórico (la edita Tomi) y Estado del Arte (la edito yo). Para que no editemos el mismo archivo en paralelo, separalas sin cambiar el contenido ni la estructura del capítulo.
+
+Tareas:
+1. Dejar en chapter01-antecedentes.tex el \chapter, su texto introductorio (si existe) y dos \input: chapters/chapter01-marco y chapters/chapter01-estado.
+2. Mover el contenido de la sección Marco Teórico a chapter01-marco.tex y el de Estado del Arte a chapter01-estado.tex, tal cual.
+3. Compilar y verificar que el PDF quede idéntico (mismas páginas, mismas referencias).
+4. Actualizar ESTRUCTURA.md.
+
+Al terminar, el mensaje final es: "Listo. Avisale a Tomi que haga git pull: el Marco Teórico ahora está en chapters/chapter01-marco.tex."
+```
+
 ### R-D2 — Estado del Arte (Grupo 1)
 
 ```
 [Reglas]
-Contexto: corregimos el capítulo de Estado del Arte (solo ese capítulo). Ver CORRECCIONES_E50.md: C-17, C-18, C-25.
+Contexto: corregimos el Estado del Arte (solo chapters/chapter01-estado.tex). Ver CORRECCIONES_E50.md: C-17, C-18, C-25.
 
 Tareas:
-1. C-17 Texto introductorio entre el título del capítulo y su primera sección, y en cualquier título del capítulo pegado a su subtítulo.
+1. C-17 Texto introductorio entre «Estado del Arte» y su primera subsección, y en cualquier título de la sección pegado a su subtítulo.
 2. Plan 01 de arquitectura, punto 2: fila "Soporte multiplataforma" en la tabla comparativa (Decidata: Tiendanube y WooCommerce por adaptadores, si el código lo confirma).
 3. C-25 Estrategia del Océano Azul, antes de la conclusión: Curva de Valor (lienzo estratégico) contra las alternativas de la tabla comparativa y Matriz ERIC (eliminar, reducir, incrementar, crear). Proponé los factores a partir de la tabla.
 4. C-18 Renombrar "Análisis comparativo y brecha identificada" a "Conclusión del Estado del Arte" y reescribirla para que deje claro el diferencial, la importancia del tema y el aporte a la sociedad.
@@ -171,8 +195,8 @@ Al terminar, el mensaje final es: "Listo. Avisale a Tomi que haga git pull y que
 Contexto: todo el contenido está corregido. Esta pasada hace los cambios que tocan todo el documento, engancha los archivos nuevos y verifica contra las correcciones y la rúbrica final. Acá sí podés editar cualquier capítulo.
 
 Tareas:
-1. C-15 Capítulo "2 Antecedentes" con "2.1 Marco Teórico" y "2.2 Estado del Arte" (bajando un nivel sus subsecciones). Agregar el texto introductorio de "Antecedentes" (C-17).
-2. C-13 Renombrar el capítulo 6 a "Metodología de desarrollo" e incluir motor-ia.tex y multiplataforma.tex en "Arquitectura y tecnologías utilizadas" y evaluacion-modelos.tex en "Validación del sistema".
+1. C-15 Verificar que el capítulo "Antecedentes" agrupa Marco Teórico y Estado del Arte (ya lo hizo el PR #4) y que tiene texto introductorio antes de la primera sección (C-17); si no, escribirlo.
+2. C-13 Verificar que el capítulo de metodología se titula "Metodología de desarrollo" (el archivo ya se renombró en el PR #4; revisar el \chapter) e incluir motor-ia.tex y multiplataforma.tex en "Arquitectura y tecnologías utilizadas" y evaluacion-modelos.tex en "Validación del sistema".
 3. Incluir brainstorming.tex en el capítulo 4, después de las entrevistas; crear el capítulo "Desarrollo del negocio" con negocio-modelo.tex y negocio-financiero.tex (proponé dónde va); incluir conclusiones.tex como capítulo antes de la bibliografía.
 4. C-06 Un anexo por entrevista (hoy todas en el Anexo B) y el anexo del brainstorming.
 5. C-19 Sacar del Anexo A y de todo el documento las menciones a entregas parciales y el lenguaje de trabajo en progreso; reescribir los desvíos del cronograma en pasado.
@@ -180,6 +204,7 @@ Tareas:
 7. C-01 "Estructura del documento" al final de la Introducción: abre nombrando el trabajo y recorre cada capítulo y cada anexo con referencias cruzadas (\ref), diciendo qué contiene.
 8. Búsqueda de restos: "PyME", "GPT-4o", "OpenAI" (salvo en la comparación de proveedores), "25%", "50%", "presente entrega", "TODO", nombres reales de entrevistados, referencias rotas (??), referencias a tablas escritas a mano.
 9. Verificar: índice con máximo 4 niveles; listas de figuras y tablas completas; tablas en formato "3.I"; encabezado en 2 líneas; cada figura y tabla citada en el texto; cada cita en la bibliografía y viceversa.
+9b. Escribir el resumen (summary.tex), el abstract en inglés (abstract.tex) y los agradecimientos (acknowledgments.tex), que hoy dicen "Completar". El resumen y el abstract en un párrafo de 200 a 300 palabras cada uno, con palabras clave, a partir del documento final.
 10. Recorrer la sección "Cobertura" de PLAN_AJUSTES_DOCUMENTO.md: marcar cada corrección con el commit que la resuelve y listar las que falten.
 11. Recorrer la rúbrica final ítem por ítem y decir qué sección la cubre.
 
@@ -224,7 +249,7 @@ Tareas:
 
 ```
 [Reglas]
-Contexto: el motor pasó a un sistema híbrido de tres capas (modelos predictivos, reglas por rubro y bandit) más un LLM que solo redacta. Corregimos el capítulo de Marco Teórico (solo ese capítulo). Usá la parte "Documento" del plan 02 de IA, puntos 1 a 5 y 18.
+Contexto: el motor pasó a un sistema híbrido de tres capas (modelos predictivos, reglas por rubro y bandit) más un LLM que solo redacta. Corregimos el Marco Teórico (solo chapters/chapter01-marco.tex; si todavía no existe, hacé git pull y esperá a que Romi lo separe). Usá la parte "Documento" del plan 02 de IA, puntos 1 a 5 y 18.
 
 Tareas:
 1. C-17 Texto introductorio entre el título del capítulo y su primera sección, y en cualquier título del capítulo pegado a su subtítulo.
@@ -297,7 +322,7 @@ Al terminar, el mensaje final es: "Listo. Avisale a Romi que haga git pull y arr
 | C-12 | Ley 25.326 | R-D6 (código: R1) |
 | C-13 | Capítulo Metodología de desarrollo | R-D6, R-D7 |
 | C-14 | Datos sintéticos y validación real | T-D3, T-D5 (código: T4) |
-| C-15 | Antecedentes | R-D7 |
+| C-15 | Antecedentes | Hecho en PR #4 · R-D1b · R-D7 verifica |
 | C-16 | Conclusiones generales | T-D6, R-D7 |
 | C-17 | Textos introductorios | R-D2, T-D1, T-D3, T-D4, R-D7 |
 | C-18 | Conclusión del estado del arte | R-D2 |
@@ -321,3 +346,5 @@ Al terminar, el mensaje final es: "Listo. Avisale a Romi que haga git pull y arr
 | N-2 | Viabilidad económico-financiera | T-D2 |
 | N-3 | Branding y logo | R-D4 |
 | N-4 | Diagrama entidad-relación actualizado | R-D6 |
+| N-5 | Resumen, abstract y agradecimientos vacíos | R-D7 |
+| N-6 | Carátula en PDF con título viejo o datos de la tutora | Romi, a mano (regenerar `cover/`) |
