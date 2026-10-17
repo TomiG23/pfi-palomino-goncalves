@@ -101,9 +101,7 @@ Aplicado a la priorización de recomendaciones, cada tipo de recomendación pued
 \subsection{Adquisición y procesamiento de datos}
 \label{sec:adquisicion-datos}
 
-El sistema propuesto contempla la integración directa con la API de Tiendanube como única fuente de ingesta de datos. Esta plataforma, líder de e-commerce en Argentina y América Latina, permite acceder en tiempo real a datos de ventas, inventario, clientes y productos de cada tienda conectada.
-
-La decisión de centrarse en esta fuente responde al perfil del segmento objetivo: emprendedores que operan principalmente sobre Tiendanube y que buscan una solución de integración inmediata y sin fricción técnica.
+Las plataformas de comercio electrónico exponen los datos de cada tienda a través de interfaces de programación (API), que permiten a una aplicación autorizada por el comerciante acceder a sus ventas, inventario, clientes y productos sin intervención manual. Tiendanube, plataforma líder de e-commerce en Argentina y América Latina, ofrece una API de este tipo, cuyos recursos y campos se describen a continuación. La selección de las plataformas integradas y la forma en que se incorporan otras fuentes se desarrollan en el capítulo de Metodología.
 
 \subsubsection{Recursos y campos consumidos}
 \label{sec:recursos-campos}
@@ -154,7 +152,7 @@ Los Sistemas de Soporte a la Decisión (DSS, por sus siglas en inglés) son herr
 
 Investigaciones en el campo de las ciencias del comportamiento y la economía conductual demuestran que los seres humanos toman mejores decisiones cuando reciben recomendaciones concretas y contextualizadas en lugar de conjuntos de datos que requieren interpretación propia. Este fenómeno es especialmente relevante en contextos de alta carga cognitiva o baja experiencia analítica, como es el caso de los emprendedores de e-commerce.
 
-El presente proyecto incorpora este principio al comparar la capacidad de respuesta de usuarios ante recomendaciones directas versus dashboards descriptivos tradicionales, con el objetivo de validar empíricamente que las recomendaciones accionables generan decisiones más rápidas y de mayor calidad \parencite{Power2002, Kahneman2011}.
+Este principio sustenta la orientación prescriptiva de los sistemas de soporte a la decisión: presentar al usuario recomendaciones concretas, acompañadas de su justificación, en lugar de un conjunto de indicadores que debe interpretar por su cuenta \parencite{Power2002, Kahneman2011}.
 
 \subsection{Feedback loop y mejora continua de las recomendaciones}
 \label{sec:feedback-loop}
