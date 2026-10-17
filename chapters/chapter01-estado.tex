@@ -67,12 +67,10 @@ Puntos de contacto: Se comparte el objetivo de potenciar las ventas mediante el 
 
 Puntos de divergencia: El alcance de Klaviyo es estrictamente externo y orientado al consumidor final (B2C), inyectando sugerencias en correos o SMS. El presente proyecto se orienta hacia adentro del negocio (B2B), actuando como sistema de soporte a las decisiones comerciales y operativas para el dueño o administrador de la tienda.
 
-\subsection{Análisis comparativo y brecha identificada}
-\label{sec:analisis-comparativo}
+\subsection{Conclusión del Estado del Arte}
+\label{sec:conclusion-estado-arte}
 
-El relevamiento del mercado permite identificar una brecha concreta y relevante en el ecosistema de soluciones tecnológicas actual. Por un lado, las herramientas accesibles localmente operan bajo un paradigma puramente descriptivo que delega la interpretación de los datos en el usuario. Por otro lado, las plataformas internacionales con capacidades prescriptivas están diseñadas para estructuras corporativas de gran escala, operan en inglés bajo costos en moneda extranjera y están configuradas para la madurez digital de mercados anglosajones o europeos, volviéndose incompatibles con la realidad operativa de los emprendedores locales.
-
-La Tabla~\ref{tab:comparativo_nubelytics} sintetiza los atributos relevados a lo largo de esta sección para los cinco competidores identificados ---Nubelytics (Sección~\ref{sec:nubelytics}), Zebra Technologies / Reflexis (Sección~\ref{sec:zebra}), Conjura (Sección~\ref{sec:conjura}), Polar Analytics (Sección~\ref{sec:polar}) y Klaviyo (Sección~\ref{sec:klaviyo})--- junto con el presente proyecto. Cada celda se completó exclusivamente a partir de lo relevado en la sección correspondiente a esa solución; cuando el material disponible no permitió determinar con certeza el estado de un atributo, se indica ``No documentado'' en lugar de presumirlo.
+La Tabla~\ref{tab:comparativo_nubelytics} sintetiza los atributos evaluados para los cinco competidores identificados ---Nubelytics (Sección~\ref{sec:nubelytics}), Zebra Technologies / Reflexis (Sección~\ref{sec:zebra}), Conjura (Sección~\ref{sec:conjura}), Polar Analytics (Sección~\ref{sec:polar}) y Klaviyo (Sección~\ref{sec:klaviyo})--- junto con el presente proyecto. Cada celda se completó exclusivamente a partir de lo relevado en la sección correspondiente; cuando el material disponible no permitió determinar con certeza el estado de un atributo, se indica ``No documentado'' en lugar de presumirlo.
 
 \begin{table}[h]
 \centering
@@ -103,6 +101,8 @@ Accesible para emprendedores argentinos (costo e idioma) & Sí & No & No & No & 
 \hline
 Integración nativa con plataforma de e-commerce local & Sí & No & No & No documentado & No documentado & Sí \\
 \hline
+	Soporte multiplataforma & Solo Tiendanube & No documentado & Sí & Sí & Sí & Tiendanube y WooCommerce (arquitectura de adaptadores) \\ % VERIFICAR-COD: WooCommerce
+\hline
 \end{tabular}
 \end{table}
 
@@ -120,4 +120,71 @@ Como refleja la comparación anterior, ninguna de las soluciones relevadas combi
     \item Un mecanismo de retroalimentación en bucle cerrado (feedback loop) que permita evaluar y mejorar la calidad de las recomendaciones en función de las decisiones reales del comerciante a lo largo del tiempo.
 \end{enumerate}
 
-Esta combinación de factores constituye la propuesta de valor diferencial del presente proyecto, cubre la vacante metodológica identificada en los antecedentes y fundamenta la pertinencia tanto académica como práctica de la investigación.
+\subsection{Estrategia del Océano Azul}
+\label{sec:oceano-azul}
+
+La Estrategia del Océano Azul \parencite{KimMauborgne2005} propone crear espacios de mercado sin competencia directa a partir de una reconfiguración del valor ofrecido, en lugar de competir dentro de los límites de un sector existente. Dos herramientas articulan este enfoque: la Curva de Valor, que mapea el desempeño relativo de cada atributo frente al promedio del sector, y la Matriz ERIC (Eliminar, Reducir, Incrementar, Crear), que guía las decisiones de diseño para alejarse de los factores de competencia convencionales.
+
+Aplicadas al posicionamiento del presente proyecto frente al sector relevado, ambas herramientas permiten trazar la brecha identificada y la propuesta de valor diferencial.
+
+\subsubsection{Curva de Valor}
+\label{sec:curva-valor}
+
+La Tabla~\ref{tab:curva-valor} compara el nivel de cada atributo en el sector relevado con el propuesto por el presente proyecto. Los valores del sector se derivan de la Tabla~\ref{tab:comparativo_nubelytics}: ``Nulo'' indica que ninguna herramienta relevada ofrece el atributo de forma confirmada; ``Bajo'' indica que al menos una lo ofrece de forma parcial o que el estado de alguna no pudo confirmarse (``No documentado''); ``Medio'' indica que la mayoría del sector lo ofrece.
+
+\begin{table}[h]
+\centering
+\caption{Curva de Valor: comparación entre el sector relevado y el presente proyecto}
+\label{tab:curva-valor}
+\renewcommand{\arraystretch}{1.3}
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{|m{5.5cm}|m{2cm}|m{2.5cm}|}
+\hline
+\textbf{Factor} & \textbf{Sector} & \textbf{Este proyecto} \\
+\hline
+Nivel de prescriptividad & Bajo & Alto \\
+\hline
+Integración nativa con Tiendanube & Bajo & Alto \\
+\hline
+Gestión de inventario y estacionalidad por rubro & Bajo & Alto \\
+\hline
+Retroalimentación algorítmica sobre outcomes & Bajo & Alto \\
+\hline
+Validación de efectividad de recomendaciones & Bajo & Alto \\
+\hline
+Accesibilidad para emprendedores locales & Bajo & Alto \\
+\hline
+Soporte multiplataforma & Medio & Alto \\ % VERIFICAR-COD: WooCommerce
+\hline
+\end{tabular}
+\end{table}
+
+\subsubsection{Matriz ERIC}
+\label{sec:matriz-eric}
+
+La Tabla~\ref{tab:eric} explicita las decisiones de diseño del presente proyecto en términos de la Estrategia del Océano Azul.
+
+\begin{table}[h]
+\centering
+\caption{Matriz ERIC aplicada al presente proyecto}
+\label{tab:eric}
+\renewcommand{\arraystretch}{1.3}
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{|m{2.5cm}|m{9.5cm}|}
+\hline
+\textbf{Acción} & \textbf{Atributos} \\
+\hline
+\textbf{Eliminar} & Tableros de control descriptivos sin acción sugerida. Dependencia del usuario para interpretar datos y derivar decisiones estratégicas. \\
+\hline
+\textbf{Reducir} & Fricción interpretativa entre dato y acción. Tiempo de respuesta ante cambios operativos críticos (stock, precios, estacionalidad). \\
+\hline
+\textbf{Incrementar} & Prescriptividad de las recomendaciones. Integración nativa con plataformas locales de e-commerce. Accesibilidad para emprendedores sin formación técnica especializada. \\
+\hline
+\textbf{Crear} & Retroalimentación algorítmica sobre outcomes de las recomendaciones. Validación de efectividad mediante comparación de comportamiento pre/post acción. Adaptación de la lógica por rubro comercial (gastronomía, indumentaria, electrónica). \\
+\hline
+\end{tabular}
+\end{table}
+
+El contexto del mercado descripto en la Sección~\ref{sec:contexto-mercado} refleja un ecosistema de comercio electrónico en expansión, con el canal digital representando el 25\,\% de las ventas totales del país \parencite{CACE2025}. En ese contexto, los emprendedores operan con datos disponibles pero con escasa capacidad para transformarlos en decisiones accionables sin apoyo analítico externo. Ninguna de las soluciones relevadas en esta sección combina simultáneamente la prescriptividad, la integración local, la adaptación por rubro y la retroalimentación sobre outcomes que caracterizan al presente proyecto. Esta combinación de atributos constituye la propuesta de valor diferencial y fundamenta tanto la pertinencia académica como la viabilidad práctica de la investigación.
