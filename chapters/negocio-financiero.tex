@@ -1,0 +1,224 @@
+\section{Viabilidad económico-financiera}
+\label{sec:viabilidad-financiera}
+
+El análisis estratégico y de competencias estableció que el entorno competitivo resulta favorable para una propuesta prescriptiva dirigida a emprendedores y fijó, en la estrategia comercial Triple P (Sección~\ref{sec:triple-p}), un precio de suscripción mensual con período de prueba gratuito y una distribución a través de las tiendas de aplicaciones de las plataformas de comercio electrónico. Resta determinar si esa propuesta, con esos precios y con la estructura de costos del prototipo desarrollado, puede sostenerse económicamente. Esta sección responde esa pregunta mediante un flujo de fondos proyectado a tres años en tres escenarios de adopción (pesimista, base y optimista) y cuatro herramientas de evaluación: el valor actual neto (VAN), la tasa interna de retorno (TIR), el período de recupero (\emph{payback}) y el punto de equilibrio expresado en cantidad de suscriptores. Primero se explicitan los supuestos generales y la estructura de costos; luego se definen los escenarios de ingresos, se presenta el flujo de fondos y sus indicadores, y se cierra con un análisis de sensibilidad y una conclusión sobre la viabilidad del proyecto.
+
+\subsection{Supuestos generales}
+\label{sec:viabilidad-supuestos}
+
+El modelo se construye mes a mes durante 36 meses y se resume en flujos anuales. Todos los importes se expresan en dólares estadounidenses, por dos razones: los servicios de infraestructura sobre los que opera el sistema se facturan en esa moneda, y expresar el flujo en dólares neutraliza el efecto de la inflación local, señalada como amenaza A5 en la matriz FODA cruzado (Sección~\ref{sec:foda-cruzado}), que de otro modo distorsionaría la comparación entre años. Los importes en pesos se convierten a la cotización oficial de venta del 16 de octubre de 2026, de 1.535 pesos por dólar \parencite{DolarApi2026}, y se supone que el precio de la suscripción se actualiza periódicamente para conservar su equivalente en dólares.
+
+El horizonte de tres años no incluye un valor terminal: el negocio se evalúa solo por lo que genera dentro de ese plazo, lo que constituye un criterio conservador. Los flujos se calculan antes de impuestos (impuesto al valor agregado, ingresos brutos y ganancias), cuyo efecto depende de la forma jurídica que adopte el emprendimiento y queda fuera del alcance de este análisis.
+
+La inversión inicial considerada es la necesaria para pasar del prototipo actual a un servicio comercial: publicación de la aplicación en la tienda de aplicaciones de Tiendanube, publicación del complemento de WooCommerce, redacción de los términos de uso y la política de privacidad, y ajustes de puesta en producción. Se estima en dos meses-persona de desarrollo. El desarrollo del prototipo, realizado en el marco de este proyecto entre marzo y diciembre de 2026 (Anexo A), constituye un costo hundido para la decisión de lanzar el servicio, dado que ya fue incurrido y no se recupera cualquiera sea la decisión que se tome; por ese motivo no integra la inversión inicial del caso principal. Para dimensionar si el negocio recupera también ese esfuerzo, la Sección~\ref{sec:viabilidad-indicadores} informa adicionalmente el VAN que resulta de incluirlo, valuado como diez meses-persona: dos desarrolladores con una dedicación del 50\% durante diez meses.
+
+\subsection{Estructura de costos}
+\label{sec:viabilidad-costos}
+
+Los costos se agrupan en cuatro rubros: infraestructura, comisiones de las tiendas de aplicaciones, desarrollo y mantenimiento, y promoción. La infraestructura replica la arquitectura con la que el prototipo se despliega: tres servicios (la API, el proceso de tareas en segundo plano y el \emph{frontend}) alojados en Railway, una base de datos PostgreSQL en Neon y la API de Gemini para la redacción de los mensajes (Sección~\ref{sec:generacion-mensajes-ia}). La Tabla~\ref{tab:viabilidad-costos} resume cada concepto, su base de cálculo y su fuente.
+
+\begin{table}[!htbp]
+\centering
+\caption{Estructura de costos del servicio (precios consultados en octubre de 2026)}
+\label{tab:viabilidad-costos}
+\renewcommand{\arraystretch}{1.3}
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{|>{\raggedright\arraybackslash}m{2.6cm}|>{\raggedright\arraybackslash}m{6.4cm}|>{\raggedright\arraybackslash}m{3.6cm}|}
+\hline
+\textbf{Concepto} & \textbf{Precio y base de cálculo} & \textbf{Costo estimado} \\
+\hline
+Railway (plan Pro) & USD 20 mensuales, que incluyen USD 20 de consumo; memoria a USD 10 por GB-mes y procesador a USD 20 por vCPU-mes \parencite{RailwayPricing2026}. Consumo estimado de los tres servicios: 1,1 GB y 0,2 vCPU, más 0,5 GB y 0,1 vCPU cada 100 tiendas activas & USD 20 mensuales hasta agotar el consumo incluido \\
+\hline
+Neon (plan Launch) & USD 0,106 por hora de unidad de cómputo (CU) y USD 0,35 por GB-mes de almacenamiento \parencite{NeonPricing2026}. El proceso de tareas consulta la cola cada 30 segundos, lo que mantiene el cómputo activo las 730 horas del mes; 0,25 CU hasta 100 tiendas, 0,5 CU hasta 300, 1 CU hasta 700 y 2 CU por encima; 0,5 GB más 50 MB por tienda & USD 19,5 mensuales con 0,25 CU \\
+\hline
+Gemini 3.5 Flash-Lite & USD 0,30 por millón de \emph{tokens} de entrada y USD 2,50 por millón de salida \parencite{GoogleGeminiPricing2026}. Estimación de 700 \emph{tokens} de entrada y 300 de salida por recomendación y un máximo de 100 recomendaciones por tienda y por mes & USD 0,10 por tienda activa y por mes \\
+\hline
+Dominio \texttt{.com.ar} & 8.500 pesos por el alta y por cada renovación anual \parencite{NICArgentina2026} & USD 5,5 anuales \\
+\hline
+Comisión de la tienda de aplicaciones & Tiendanube retiene el 30\% de los ingresos de las aplicaciones pagas \parencite{TiendanubeReglamento2026}; el Woo Marketplace transfiere al desarrollador el 70\% de cada venta \parencite{WooMarketplace2026} & 30\% del ingreso bruto en ambos canales \\
+\hline
+Mantenimiento y soporte & Mediana del salario bruto mensual de un desarrollador semi senior con dedicación completa en Argentina: 2.864.715 pesos (603 respuestas de la encuesta Sysarmy 2026.1) \parencite{Sysarmy2026}. Dedicación base del 25\%, más un 10\% cada 100 tiendas activas para soporte & USD 467 mensuales de base, más USD 187 cada 100 tiendas \\
+\hline
+Puesta en producción (inversión) & Dos meses-persona al salario de referencia & USD 3.733 en el año 0 \\
+\hline
+Promoción & Presupuesto fijo, consistente con una distribución a través de las tiendas de aplicaciones, que no requiere una estrategia de adquisición independiente (Sección~\ref{sec:triple-p-plaza-promocion}) & USD 100 mensuales \\
+\hline
+\end{tabular}
+
+\smallskip
+\noindent\textit{Fuente: elaboración propia sobre la base de las fuentes citadas.}
+\end{table}
+
+Dos supuestos completan la estructura. En primer lugar, el período de prueba gratuito definido en la estrategia de precio implica que una parte de las tiendas que consumen infraestructura todavía no paga; para reflejarlo, los costos que dependen de la cantidad de tiendas se calculan sobre 1,25 tiendas activas por cada suscriptor pago. En segundo lugar, el costo de la API de Gemini resulta marginal frente al resto: aun con el máximo supuesto de llamadas, no supera los diez centavos de dólar por tienda y por mes, y si el servicio no responde, el sistema recurre a un mensaje de respaldo por plantilla, por lo que una restricción de cuota no interrumpe el servicio.
+
+La lectura conjunta de la tabla muestra que el costo dominante no es tecnológico sino humano: en el escenario base, la infraestructura completa representa menos del 10\% de los costos operativos de cada año, mientras que el mantenimiento y el soporte superan el 75\%.
+
+\subsection{Ingresos y escenarios de adopción}
+\label{sec:viabilidad-ingresos}
+
+El precio de la suscripción se fija en 30.000 pesos mensuales (USD 19,54), el extremo inferior del rango de disposición a pagar relevado en la muestra entrevistada (Sección~\ref{sec:triple-p-precio}): E05 declaró hasta 30 mil pesos mensuales, E01 entre 40 mil y 50 mil y E02 entre 50 mil y 60 mil. Elegir el extremo inferior es una decisión conservadora, y la existencia de un perfil dispuesto a pagar solo un adicional de 5 mil a 10 mil pesos (E04) se contempla en el análisis de sensibilidad. Estos montos son indicios de disposición a pagar en la muestra entrevistada y no son generalizables al conjunto del segmento, por lo que los escenarios se construyen para acotar su incertidumbre y no para predecir un resultado. Descontada la comisión del 30\%, el ingreso neto por suscriptor es de USD 13,68 mensuales.
+
+La adopción se modela con dos parámetros: la cantidad de altas de suscriptores pagos por mes, que crece de un año al siguiente a medida que la aplicación gana visibilidad en la tienda de aplicaciones, y la tasa de bajas mensual. Como referencia de tamaño de mercado, más de 65 mil marcas venden en Argentina con la tecnología de Tiendanube \parencite{Calegari2026}. La Tabla~\ref{tab:viabilidad-escenarios} presenta los tres escenarios.
+
+\begin{table}[!htbp]
+\centering
+\caption{Escenarios de adopción}
+\label{tab:viabilidad-escenarios}
+\renewcommand{\arraystretch}{1.3}
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{|m{4.4cm}|r|r|r|}
+\hline
+\textbf{Parámetro} & \textbf{Pesimista} & \textbf{Base} & \textbf{Optimista} \\
+\hline
+Altas mensuales en los años 1, 2 y 3 & 3 / 4 / 5 & 6 / 10 / 14 & 12 / 22 / 32 \\
+\hline
+Tasa de bajas mensual & 7\% & 5\% & 3,5\% \\
+\hline
+Suscriptores pagos al cierre de los años 1, 2 y 3 & 25 / 44 / 60 & 55 / 122 / 194 & 119 / 296 / 511 \\
+\hline
+Penetración al cierre del año 3 (sobre 65 mil marcas) & 0,09\% & 0,30\% & 0,79\% \\
+\hline
+\end{tabular}
+
+\smallskip
+\noindent\textit{Fuente: elaboración propia.}
+\end{table}
+
+El escenario pesimista materializa las amenazas del análisis estratégico: que Nubelytics incorpore capacidades prescriptivas (A1) o que Tiendanube desarrolle analítica avanzada de forma nativa (A2) reduciría las altas, y la alta sensibilidad al precio del segmento (A3) elevaría las bajas. Su tasa de bajas del 7\% mensual responde a la conducta observada en las entrevistas, donde E02 dejó de pagar el plan de Tiendanube al no percibir un rendimiento proporcional a su costo y E05 migró su tienda completa a una plataforma más económica (Sección~\ref{sec:porter}). El escenario base supone que la aplicación capta una fracción mínima del mercado, del 0,30\% al cabo de tres años, y que el período de prueba gratuito, condición explícita de E05 para pagar, retiene a quienes comprueban el valor de las recomendaciones. El escenario optimista se apoya en la brecha prescriptiva vacante identificada en el Estado del Arte (O2) y suma un segundo canal de distribución: la arquitectura de adaptadores del prototipo ya implementa la integración con WooCommerce, cuya publicación en el Woo Marketplace queda como trabajo futuro, de modo que solo este escenario incorpora suscriptores de esa plataforma.
+
+\subsection{Flujo de fondos del escenario base}
+\label{sec:viabilidad-flujo}
+
+La Tabla~\ref{tab:viabilidad-flujo} presenta el flujo de fondos anual del escenario base. En el año 1 los ingresos netos no alcanzan a cubrir el costo fijo de mantenimiento, lo que produce un flujo negativo; a partir del año 2, con una base de suscriptores más amplia, el flujo se vuelve positivo y crece.
+
+\begin{table}[!htbp]
+\centering
+\caption{Flujo de fondos del escenario base, en dólares estadounidenses}
+\label{tab:viabilidad-flujo}
+\renewcommand{\arraystretch}{1.3}
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{|m{5.4cm}|r|r|r|r|}
+\hline
+\textbf{Concepto} & \textbf{Año 0} & \textbf{Año 1} & \textbf{Año 2} & \textbf{Año 3} \\
+\hline
+Suscriptores pagos al cierre & --- & 55 & 122 & 194 \\
+\hline
+Ingresos brutos & --- & 7.662 & 22.184 & 38.655 \\
+\hline
+Comisión de la tienda de aplicaciones (30\%) & --- & $-$2.298 & $-$6.655 & $-$11.596 \\
+\hline
+\textbf{Ingresos netos} & --- & \textbf{5.363} & \textbf{15.529} & \textbf{27.058} \\
+\hline
+Infraestructura (Railway, Neon, Gemini y dominio) & --- & $-$535 & $-$854 & $-$1.106 \\
+\hline
+Promoción & --- & $-$1.200 & $-$1.200 & $-$1.200 \\
+\hline
+Mantenimiento y soporte & --- & $-$6.513 & $-$8.247 & $-$10.213 \\
+\hline
+\textbf{Costos operativos} & --- & \textbf{$-$8.249} & \textbf{$-$10.301} & \textbf{$-$12.518} \\
+\hline
+Inversión en puesta en producción & $-$3.733 & --- & --- & --- \\
+\hline
+\textbf{Flujo neto} & \textbf{$-$3.733} & \textbf{$-$2.886} & \textbf{5.228} & \textbf{14.540} \\
+\hline
+Flujo acumulado & $-$3.733 & $-$6.618 & $-$1.390 & 13.149 \\
+\hline
+\end{tabular}
+
+\smallskip
+\noindent\textit{Fuente: elaboración propia. Valores redondeados a dólares enteros; las sumas pueden diferir en una unidad por redondeo.}
+\end{table}
+
+\subsection{Indicadores financieros}
+\label{sec:viabilidad-indicadores}
+
+La tasa de descuento se construye a partir del costo del capital propio en dólares, siguiendo el criterio de \textcite{Damodaran2026}: la tasa libre de riesgo en dólares es el rendimiento del bono del Tesoro estadounidense a diez años menos el diferencial de incumplimiento que el propio autor asigna a los Estados Unidos, es decir, 5,09\% \parencite{USTreasury2026} menos 0,23\%, lo que da 4,86\%. A esa tasa se suma la prima de riesgo accionario total de Argentina, del 13,94\% (4,23\% de prima de un mercado maduro y 9,71\% de prima de riesgo país) \parencite{Damodaran2026}, con un coeficiente beta igual a uno, lo que arroja un costo del capital del 18,80\%. Como esa referencia corresponde a empresas cotizantes y diversificadas, se agrega una prima de aproximadamente once puntos por tratarse de un emprendimiento en etapa temprana, sin historial de ventas, sin liquidez para sus participaciones y dependiente de dos personas. La tasa resultante, redondeada, es del 30\% anual; el análisis de sensibilidad evalúa también tasas del 20\% y del 40\%.
+
+La Tabla~\ref{tab:viabilidad-indicadores} resume los indicadores de los tres escenarios. El período de recupero se informa en meses y sin descontar, como el primer mes en que el flujo acumulado se vuelve positivo.
+
+\begin{table}[!htbp]
+\centering
+\caption{Indicadores financieros por escenario (tasa de descuento del 30\%)}
+\label{tab:viabilidad-indicadores}
+\renewcommand{\arraystretch}{1.3}
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{|m{5.2cm}|r|r|r|}
+\hline
+\textbf{Indicador} & \textbf{Pesimista} & \textbf{Base} & \textbf{Optimista} \\
+\hline
+VAN (USD) & $-$9.198 & 3.759 & 32.590 \\
+\hline
+TIR & No definida & 60,7\% & 237,3\% \\
+\hline
+Período de recupero & No se recupera & Mes 26 & Mes 14 \\
+\hline
+Mes en que se alcanza el punto de equilibrio (55 suscriptores) & Mes 32 & Mes 12 & Mes 5 \\
+\hline
+VAN incluyendo el desarrollo del prototipo (USD) & $-$27.861 & $-$14.904 & 13.927 \\
+\hline
+\end{tabular}
+
+\smallskip
+\noindent\textit{Fuente: elaboración propia.}
+\end{table}
+
+En el escenario pesimista el flujo neto es negativo en los tres años, por lo que la TIR no está definida y la inversión no se recupera dentro del horizonte. En el escenario base el VAN es positivo y la inversión se recupera en el mes 26. La TIR elevada de los escenarios base y optimista se explica por la escala reducida de la inversión inicial frente a los flujos que se generan a partir del año 2, y debe leerse junto con el VAN, que mide el valor creado en términos absolutos.
+
+El punto de equilibrio se alcanza con 55 suscriptores pagos. Por debajo de las 100 tiendas activas, los costos fijos mensuales suman USD 607 (mantenimiento de base, Railway, Neon, dominio y promoción) y cada suscriptor aporta un margen de contribución de USD 11,21, que resulta de restar al ingreso neto de USD 13,68 los costos variables de soporte, Gemini y almacenamiento asociados a sus 1,25 tiendas activas; el cociente entre ambos valores, redondeado hacia arriba, da 55 suscriptores. El escenario base llega a ese umbral al cierre del primer año.
+
+Si, en cambio, se incluye como inversión el desarrollo del prototipo (USD 18.663), solo el escenario optimista resulta con un VAN positivo dentro de los tres años, con una TIR del 57,4\% y un recupero en el mes 24. El servicio puede sostenerse una vez lanzado, pero recuperar también el esfuerzo de desarrollo dentro de ese plazo requiere una adopción superior a la del escenario base.
+
+\subsection{Análisis de sensibilidad}
+\label{sec:viabilidad-sensibilidad}
+
+La Tabla~\ref{tab:viabilidad-sensibilidad} muestra cómo varía el VAN del escenario base cuando se modifica una variable por vez y se mantienen las demás en su valor de referencia.
+
+\begin{table}[!htbp]
+\centering
+\caption{Sensibilidad del VAN del escenario base}
+\label{tab:viabilidad-sensibilidad}
+\renewcommand{\arraystretch}{1.3}
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{|m{3.6cm}|m{3.4cm}|r|r|}
+\hline
+\textbf{Variable} & \textbf{Variación} & \textbf{VAN (USD)} & \textbf{Recupero} \\
+\hline
+\multirow{2}{*}{Tasa de descuento} & 20\% & 5.907 & Mes 26 \\
+\cline{2-4}
+ & 40\% & 2.172 & Mes 26 \\
+\hline
+\multirow{2}{*}{Precio} & $-$20\% (24.000 pesos) & $-$1.367 & Mes 33 \\
+\cline{2-4}
+ & +20\% (36.000 pesos) & 8.885 & Mes 22 \\
+\hline
+\multirow{2}{*}{Altas mensuales} & $-$20\% & $-$367 & Mes 31 \\
+\cline{2-4}
+ & +20\% & 7.907 & Mes 22 \\
+\hline
+\multirow{2}{*}{Tasa de bajas mensual} & 7\% & 1.026 & Mes 29 \\
+\cline{2-4}
+ & 3\% & 7.293 & Mes 24 \\
+\hline
+\multirow{2}{*}{Costos operativos} & +20\% & 131 & Mes 31 \\
+\cline{2-4}
+ & $-$20\% & 7.387 & Mes 22 \\
+\hline
+\end{tabular}
+
+\smallskip
+\noindent\textit{Fuente: elaboración propia.}
+\end{table}
+
+Las variables más sensibles son el precio y el ritmo de altas: el VAN del escenario base se anula con un precio de 25.600 pesos mensuales, un 15\% inferior al supuesto, o con un 18\% menos de altas mensuales. Un precio cercano al adicional de 5 mil a 10 mil pesos declarado por E04 no sostendría el servicio con esta estructura de costos, lo que confirma que la propuesta debe dirigirse a los emprendedores que perciben un valor equivalente al de un plan pago y no a quienes la evalúan como un complemento marginal. La tasa de descuento, en cambio, tiene un efecto acotado, porque la inversión inicial es pequeña y el horizonte es corto. Un aumento del 20\% en los costos operativos lleva el VAN prácticamente a cero, lo que advierte que la dedicación al soporte debe crecer de forma más lenta que la base de suscriptores.
+
+\subsection{Conclusión sobre la viabilidad}
+\label{sec:viabilidad-conclusion}
+
+El análisis indica que el servicio es económicamente viable en los escenarios base y optimista como decisión de lanzamiento, y que no lo es en el escenario pesimista. La condición central de la viabilidad es alcanzar los 55 suscriptores pagos que cubren los costos fijos, un umbral equivalente a menos del 0,1\% de las marcas que venden con Tiendanube en Argentina, que el escenario base alcanza al cierre del primer año. La estructura de costos favorece esa condición: la infraestructura es una fracción menor del costo total, de modo que el riesgo económico se concentra en la adopción y en el precio, las dos variables que el análisis de sensibilidad identifica como críticas y que las entrevistas señalaron como las más inciertas. Recuperar además el esfuerzo de desarrollo del prototipo dentro de los tres años exige una adopción cercana a la del escenario optimista, para la cual la publicación del canal de WooCommerce constituye la palanca más directa.
+
+Estas conclusiones están sujetas a las limitaciones de sus supuestos: los parámetros de adopción y de bajas no surgen de una medición sino de indicios cualitativos, los flujos se calculan antes de impuestos y el costo del mantenimiento se apoya en un salario de referencia de comienzos de 2026. La validación del precio y de la tasa de conversión del período de prueba con los primeros usuarios reales es, en consecuencia, el paso que permitiría reemplazar los escenarios por datos observados. La lógica de captura de valor sobre la que se apoyan estos supuestos, una suscripción mensual con período de prueba gratuito distribuida a través de las tiendas de aplicaciones, se desarrolla en la sección dedicada al modelo de negocio.
