@@ -1,0 +1,75 @@
+\section{Modelo de negocio}
+\label{sec:modelo-negocio}
+
+El Business Model Canvas (BMC) sintetiza en nueve bloques la lógica de creación, entrega y captura de valor del proyecto. Cada bloque retoma los análisis del FODA cruzado (Sección~\ref{sec:foda-cruzado}), las cinco fuerzas de Porter (Sección~\ref{sec:porter}) y la estrategia comercial Triple P (Sección~\ref{sec:triple-p}), sin repetirlos.
+
+\subsubsection*{1. Segmentos de clientes}
+
+Propietarios de tiendas de comercio electrónico en Argentina, sin analistas de datos dedicados, que operan sobre Tiendanube o WooCommerce en rubros de gastronomía, indumentaria o electrónica.
+
+\subsubsection*{2. Propuesta de valor}
+
+Recomendaciones comerciales prescriptivas y accionables entregadas en lenguaje natural, adaptadas al rubro del comerciante, disponibles directamente en el panel de administración de la plataforma. El sistema elimina la necesidad de interpretar tableros de control y reduce el tiempo entre el dato y la decisión operativa.
+
+\subsubsection*{3. Canales}
+
+Captación y distribución mediante la tienda de aplicaciones de Tiendanube; entrega del servicio mediante la aplicación embebida en el panel de administración vía el SDK Nexo y, como segunda plataforma, en WordPress vía WooCommerce.
+
+\subsubsection*{4. Relación con clientes}
+
+Autoservicio con período de prueba gratuito. La interfaz en lenguaje natural reduce la fricción analítica para usuarios sin formación técnica. El mecanismo de retroalimentación incorpora las decisiones del emprendedor para mejorar la priorización de recomendaciones futuras.
+
+\subsubsection*{5. Fuentes de ingresos}
+
+Suscripción mensual por tienda conectada, con plan base gratuito y plan pago con recomendaciones completas, historial y priorización por rubro. Los indicios de disposición a pagar relevados en la muestra entrevistada oscilan entre los \$30.000 y los \$60.000 mensuales (Sección~\ref{sec:triple-p-precio}); estos valores no son generalizables al conjunto del segmento.
+
+\subsubsection*{6. Recursos clave}
+
+Motor de análisis híbrido en tres capas (modelos predictivos, reglas por rubro y bandit con Thompson Sampling); APIs de Tiendanube y WooCommerce como fuentes de datos transaccionales; Gemini API como proveedor de inteligencia artificial para la generación de texto en lenguaje natural; infraestructura cloud (Railway y Neon).
+
+\subsubsection*{7. Actividades clave}
+
+Sincronización periódica con las APIs de las plataformas conectadas; generación, priorización y entrega de recomendaciones por rubro; actualización del scoring mediante el feedback loop; mantenimiento de la infraestructura.
+
+\subsubsection*{8. Socios clave}
+
+Tiendanube (plataforma principal de distribución y fuente de datos); Google (Gemini API como proveedor de IA configurable por variable de entorno); Railway y Neon (infraestructura cloud); WooCommerce y WordPress como ecosistema de la segunda plataforma.
+
+\subsubsection*{9. Estructura de costos}
+
+Infraestructura variable (Railway, Neon y costo de llamadas a la API de Gemini proporcional al volumen de tiendas activas); comisión de la tienda de aplicaciones de Tiendanube; costo del equipo de desarrollo y mantenimiento. El análisis de viabilidad económico-financiera con proyección de costos, escenarios de adopción, VAN, TIR y punto de equilibrio se desarrolla en la sección de viabilidad económico-financiera.
+
+\section{Marca: Decidata}
+\label{sec:marca-decidata}
+
+\subsection{Nombre}
+\label{sec:marca-nombre}
+
+\textbf{Decidata}: contracción de \emph{decisión} y \emph{data}. El nombre sintetiza la propuesta central del proyecto: transformar datos operativos de la tienda en decisiones concretas y accionables para el emprendedor.
+
+\subsection{Propuesta de valor de la marca}
+\label{sec:marca-propuesta}
+
+\begin{quote}
+Decidata convierte los datos de tu tienda en decisiones concretas, sin que tengas que ser analista.
+\end{quote}
+
+La frase se comunica en segunda persona directa para hablar de igual a igual con el emprendedor. Evita la palabra \emph{analytics} y ancla el valor en la acción concreta (``decisiones'') y en la eliminación de una barrera (``sin que tengas que ser analista''), coherente con el diagnóstico de baja alfabetización analítica del segmento relevado en las entrevistas (Sección~\ref{sec:metodologia-entrevistas}).
+
+\subsection{Tono de comunicación}
+\label{sec:marca-tono}
+
+El tono de Decidata es directo, práctico y empático con la carga operativa del emprendedor. Habla en términos de resultados económicos concretos ---pesos ahorrados, ventas capturadas, quiebres de stock evitados--- y no en términos de capacidades técnicas abstractas. No usa jerga de \emph{business intelligence} ni anglicismos innecesarios. No es condescendiente con el usuario sin formación analítica: el sistema realiza el análisis; el emprendedor toma la decisión.
+
+\subsection{Identidad visual: paleta alineada con Nimbus}
+\label{sec:marca-paleta}
+
+La identidad visual de Decidata se construye sobre el sistema de diseño Nimbus de Tiendanube para garantizar coherencia dentro del panel de administración donde se integra la aplicación. El color primario es el azul institucional de Nimbus, empleado en elementos interactivos, llamadas a la acción y el logotipo. Los fondos y el texto secundario utilizan los tonos neutros del mismo sistema. Los estados de confirmación y éxito emplean el verde de Nimbus; las advertencias, el naranja; y los errores, el rojo. Esta elección no es estética sino funcional: el emprendedor que accede a Decidata dentro de su panel de Tiendanube no percibe un cambio de entorno visual, lo que reduce la fricción de adopción.
+
+% TODO-LOGO
+% Insertar aquí:
+% (1) figura del logotipo de Decidata (isotipo + tipografía),
+% (2) explicación del diseño: construcción sobre grilla, proporciones, tipografía,
+% (3) variantes: positivo sobre fondo claro, negativo sobre fondo oscuro,
+% (4) usos permitidos y restricciones (tamaño mínimo, zona de respeto).
+% Reemplazar este bloque cuando el logo esté diseñado y disponible.
