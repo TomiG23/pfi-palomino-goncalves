@@ -96,8 +96,8 @@
 %\titleformat{\subsection}
 %{\normalfont\ssecfnt\bfseries}{\thesubsection}{1em}{}
 
-% Numeraci\'on de tablas por cap\'{\i}tulo (Tabla 6.1, Tabla 6.2, ...), igual que las figuras.
-\renewcommand{\thetable}{\thechapter.\arabic{table}}
+% Numeraci\'on de tablas por cap\'{\i}tulo (Tabla 3.I, Tabla 3.II, ...), con romano por cap\'{\i}tulo.
+\renewcommand{\thetable}{\arabic{chapter}.\Roman{table}}
 
 %Espaciado antes y despu\'es de una figura respecto del texto
 \setlength{\textfloatsep}{5pt}
@@ -125,7 +125,7 @@
 	\renewcommand{\contentsname}{\'Indice}
 	\renewcommand{\listfigurename}{Lista de Figuras}
 	\renewcommand{\listtablename}{Lista de Tablas}
-	\renewcommand{\tablename}{TABLA}
+	\renewcommand{\tablename}{Tabla}
 }
 
 % Para que el primer parrafo de un cap\'{\i}tulo tenga identado.
