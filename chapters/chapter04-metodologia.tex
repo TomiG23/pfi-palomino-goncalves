@@ -230,7 +230,7 @@ Claude Haiku 4.5 (Anthropic) & SDK oficial \texttt{@anthropic-ai/sdk} para Node.
 \end{tabular}
 \end{table}
 
-La elección se inclinó por Gemini 3.5 Flash-Lite, y el criterio decisivo fue el costo: para un prototipo con un volumen de llamadas acotado, ofrece el costo por token más conveniente entre las opciones evaluadas, con una capacidad de generación de texto más que suficiente para la tarea concreta que debe resolver, redactar un mensaje breve a partir de datos ya estructurados, sin que se requiera el razonamiento complejo propio de un modelo \emph{frontier}. La latencia, por su parte, no tuvo un peso relevante en la decisión: el procesamiento es por lotes y no en tiempo real (RNF-11), y las recomendaciones se generan de forma periódica en el flujo del CU-03 y no en respuesta directa a una acción del comerciante, por lo que la aplicación no resulta sensible a la latencia de la manera en que lo sería una interfaz conversacional interactiva.
+La elección se inclinó por Gemini 3.5 Flash-Lite, y el criterio decisivo fue el costo: para un prototipo con un volumen de llamadas acotado, ofrece el costo por token más conveniente entre las opciones evaluadas, con una capacidad de generación de texto más que suficiente para la tarea concreta que debe resolver, redactar un mensaje breve a partir de datos ya estructurados, sin que se requiera el razonamiento complejo propio de un modelo \emph{frontier}. La latencia, por su parte, no tuvo un peso relevante en la decisión: el procesamiento es por lotes y no en tiempo real —característica que forma parte de las exclusiones de alcance del prototipo detalladas en la Sección~\ref{sec:alcance}—, y las recomendaciones se generan de forma periódica en el flujo del CU-03 y no en respuesta directa a una acción del comerciante, por lo que la aplicación no resulta sensible a la latencia de la manera en que lo sería una interfaz conversacional interactiva.
 
 La integración se implementa mediante el SDK oficial \texttt{@google/genai}, invocando el modelo \texttt{gemini-3.5-flash-lite}. La solicitud define un esquema de respuesta en formato JSON con dos campos: \texttt{message}, que contiene el mensaje en lenguaje natural que se presenta al comerciante, y \texttt{detail\_reason}, que expone el motivo de la recomendación. Al exigir una respuesta ajustada a ese esquema, el backend recibe una salida con estructura predecible, que puede validar y persistir sin necesidad de interpretar texto libre.
 
@@ -240,7 +240,7 @@ El flujo técnico completo, ya introducido como parte del flujo principal del CU
 
 La integración incorpora, además, un mecanismo de respaldo que aporta robustez al sistema frente a la dependencia de un servicio externo. Si la llamada a la API falla, ya sea porque no hay una API key configurada, porque se alcanzó el límite de solicitudes del proveedor (\emph{rate limit}) o porque la respuesta excede el tiempo de espera (\emph{timeout}), el sistema genera el mensaje a partir de una plantilla de texto predefinida, tal como contempla el flujo alternativo 6a del CU-03. De este modo, la falla del proveedor de IA degrada únicamente la redacción del mensaje, pero no bloquea la generación de la recomendación ni el resto del procesamiento por lotes.
 
-La clave de acceso (API key) de Gemini se almacena exclusivamente en el backend, como variable de entorno, siguiendo el mismo criterio de seguridad aplicado al \texttt{Client Secret} de Tiendanube (RNF-05, RNF-14; Sección~\ref{sec:backend-node-express}). Al igual que ese secreto, la API key se mantiene del lado del servidor, donde se origina y resuelve toda comunicación con el proveedor de IA.
+La clave de acceso (API key) de Gemini se almacena exclusivamente en el backend, como variable de entorno, siguiendo el mismo criterio de seguridad aplicado al \texttt{Client Secret} de Tiendanube (RNF-05, RNF-11; Sección~\ref{sec:backend-node-express}). Al igual que ese secreto, la API key se mantiene del lado del servidor, donde se origina y resuelve toda comunicación con el proveedor de IA.
 
 \subsection{Arquitectura de red}
 \label{sec:arquitectura-red}
@@ -306,7 +306,7 @@ La configuración de cada capa se administra mediante variables de entorno indep
 \section{Validación del sistema}
 \label{sec:validacion}
 
-Esta sección define la estrategia de validación del prototipo mediante pruebas automatizadas unitarias y de integración, tanto para el backend como para el frontend. Se describen las herramientas adoptadas en cada capa, la meta de cobertura de código que las pruebas deben alcanzar (RNF-17) y el criterio aplicado para excluir archivos de la medición.
+Esta sección define la estrategia de validación del prototipo mediante pruebas automatizadas unitarias y de integración, tanto para el backend como para el frontend. Se describen las herramientas adoptadas en cada capa, la meta de cobertura de código que las pruebas deben alcanzar (RNF-20) y el criterio aplicado para excluir archivos de la medición.
 
 \subsection{Tipos de prueba}
 \label{sec:tipos-prueba}
