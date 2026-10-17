@@ -22,7 +22,7 @@ El presente proyecto se plantea los siguientes objetivos específicos:
 
 \section{Alcance}
 
-El proyecto contempla el diseño y desarrollo de un prototipo funcional con cobertura geográfica limitada a la Ciudad Autónoma de Buenos Aires, Argentina, orientado a emprendimientos y comercios de pequeño y mediano tamaño.
+El proyecto contempla el diseño y desarrollo de un prototipo funcional con cobertura geográfica limitada a la Ciudad Autónoma de Buenos Aires, Argentina, orientado a emprendedores. A los fines de este trabajo, se denomina emprendedores a los comercios de pequeña escala que reúnen tres condiciones: un tamaño de menos de diez personas ocupadas, incluidos los emprendimientos unipersonales, umbral con el que la Comisión Europea define a la microempresa \parencite{ComisionEuropea2003}, y la ausencia de un área o una persona dedicada al análisis de datos; la venta en línea a través de una tienda propia en Tiendanube o en WooCommerce, de forma exclusiva o junto con otros canales, como las redes sociales o un local físico; y la pertenencia a alguno de los tres rubros sobre los que el motor de análisis aplica reglas diferenciadas: gastronomía, indumentaria o electrónica. Los comercios de otros rubros pueden utilizar el prototipo, pero reciben recomendaciones con parámetros genéricos.
 
 
 \subsection{Componentes Incluidos}
@@ -30,31 +30,33 @@ El proyecto contempla el diseño y desarrollo de un prototipo funcional con cobe
 \begin{enumerate}
     \item Identificación del negocio para obtener y asociar sus métricas operativas.
 
-    \item Adquisición y procesamiento de datos de e-commerce a través de integración con la API de Tiendanube.
+    \item Adquisición y procesamiento de datos de e-commerce a través de la integración con las API de Tiendanube y WooCommerce, mediante una arquitectura de adaptadores que permite incorporar otras plataformas sin modificar el motor de análisis.
 
     \item Desarrollo de un motor de análisis para la detección de patrones y oportunidades comerciales, con enfoque en rubros específicos (gastronomía, indumentaria y electrónica).
 
-    \item Construcción de una interfaz web responsiva integrada al panel de administración de Tiendanube mediante iframe (Aplicación Integrada), que presente recomendaciones accionables optimizadas para diversos dispositivos.
+    \item Construcción de una interfaz web responsiva integrada al panel de administración de cada plataforma (en Tiendanube, como Aplicación Integrada mediante iframe; en WooCommerce, mediante un complemento de WordPress que muestra la misma aplicación en un iframe), que presente recomendaciones accionables optimizadas para diversos dispositivos.
 
     \item Implementación de un mecanismo de retroalimentación para evaluar el impacto de las recomendaciones ejecutadas.
 
-    \item Consulta diaria a una API pública de tipo de cambio (dólar oficial/blue) como dato de contexto auxiliar para las recomendaciones del rubro electrónica, distinguida de una integración de plataforma: se trata de una única llamada de solo lectura sin autenticación, sin relación de negocio con el proveedor externo, y no reemplaza ni complementa la fuente principal de datos transaccionales, que continúa siendo exclusivamente la API de Tiendanube.
+    \item Consulta diaria a una API pública de tipo de cambio (dólar oficial/blue) como dato de contexto auxiliar para las recomendaciones del rubro electrónica, distinguida de una integración de plataforma: se trata de una única llamada de solo lectura sin autenticación, sin relación de negocio con el proveedor externo, y no reemplaza ni complementa la fuente principal de datos transaccionales, que continúan siendo exclusivamente las API de las plataformas de comercio electrónico integradas.
 \end{enumerate}
 
 \subsection{Componentes Excluidos}
 
-El foco estará en demostrar la viabilidad de generar valor comercial dentro del ecosistema de Tiendanube, priorizando la claridad y utilidad de las recomendaciones. Quedan fuera del alcance:
+El foco estará en demostrar la viabilidad de generar valor comercial dentro de los ecosistemas de Tiendanube y WooCommerce, priorizando la claridad y utilidad de las recomendaciones. Quedan fuera del alcance:
 
 \begin{enumerate}
-    \item Integraciones múltiples con plataformas externas más allá de Tiendanube.
+    \item Integraciones con plataformas de comercio electrónico distintas de Tiendanube y WooCommerce, como Shopify, que quedan como trabajo futuro.
+
+    \item Un modo de uso independiente, fuera del panel de administración de una plataforma de comercio electrónico, que queda como trabajo futuro.
 
     \item Carga manual de datos mediante archivos CSV.
 
-    \item Despliegue productivo a escala industrial.
+    \item Despliegue productivo a escala industrial. El despliegue del prototipo en un proveedor de nube y su posterior migración a AWS quedan como trabajo futuro.
 
     \item Procesamiento de datos en tiempo real.
 
-    \item Módulos de autenticación, registro de usuarios o gestión de permisos, funcionalidades inherentes a la plataforma Tiendanube.
+    \item Módulos de autenticación, registro de usuarios o gestión de permisos, funcionalidades inherentes a las plataformas de comercio electrónico integradas.
 
-    \item Publicación formal en la App Store de Tiendanube (queda como trabajo futuro).
+    \item Publicación formal en la tienda de aplicaciones de Tiendanube y en el Woo Marketplace (queda como trabajo futuro).
 \end{enumerate}
