@@ -1,0 +1,93 @@
+\section{Sesión de brainstorming con perfiles de la industria}
+\label{sec:brainstorming}
+
+El trabajo de campo que sustenta los análisis de este capítulo no se limitó a las entrevistas cualitativas en profundidad descriptas en la sección~\ref{sec:metodologia-entrevistas}. Como complemento, se realizó una sesión de brainstorming estructurado con perfiles de la industria tecnológica y de producto, con el objetivo de someter el diseño del motor de recomendaciones a una validación cruzada desde una perspectiva técnica que las entrevistas a emprendedores no podían proveer. La sesión no ofició como punto de origen del diseño del sistema, sino como instancia de validación de un diseño ya tomado: el motor, la lógica de retroalimentación y las categorías de recomendaciones existían antes de la sesión, y los resultados se interpretan en consecuencia como evidencia de coherencia con el razonamiento independiente de los participantes, no como insumo fundacional.
+
+\subsection{Justificación metodológica}
+\label{sec:brainstorming-justificacion}
+
+La sección~\ref{sec:metodologia-entrevistas} argumentó con detalle por qué el diseño prescindió de encuestas cuantitativas como instrumento de relevamiento: un cuestionario cerrado solo puede medir lo que el investigador ya anticipó, e impone sobre el fenómeno una estructura de respuesta que el relevamiento buscaba precisamente descubrir. El mismo razonamiento se extiende, con matices, al brainstorming. Una encuesta cerrada sobre preferencias de funcionalidad hubiese forzado a los participantes a evaluar opciones predefinidas; el brainstorming libre, en cambio, permitió observar qué problemas y soluciones emergían de manera espontánea cuando se describía el contexto del emprendedor sin anticipar la respuesta.
+
+El complemento entre ambas herramientas es metodológicamente deliberado. Las entrevistas aportaron profundidad contextual desde la perspectiva del usuario final, el emprendedor que opera la tienda, e incluyeron a quienes experimentan en primera persona el problema que el sistema busca resolver. El brainstorming aportó divergencia técnica y de producto desde perfiles que no son el usuario final, sino quienes razonan sobre sistemas, datos e interfaces de forma profesional. Ninguno de los invitados tiene tienda propia: todas las preguntas de la sesión se formularon en tercera persona, sobre las User Personas descriptas en la sección~\ref{sec:user-persona}, de modo de evitar que la experiencia personal de los participantes sesgara las ideas hacia contextos que no corresponden al segmento objetivo.
+
+\subsection{Participantes, agenda y dinámica}
+\label{sec:brainstorming-participantes}
+
+La sesión se realizó el 10 de octubre de 2026, en formato presencial, con una duración de 60 minutos y sin dispositivos electrónicos durante la ideación: los participantes trabajaron con post-its, marcadores y tres cartulinas. La sesión fue grabada con consentimiento explícito de todos los participantes para su uso académico y citación en este trabajo. Participaron siete personas:
+
+\begin{itemize}
+  \item \textbf{Facilitador:} una de las autoras, responsable de leer las preguntas, dar la palabra y evitar las críticas durante la ideación. No votó.
+  \item \textbf{Cronometrista y registro:} la otra autora, encargada de pegar y ordenar los post-its y de cuidar la grabación. No votó.
+  \item Desarrollador backend junior (Mercado Libre).
+  \item Desarrollador backend semi senior (Mercado Libre); estimó el esfuerzo técnico en la matriz.
+  \item DevOps; estimó el esfuerzo técnico en la matriz.
+  \item Product Manager.
+  \item Especialista en Marketing.
+\end{itemize}
+
+La dinámica siguió el protocolo de ideación divergente clásica: cantidad antes que calidad, sin críticas durante la ideación, ideas locas bienvenidas y construcción sobre las ideas de otros. La Tabla~\ref{tab:brainstorming-agenda} resume la agenda.
+
+\begin{table}[ht]
+\centering
+\caption{Agenda de la sesión de brainstorming (10/10/2026).}
+\label{tab:brainstorming-agenda}
+\begin{tabular}{p{2cm} p{3cm} p{8cm}}
+\hline
+\textbf{Tiempo} & \textbf{Bloque} & \textbf{Actividad} \\
+\hline
+0:00--0:05 & Bienvenida & Aviso de grabación. Ronda de presentación y calentamiento: «Si tuvieras una tienda online, ¿qué mirarías cada mañana?» \\
+0:05--0:09 & Contexto & Presentación del problema en 3--4 frases, User Personas y mockup del panel; reglas de la sesión. \\
+0:09--0:21 & Pregunta 1 & 4 minutos de escritura individual en silencio (mínimo 3 post-its por persona), seguidos de ronda de lectura y pegado en cartulina. \\
+0:21--0:33 & Pregunta 2 & Igual que la Pregunta 1. \\
+0:33--0:43 & Pregunta 3 & 4 minutos de escritura y 6 de ronda (subpreguntas 3a y 3b). \\
+0:43--0:49 & Agrupación & Los post-its de la cartulina de ideación se agrupan por afinidad en la cartulina de grupos; cada grupo recibe un nombre. \\
+0:49--0:53 & Votación & Votación por puntos: cada invitado anota sus 3 grupos preferidos y los marca simultáneamente. Las autoras no votaron. \\
+0:53--0:58 & Matriz & Los grupos más votados se trasladaron a la cartulina de matriz impacto/esfuerzo. El grupo decidió el impacto percibido; los dos desarrolladores y el DevOps estimaron el esfuerzo técnico. \\
+0:58--1:00 & Cierre & Fotografías de las tres cartulinas. \\
+\hline
+\end{tabular}
+\end{table}
+
+\noindent\textit{Fuente: elaboración propia.}
+
+\FloatBarrier
+
+Las tres preguntas guía de la sesión fueron las siguientes:
+
+\begin{enumerate}
+  \item \textbf{Confianza y acción:} ¿Cómo se podría lograr que un emprendedor que no sabe de análisis de datos confíe en una recomendación y la ejecute? (Estímulos: ¿qué tendría que decir la recomendación para que una User Persona le haga caso? Si la app se equivoca una vez, ¿qué tendría que pasar para que siga confiando?)
+  \item \textbf{Nuevas oportunidades:} Hoy la app avisa cuatro cosas: que un producto se queda sin stock, que algo dejó de venderse, que un precio quedó desactualizado y que un cliente dejó de comprar. ¿Qué otras cosas debería avisarle? (Ejemplos orientadores: Día de la Madre, Hot Sale, aguinaldo, cambio de temporada, feriado largo.)
+  \item \textbf{Cómo funcionaría el motor:}
+    \begin{enumerate}[label=\alph*.]
+      \item Si se tuviera que programar el aviso de «este producto se va a quedar sin stock», ¿cómo se haría? ¿Qué datos se usarían y cada cuánto se revisaría?
+      \item La app le recomienda algo al emprendedor y él lo ejecuta. ¿Cómo se da cuenta la app de si le sirvió o no, para recomendar mejor la próxima vez?
+    \end{enumerate}
+\end{enumerate}
+
+La Pregunta 2 enunció explícitamente las cuatro categorías de recomendaciones que el sistema ya implementaba al momento de la sesión. Esta decisión fue deliberada: al declarar abiertamente el punto de partida del diseño, la sesión operó como validación de ese diseño y como exploración de sus extensiones naturales, en lugar de simular una ideación desde cero que hubiese requerido ocultar información relevante a los participantes.
+
+\subsection{Resultados e integración con el diseño}
+\label{sec:brainstorming-resultados}
+
+La sesión produjo un total de 21 ideas, que la matriz impacto/esfuerzo organizó en cuatro cuadrantes según la evaluación colectiva de los participantes (Anexo~\ref{anx:brainstorming}). Los resultados se clasifican a continuación según su relación con lo implementado en el sistema al cierre del proyecto.
+
+\subsubsection{Ideas que validan el diseño}
+
+Nueve de las 21 ideas del tablero coinciden con funcionalidades ya implementadas en el sistema, propuestas por participantes que no conocían la implementación. Esta coincidencia constituye la principal lectura de la sesión: el razonamiento independiente de perfiles técnicos y de producto convergió con las decisiones de diseño tomadas por el equipo.
+
+Entre las coincidencias más relevantes se destacan: la solicitud de feedback al usuario sobre la ejecución de una recomendación, implementada mediante las acciones de marcar como ejecutada, deshacer y declarar que la acción no fue realizada por el emprendedor (Sección~\ref{sec:multiplataforma}); la segmentación de clientes en niveles alto, medio y bajo, correspondiente a la segmentación RFM con \emph{k}-means y valor de vida del cliente (CLV) de la Sección~\ref{sec:motor-ia}; los avisos de efemérides comerciales como el Día de la Madre o el Hot Sale, implementados como recomendaciones de fecha clave con calendario por rubro; y la medición de si el sistema había podido detectar si el emprendedor implementó la recomendación, resuelta mediante la inferencia automática de la ejecución a partir de snapshots de stock y precio (Sección~\ref{sec:motor-ia}).
+
+La Pregunta 3 produjo un resultado que merece señalarse de forma explícita: los perfiles técnicos describieron de manera espontánea, sin conocer el diseño del motor, los mismos mecanismos que el sistema implementa. Para el pronóstico de quiebre de stock (3a), los participantes propusieron observar la tendencia de ventas de los últimos días y compararla con el stock disponible, que es precisamente la lógica del pronóstico con suavizado exponencial y el disparador de la alerta de quiebre (Sección~\ref{sec:motor-ia}). Para el ciclo de retroalimentación (3b), propusieron medir si la métrica relevante mejoró después de que el emprendedor tomó la acción, que es la base del ciclo esperado versus real y del mecanismo de scoring dinámico con Thompson Sampling (Sección~\ref{sec:motor-ia}).
+
+\subsubsection{Ideas parcialmente implementadas}
+
+Seis ideas del tablero corresponden a funcionalidades que el sistema implementa en parte. Las diferenciación entre notificaciones urgentes y recomendaciones estratégicas está parcialmente presente mediante los niveles de prioridad urgente, atención y oportunidad, pero sin una separación visual explícita entre avisos de alerta y sugerencias de acción. La posibilidad de que el emprendedor confirme si la acción le resultó útil mediante una consulta activa existe de forma pasiva, a través de la inferencia automática de la ejecución, pero sin un mecanismo de pregunta directa. El botón para ejecutar la acción desde la propia tarjeta de recomendación existe como llamada a la acción, pero sin integración de escritura hacia la plataforma, lo que limita su alcance a la navegación hacia la sección correspondiente. La adaptación del tono y del vocabulario al rubro del comercio existe en tanto el proveedor de IA recibe el rubro como contexto, pero su aplicación efectiva depende del \emph{system prompt} de Gemini, que fue objeto de revisión durante el desarrollo.
+
+\subsubsection{Trabajo futuro y descartadas}
+
+Seis ideas se clasificaron como trabajo futuro o se descartaron con justificación. La visualización de un estado general de pérdidas y ganancias acumuladas se plantea como trabajo futuro condicionado: tendría sentido únicamente si se presenta como impacto acumulado de las recomendaciones ejecutadas, para no convertirse en un tablero descriptivo que replica lo que las plataformas ya ofrecen. El seguimiento de acciones ejecutadas por canales externos a la plataforma, como publicaciones en redes sociales, se identificó como trabajo futuro por no ser observable desde la API de Tiendanube o de WooCommerce. La incorporación de productos en tendencia del rubro que la tienda no tiene requeriría fuentes de datos de mercado externas que exceden el alcance del sistema. El envío de un reporte mensual y las recomendaciones agrupadas al cierre de la semana se clasificaron como trabajo futuro por su bajo impacto en la matriz. El cambio de tendencia en reseñas negativas se descartó: la API de Tiendanube no expone reseñas de forma nativa y el impacto percibido por los participantes fue bajo.
+
+\subsection{Cierre del user research}
+\label{sec:brainstorming-cierre}
+
+El trabajo de campo de este capítulo combinó dos herramientas de user research con objetivos complementarios. Las entrevistas en profundidad de la sección~\ref{sec:metodologia-entrevistas} aportaron comprensión contextual desde la perspectiva del emprendedor, con énfasis en el \emph{por qué} de cada decisión y en la carga cognitiva que el sistema busca reducir. La sesión de brainstorming de la sección~\ref{sec:brainstorming} aportó validación técnica cruzada: más de un tercio de las 21 ideas del tablero coincidió con funcionalidades ya implementadas, propuestas de forma independiente por perfiles que no conocían el diseño. Ambas herramientas se complementan sin solaparse: la primera indaga desde la experiencia vivida del usuario, la segunda desde el razonamiento técnico de quienes diseñan sistemas para ese usuario.
