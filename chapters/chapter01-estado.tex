@@ -130,35 +130,52 @@ Aplicadas al posicionamiento del presente proyecto frente al sector relevado, am
 \subsubsection{Curva de Valor}
 \label{sec:curva-valor}
 
-La Tabla~\ref{tab:curva-valor} compara el nivel de cada atributo en el sector relevado con el propuesto por el presente proyecto. Los valores del sector se derivan de la Tabla~\ref{tab:comparativo_nubelytics}: ``Nulo'' indica que ninguna herramienta relevada ofrece el atributo de forma confirmada; ``Bajo'' indica que al menos una lo ofrece de forma parcial o que el estado de alguna no pudo confirmarse (``No documentado''); ``Medio'' indica que la mayoría del sector lo ofrece.
+La Figura~\ref{fig:curva-valor} mapea el nivel de cada atributo estratégico en el sector relevado frente al propuesto por el presente proyecto. Los valores del sector se derivan del análisis presentado en esta sección: ``Nulo'' indica que ninguna herramienta relevada ofrece el atributo de forma confirmada; ``Bajo'' indica que al menos una lo ofrece parcialmente o que su estado no pudo confirmarse; ``Medio'' indica que la mitad o más del sector lo ofrece; ``Alto'' indica que el atributo es central en la propuesta de la mayoría de las herramientas relevadas. Los tres últimos factores corresponden a capacidades en las que el sector invierte intensamente (Google Analytics, Shopify Analytics, Polar Analytics, Conjura y Klaviyo), pero que el presente proyecto elimina o reduce deliberadamente por no aportar valor al emprendedor sin formación analítica (ver Tabla~\ref{tab:eric}).
 
-\begin{table}[h]
+\begin{figure}[h]
 \centering
+\begin{tikzpicture}
+\begin{axis}[
+    width=\textwidth,
+    height=7.5cm,
+    xtick={1,2,3,4,5,6,7,8,9,10},
+    xticklabels={
+        Prescriptividad,
+        Integr.~Tiendanube,
+        Inventario/estac.,
+        Feedback loop,
+        Valid.~efectividad,
+        Accesibilidad,
+        Multiplataforma,
+        Dashboards descr.,
+        Integr.~externos,
+        Complej.~analistas
+    },
+    xticklabel style={rotate=45, anchor=east, font=\footnotesize},
+    ytick={0,1,2,3},
+    yticklabels={Nulo, Bajo, Medio, Alto},
+    ymin=-0.4, ymax=3.4,
+    xmin=0.5, xmax=10.5,
+    ylabel={Nivel},
+    legend pos=north east,
+    legend style={font=\footnotesize},
+    grid=major,
+    grid style={dashed, gray!30},
+    tick align=outside,
+]
+\addplot[color=blue!70, mark=square*, thick, mark size=2.5pt] coordinates {
+    (1,1)(2,1)(3,1)(4,1)(5,1)(6,1)(7,2)(8,3)(9,3)(10,3)
+};
+\addlegendentry{Sector}
+\addplot[color=red!80, mark=*, thick, mark size=2.5pt] coordinates {
+    (1,3)(2,3)(3,3)(4,3)(5,3)(6,3)(7,3)(8,0)(9,1)(10,0)
+};
+\addlegendentry{Este proyecto}
+\end{axis}
+\end{tikzpicture}
 \caption{Curva de Valor: comparación entre el sector relevado y el presente proyecto}
-\label{tab:curva-valor}
-\renewcommand{\arraystretch}{1.3}
-\footnotesize
-\setlength{\tabcolsep}{4pt}
-\begin{tabular}{|m{5.5cm}|m{2cm}|m{2.5cm}|}
-\hline
-\textbf{Factor} & \textbf{Sector} & \textbf{Este proyecto} \\
-\hline
-Nivel de prescriptividad & Bajo & Alto \\
-\hline
-Integración nativa con Tiendanube & Bajo & Alto \\
-\hline
-Gestión de inventario y estacionalidad por rubro & Bajo & Alto \\
-\hline
-Retroalimentación algorítmica sobre outcomes & Bajo & Alto \\
-\hline
-Validación de efectividad de recomendaciones & Bajo & Alto \\
-\hline
-Accesibilidad para emprendedores locales & Bajo & Alto \\
-\hline
-Soporte multiplataforma & Medio & Alto \\ % VERIFICAR-COD: WooCommerce
-\hline
-\end{tabular}
-\end{table}
+\label{fig:curva-valor}
+\end{figure}
 
 \subsubsection{Matriz ERIC}
 \label{sec:matriz-eric}
@@ -178,7 +195,7 @@ La Tabla~\ref{tab:eric} explicita las decisiones de diseño del presente proyect
 \hline
 \textbf{Eliminar} & Tableros de control descriptivos sin acción sugerida. Dependencia del usuario para interpretar datos y derivar decisiones estratégicas. \\
 \hline
-\textbf{Reducir} & Fricción interpretativa entre dato y acción. Tiempo de respuesta ante cambios operativos críticos (stock, precios, estacionalidad). \\
+\textbf{Reducir} & Fricción interpretativa entre dato y acción. Tiempo de respuesta ante cambios operativos críticos (stock, precios, estacionalidad). Alcance de integraciones con canales publicitarios externos. \\
 \hline
 \textbf{Incrementar} & Prescriptividad de las recomendaciones. Integración nativa con plataformas locales de e-commerce. Accesibilidad para emprendedores sin formación técnica especializada. \\
 \hline
