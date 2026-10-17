@@ -143,7 +143,7 @@ El script genera, además, un historial simulado de recomendaciones de los últi
 
 Los datos se alojan en una base de datos PostgreSQL provista por Neon, un servicio que permite crear ramas de la base de datos: copias aisladas de una rama de origen, creadas mediante un mecanismo de copia en escritura (\emph{copy-on-write}), en las que los cambios no afectan a las demás ramas \parencite{NeonBranching2026}. Esta característica permite que cada desarrollador trabaje sobre su propia rama, y genere y regenere en ella el conjunto sintético tantas veces como sea necesario, mientras la rama principal conserva los datos de demostración compartidos. Como el script borra la base antes de cargarla, se niega a ejecutarse contra la rama principal salvo con una opción explícita, y el procedimiento previsto para recargar en ella los datos de demostración consiste en crear antes una rama de respaldo.
 
-Esta combinación permite demostrar la viabilidad técnica de la integración con la API real, al tiempo que garantiza la disponibilidad y el control necesarios sobre los datos de prueba durante el desarrollo del prototipo. La evaluación de los modelos con datos reales, que el conjunto sintético no puede reemplazar, se trata en la sección de evaluación de los modelos.
+Esta combinación permite demostrar la viabilidad técnica de la integración con la API real, al tiempo que garantiza la disponibilidad y el control necesarios sobre los datos de prueba durante el desarrollo del prototipo. La evaluación de los modelos con datos reales, que el conjunto sintético no puede reemplazar, se trata en la Sección~\ref{sec:evaluacion-modelos}.
 
 \subsection{Sistemas de soporte a la decisión y toma de decisiones basada en datos}
 \label{sec:dss}
