@@ -447,21 +447,22 @@ Quedan excluidos de la medición de cobertura los siguientes archivos, por no co
 \subsection{Resultados de cobertura}
 \label{sec:resultados-cobertura}
 
-% VERIFICAR-COD: cobertura c8 — correr npm run test:coverage en backend y frontend; completar la tabla con los porcentajes reales e incluir el reporte como evidencia (Tabla~\ref{tab:resultados-cobertura}).
-La Tabla~\ref{tab:resultados-cobertura} presenta los resultados de cobertura obtenidos para cada capa.
+La Tabla~\ref{tab:resultados-cobertura} presenta los resultados de cobertura obtenidos para cada capa con la herramienta c8 (\texttt{all: true}).
 
 \begin{table}[h]
 \centering
 \caption{Resultados de cobertura de código por capa}
 \label{tab:resultados-cobertura}
 \renewcommand{\arraystretch}{1.3}
-\begin{tabular}{|m{2.3cm}|m{2.6cm}|m{2.6cm}|m{2.6cm}|m{2.6cm}|}
+\begin{tabular}{|m{3cm}|m{2.6cm}|m{2.6cm}|m{2.6cm}|}
 \hline
-\textbf{Capa} & \textbf{Líneas} & \textbf{Sentencias} & \textbf{Funciones} & \textbf{Ramas} \\
+\textbf{Capa} & \textbf{Líneas} & \textbf{Funciones} & \textbf{Ramas} \\
 \hline
-Backend & \TODO{\%} & \TODO{\%} & \TODO{\%} & \TODO{\%} \\
+Backend (344 pruebas) & 83\% & 87\% & 89\% \\
 \hline
-Frontend & \TODO{\%} & \TODO{\%} & \TODO{\%} & \TODO{\%} \\
+Frontend (53 pruebas) & 70\% & n/d & n/d \\
 \hline
 \end{tabular}
 \end{table}
+
+La meta establecida en el RNF-20 es del 85\% de cobertura de líneas. El backend queda a 2 puntos de la meta: los módulos de análisis y de integración con WooCommerce superan el 99,5\%, pero el punto de entrada del servidor (\texttt{index.js}), el proceso en segundo plano (\texttt{worker.js}) y las rutinas de sincronización (\texttt{syncOrder.js}, 9\%; \texttt{syncCustomer.js}, 17\%) presentan baja cobertura porque su ejecución requiere una base de datos o una tienda real, y se validaron de extremo a extremo en lugar de con pruebas unitarias automatizadas. El frontend alcanza el 70\%, distante de la meta, dado que la mayor parte de la superficie de la interfaz no cuenta con pruebas unitarias. Ambos valores constituyen una limitación del prototipo; alcanzar la meta completa se deja como trabajo futuro.
