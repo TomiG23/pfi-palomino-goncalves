@@ -1,5 +1,82 @@
 # Plan de ajustes del documento
 
+---
+
+## Estado al 17/10, cierre del día
+
+### Bloques de Romi: resumen de estado
+
+| Bloque | Descripción | Estado | Commits |
+|--------|-------------|--------|---------|
+| R-D1 | Portada, títulos, estructura, listas de figuras/tablas | Cerrado | `b677993` y previos |
+| R-D1b | Antecedentes separados (chapter01-marco + chapter01-estado) | Cerrado | `04897c3` |
+| R-D2 | Estado del Arte: Océano Azul, Curva de Valor, ERIC, conclusión | Cerrado | `9f5f434`, `e8bfb26`, `74cad8c`, `e1e7833` |
+| R-D3 | Brainstorming: guía, fotos, sesión 10/10 como validación | Cerrado | `d960cb1`, `bf9f9d9`, `f98cf59`, `94610a9` |
+| R-D4 | Negocio: Business Model Canvas y marca Decidata | Cerrado | `eab0d58` |
+| R-D5 | RNF afirmativos, renumerados (13→10, +RNF 13–20), alcance sin ref rota | Cerrado | `6d8aa06`, `d4c5164`, `c562f1c`, `e719395`, `e0c407a` |
+| R-D6 Parte 1 | Metodología, seguridad, Nimbus, ERD texto, Gemini config, ciclo de vida | Cerrado | `a57ef4a` |
+| R-D6 Parte 2 | Infraestructura Railway (A-3), cifrado en prod (C-11), cobertura real (C-08/A-7) | **Pendiente** — requiere R5 y `npm run test:coverage` | — |
+| R-D7 | Pasada final | **Pendiente** — espera T-D6 (Conclusiones de Tomi) | — |
+
+### Marcas pendientes (`grep -rn 'VERIFICAR-COD\|\\TODO{' chapters/`)
+
+| Archivo | Línea | Tipo | Qué falta | Bloque |
+|---------|-------|------|-----------|--------|
+| chapter04-metodologia.tex | 150 | `% VERIFICAR-COD` | Regenerar `erd_diagram.png` con tablas nuevas del schema.prisma (ver lista abajo) | R-D7 7b / tarea no-código |
+| chapter04-metodologia.tex | 243 | `% VERIFICAR-COD` | Precio actualizado de `gemini-3.5-flash-lite` (dato externo, citar con URL y fecha) | R-D7 7b / tarea no-código |
+| chapter04-metodologia.tex | 332 | `% VERIFICAR-COD: R5` | URL de producción Railway, servicios activos (api, worker, frontend), vars de entorno | R-D6 Parte 2 |
+| chapter04-metodologia.tex | 348 | `% VERIFICAR-COD: R5` | Verificar `TOKEN_ENCRYPTION_KEY` cargada en Railway y cifrado funciona en prod (C-11) | R-D6 Parte 2 |
+| chapter04-metodologia.tex | 450 | `% VERIFICAR-COD: cobertura c8` | Correr `npm run test:coverage`; completar tabla con porcentajes reales | R-D6 Parte 2 |
+| chapter04-metodologia.tex | 462 | `\TODO{\%}` ×4 | Celdas de cobertura backend (Statements, Branch, Functions, Lines) | R-D6 Parte 2 |
+| chapter04-metodologia.tex | 464 | `\TODO{\%}` ×4 | Celdas de cobertura frontend | R-D6 Parte 2 |
+| chapter05-requerimientos.tex | 181 | `% VERIFICAR-COD` | Reemplazar 85% con cobertura real medida (RNF-20) | R-D6 Parte 2 |
+| chapter01-estado.tex | 104 | `% VERIFICAR-COD: WooCommerce` | Confirmar texto columna Decidata en tabla comparativa | R-D7 7b |
+| chapter01-estado.tex | 171 | `% VERIFICAR-COD: WooCommerce` | Confirmar coordenada Multiplataforma en pgfplots Curva de Valor | R-D7 7b |
+
+### Capturas pendientes
+
+| `\label` | Descripción | Archivo |
+|----------|-------------|---------|
+| `sec:captura-inferencia` | Ejecución del motor con fecha inferida | chapter05-requerimientos.tex |
+| `sec:captura-esperado-real` | Comparación esperado vs. real en la UI | chapter05-requerimientos.tex |
+| `sec:captura-preparacion` | Recomendación de preparación anticipada | chapter05-requerimientos.tex |
+| `sec:captura-fecha-clave` | Vista de fecha clave en el panel | chapter05-requerimientos.tex |
+| `sec:captura-wordpress` | App embebida en WordPress/WooCommerce | chapter05-requerimientos.tex |
+
+### Pendientes para Tomi
+
+1. **Tercera exclusión de alcance** (`chapter00.tex`, Componentes Excluidos): verificar que la exclusión relevante diga "Tiendanube y WooCommerce", no solo "Tiendanube". Confirmar texto actual y corregir si hace falta.
+2. **`\label{sec:alcance}`**: agregar `\label{sec:alcance}` en la línea siguiente a `\section{Alcance}` en `chapter00.tex` si se quieren referencias cruzadas desde el resto del documento (actualmente no tiene label).
+3. **T-D6 (`conclusiones.tex`) — borrador**: redactar lo que se pueda ya; marcar con `% VERIFICAR-COD` los pasajes que dependen de R-D6 Parte 2:
+   - cobertura real de pruebas (C-08): `% VERIFICAR-COD: cobertura c8 — reemplazar con número real`
+   - URL productiva de Railway y servicios activos (A-3): `% VERIFICAR-COD: R5 — completar con URL de Railway`
+   Ver instrucciones completas en la sección T-D6 más abajo.
+
+### Checklist R-D7
+
+- [ ] **C-15** Verificar que capítulo Antecedentes agrupa Marco Teórico + Estado del Arte; texto introductorio antes de primera sección (C-17)
+- [ ] **C-13** Verificar `\chapter{...}` de metodología dice "Metodología de desarrollo"; incluir `motor-ia.tex` y `multiplataforma.tex` en "Arquitectura y tecnologías"; incluir `evaluacion-modelos.tex` en "Validación del sistema"
+- [ ] Incluir `brainstorming.tex` en cap. 4 después de entrevistas; crear capítulo "Desarrollo del negocio" con `negocio-modelo.tex` y `negocio-financiero.tex`; incluir `conclusiones.tex` antes de bibliografía
+- [ ] **C-06** Un anexo por entrevista (cinco en total); un anexo del brainstorming
+- [ ] **C-19** Sacar menciones a entregas parciales y lenguaje de work-in-progress; reescribir desvíos de cronograma en pasado
+- [ ] **C-27** `grep -rn 'PyME\|PyMEs'` en todo el documento; reemplazar caso por caso con concordancia correcta; lo que cita una fuente: dejar original + frase puente. Mostrar lista de casos dudosos antes de editar.
+- [ ] **C-01** Sección "Estructura del documento" al final de la Introducción: nombrar cada capítulo y cada anexo con `\ref`, explicando qué contiene
+- [ ] **7b** Resolver todos los `% VERIFICAR-COD` contra código final: si implementado → texto + borrar comentario; si no → reescribir como trabajo futuro
+- [ ] **Búsqueda de restos** `grep -rn 'PyME\|GPT-4o\|OpenAI\|25\\%\|50\\%\|presente entrega\|TODO\|\?\?' chapters/` (OpenAI: solo borrar fuera de comparación de proveedores; nombres reales de entrevistados)
+- [ ] Verificar: índice máx. 4 niveles; listas de figuras y tablas completas; tablas en formato "3.I"; encabezado 2 líneas; cada figura/tabla citada en el texto; cada cita en bibliografía y viceversa
+- [ ] **9b** Escribir `summary.tex`, `abstract.tex` y `acknowledgments.tex` (hoy dicen "Completar"); 200–300 palabras con palabras clave, a partir del documento final
+- [ ] Recorrer sección "Cobertura": marcar cada corrección con commit que la resuelve; listar las que falten
+- [ ] Recorrer rúbrica final ítem por ítem y mapear a sección del documento
+- [ ] Criterio de aceptación: ninguna corrección abierta + PDF compila sin referencias rotas (`??`)
+
+### Tareas que no salen del código
+
+1. **Precio de Gemini**: buscar precio actual de `gemini-3.5-flash-lite` en la página de precios de Google AI Studio (dato externo; citar con URL y fecha de consulta octubre 2026). Completar `chapter04-metodologia.tex:243`.
+2. **Regenerar diagrama ER**: correr `prisma-erd-generator` o herramienta equivalente con el `schema.prisma` actual y exportar como `erd_diagram.png`. Tablas nuevas que deben aparecer: `VariantSnapshot`, `DemandForecast`, `ForecastRun`, `CustomerSegment`, `SegmentationRun`, `BanditArm`, `BanditArmHistory`, `RubroPrior`, `PrivacyRequest`, `FeedbackConfig`; campos WooCommerce en `Store` (`store_url`, `consumer_key`, `consumer_secret`, `plugin_secret`, `platform`). Ver `chapter04-metodologia.tex:150`.
+3. **Confirmar tema oscuro de Nimbus**: verificar si el `ThemeProvider` del frontend usa `theme="dark"` en la build de producción. Si no, corregir el texto en `sec:nimbus` en `chapter04-metodologia.tex` para no afirmar que se usa el tema oscuro.
+
+---
+
 **Para qué:** corregir la tesis con todas las observaciones de la entrega del 50%, lo pedido en persona, lo que exige la rúbrica final y lo que cambió en el código. Al terminar no tiene que quedar ninguna corrección abierta (ver «Cobertura» al final).
 **Cuándo:** hoy, viernes 16/10, en paralelo con los planes de cierre del código.
 **Dónde se corre:** Claude Code en el proyecto `pfi-palomino-goncalves` (LaTeX). Lo corren **los dos**, cada uno sus bloques, en su propia sesión. Este archivo y `CORRECCIONES_E50.md` van en la raíz de ese repo.
