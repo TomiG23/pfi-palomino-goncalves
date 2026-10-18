@@ -25,6 +25,13 @@ El código se versiona en GitHub, en el monorepo descripto en la Sección~\ref{s
 
 Para el trabajo colaborativo de diseño se utiliza Miro, herramienta en la que se elaboran los mapas de empatía presentados en la Sección~\ref{sec:mapa-empatia} y los diagramas que acompañan la especificación del sistema.
 
+\subsection{Ciclo de vida del desarrollo}
+\label{sec:ciclo-vida}
+
+El trabajo se organizó en cuatro pilares funcionales, cada uno documentado como un plan de trabajo independiente almacenado en el repositorio del código: arquitectura e integración multiplataforma (\texttt{01-plan-arquitectura.md}), inteligencia artificial (\texttt{02-plan-ia.md}), seguridad (\texttt{03-plan-seguridad.md}) y frontend con Nimbus (\texttt{04-plan-frontend-nimbus.md}). El plan general (\texttt{00-plan-general.md}) concentra las decisiones de alcance transversales y las dependencias entre pilares. Cada pilar se descompone en etapas secuenciales con criterios de aceptación definidos antes de su implementación. Este esquema de desarrollo incremental por pilares permite integrar cada etapa a la rama principal solo cuando supera esos criterios y la revisión cruzada del otro integrante, sin bloquear el avance de los pilares independientes entre sí.
+
+La dependencia crítica entre pilares fue la etapa~0 de arquitectura ---la migración del esquema de base de datos a Neon y la sincronización de la estructura entre los dos entornos de desarrollo---, que bloqueó el comienzo de todos los demás pilares: ninguno podía ejecutar migraciones hasta que el esquema estuviese sincronizado. A partir de su cierre, los cuatro pilares avanzaron en paralelo respetando sus dependencias, entre las que se destaca que el adaptador de WooCommerce del pilar de arquitectura debía estar completo antes de que el pilar de seguridad pudiera implementar la verificación de su token de autenticación. El cronograma del proyecto, presentado en el Anexo~\ref{anx:cronograma}, registra la secuencia completa de etapas y los puntos de congelamiento del código.
+
 \subsection{Justificación del enfoque}
 \label{sec:justificacion-enfoque}
 
@@ -87,6 +94,15 @@ Next.js & Framework full-stack; renderizado del lado del servidor (SSR); enrutad
 \end{tabular}
 \end{table}
 
+\subsubsection{Sistema de diseño: Nimbus}
+\label{sec:nimbus}
+
+La integración con Tiendanube impone no solo el framework del frontend sino también el sistema de diseño: toda aplicación integrada al panel de administración debe usar Nimbus para mantener la coherencia visual con el resto de la plataforma \parencite{TiendanubeAPI2024}. Nimbus es el sistema de diseño oficial de Tiendanube, desarrollado por Nuvemshop, y provee componentes de interfaz, íconos y tokens de diseño listos para React.
+
+Los paquetes instalados son \texttt{@nimbus-ds/components} (versión~\texttt{5.63.0}), \texttt{@nimbus-ds/styles} (\texttt{9.69.0}) e \texttt{@nimbus-ds/icons} (\texttt{1.28.0}). Los estilos base y el tema oscuro oficial se importan desde \texttt{@nimbus-ds/styles}; la aplicación envuelve su árbol de componentes en el \texttt{ThemeProvider} de Nimbus y alterna el atributo de tema activo entre \texttt{"base"} y \texttt{"dark"} mediante el selector de modo oscuro, cuya preferencia se persiste en \texttt{localStorage}.
+
+Una consecuencia de construir la interfaz sobre Nimbus es la unificación visual entre plataformas: la misma aplicación React resulta estéticamente coherente tanto dentro del panel de Tiendanube como dentro del panel de WordPress para WooCommerce, donde se embebe mediante el complemento de WordPress. Este alineamiento visual no requirió trabajo adicional de diseño; es un beneficio directo de adoptar el sistema de diseño de la plataforma como base de la interfaz, y sustenta el cumplimiento del RNF-03.
+
 \subsubsection{Backend: Node.js y Express}
 \label{sec:backend-node-express}
 
@@ -131,6 +147,7 @@ Conviene precisar que PostgreSQL y MySQL resultaban ambos válidos para el proye
 
 El acceso a la base de datos se implementa mediante Prisma como \emph{Object-Relational Mapping} (ORM). Esta elección responde a los mismos criterios que guiaron la selección del resto del stack (Sección~\ref{sec:criterios-seleccion}): al tratarse de un equipo reducido de dos personas, Prisma permite definir el esquema de datos de forma declarativa en un único archivo, generar automáticamente un cliente tipado en JavaScript y gestionar las migraciones de forma reproducible, evitando la escritura manual de SQL y la duplicación de herramientas entre las capas del proyecto. El esquema de Prisma refleja directamente el modelo de datos presentado en la Figura~\ref{fig:erd-diagram}.
 
+% VERIFICAR-COD: regenerar erd_diagram.png con las tablas del schema.prisma actual (variant_snapshots, demand_forecasts, forecast_runs, customer_segments, segmentation_runs, bandit_arms, bandit_arm_history, rubro_priors, privacy_requests y campos WooCommerce en stores).
 \begin{figure}[ht]
     \centering
     \includegraphics[width=\textwidth]{./images/erd_diagram.png}
@@ -143,6 +160,8 @@ El acceso a la base de datos se implementa mediante Prisma como \emph{Object-Rel
 El esquema se organiza en torno a \texttt{STORES} como entidad raíz de aislamiento multi-tienda: la clave foránea \texttt{store\_id} se repite en \texttt{CATEGORIES}, \texttt{PRODUCTS}, \texttt{CUSTOMERS}, \texttt{ORDERS} y \texttt{RECOMMENDATIONS}, garantizando que los datos de cada comercio conectado permanezcan separados entre sí. Sobre esa base, \texttt{PRODUCTS} se vincula con \texttt{VARIANTS} en una relación uno a muchos, reflejando la distinción entre un producto y sus combinaciones concretas de talle, color u otro atributo descripta en la Sección~\ref{sec:adquisicion-datos} del Marco Teórico, mientras que \texttt{CATEGORIES} se relaciona con \texttt{PRODUCTS} a través de la tabla intermedia \texttt{PRODUCT\_CATEGORIES} y admite una jerarquía propia mediante \texttt{parent\_id}, lo que permite segmentar las recomendaciones por rubro comercial tal como se planteó en la Sección~\ref{sec:comportamiento-consumidor}. Los pedidos, por su parte, se modelan mediante \texttt{ORDERS} y su detalle \texttt{ORDER\_ITEMS}, que referencia cada variante junto con la cantidad y el precio de la operación, y \texttt{CUSTOMERS} conserva el campo \texttt{total\_spent} provisto directamente por la API de Tiendanube y descripto en esa misma sección.
 
 Dos entidades del esquema no se limitan a replicar recursos de la API de Tiendanube, sino que materializan capacidades propias del prototipo. \texttt{RECOMMENDATIONS} implementa el mecanismo de retroalimentación presentado en la Sección~\ref{sec:feedback-loop} del Marco Teórico: el campo \texttt{executed} registra si el comerciante llevó a cabo la acción sugerida, \texttt{metric\_before} y \texttt{metric\_after} sostienen la comparación de impacto entre ventanas temporales, y \texttt{score} persiste la priorización dinámica que ese mecanismo actualiza en función de los resultados obtenidos. \texttt{EXCHANGE\_RATES}, por su parte, almacena el valor diario del dólar oficial y del dólar blue consultado ante la API pública de tipo de cambio mencionada en el Alcance del proyecto, dato de contexto auxiliar que las recomendaciones del rubro electrónica utilizan para detectar la desactualización de precios frente a movimientos cambiarios, según se caracterizó en la Sección~\ref{sec:comportamiento-consumidor}.
+
+El esquema incorpora además entidades de soporte para las capacidades analíticas del prototipo que no tienen correspondencia directa en la API de Tiendanube. \texttt{VARIANT\_SNAPSHOTS} registra fotos periódicas de stock y precio por variante; al comparar snapshots sucesivos el sistema infiere si una recomendación fue ejecutada sin que el comerciante haya presionado el botón de confirmación. \texttt{DEMAND\_FORECASTS} y \texttt{FORECAST\_RUNS} persisten los pronósticos de demanda diaria por variante y el historial de corridas de pronóstico por tienda, respectivamente, con el error ponderado WAPE de cada corrida. \texttt{CUSTOMER\_SEGMENTS} y \texttt{SEGMENTATION\_RUNS} almacenan la segmentación RFM y CLV de cada cliente junto con el historial de parámetros de la segmentación (número de clusters, coeficiente de silueta, umbral de inactividad). Para el mecanismo de Thompson Sampling (RF-16), \texttt{BANDIT\_ARMS} guarda el estado actual de cada brazo por tienda y tipo de recomendación ---distribución Beta con parámetros $\alpha$ y $\beta$---, \texttt{BANDIT\_ARM\_HISTORY} registra el historial de actualizaciones y \texttt{RUBRO\_PRIORS} almacena los valores iniciales de los brazos calculados por rubro. La tabla \texttt{PRIVACY\_REQUESTS} actúa como registro de auditoría de las solicitudes de privacidad recibidas a través de los \emph{webhooks} de Tiendanube, con tipo, identificadores y marcas temporales de recepción y procesamiento. Por último, la entidad raíz \texttt{STORES} incorpora los campos de credenciales de WooCommerce ---\texttt{store\_url}, \texttt{consumer\_key}, \texttt{consumer\_secret} y \texttt{plugin\_secret}--- almacenados cifrados, junto con el campo \texttt{platform} que distingue tiendas de Tiendanube de las de WooCommerce; el mecanismo de cifrado se describe en la Sección~\ref{sec:cifrado-credenciales}.
 
 \FloatBarrier
 
@@ -221,7 +240,8 @@ Para resolver esta necesidad se evaluaron tres modelos de lenguaje de bajo costo
 \hline
 \textbf{Opción} & \textbf{Ventajas} & \textbf{Consideraciones} & \textbf{Decisión} \\
 \hline
-Gemini 3.5 Flash-Lite (Google) & Costo por token más conveniente entre las opciones evaluadas \TODO{precio por millón de tokens de entrada y de salida de gemini-3.5-flash-lite} \parencite{GoogleGeminiPricing2026}; SDK oficial \texttt{@google/genai} para Node.js; soporte de respuestas en formato JSON ajustadas a un esquema definido & Como toda opción basada en un servicio externo, su disponibilidad no depende del equipo; el prototipo lo mitiga con un mecanismo de respaldo por plantilla & \textbf{Elegido.} Ofrece el menor costo para el volumen de llamadas acotado de un prototipo, con una capacidad más que suficiente para la tarea \\
+% VERIFICAR-COD: completar precio de gemini-3.5-flash-lite con la cifra actualizada al cierre del documento (R-D7).
+Gemini 3.5 Flash-Lite (Google) & Costo por token más conveniente entre las opciones evaluadas \parencite{GoogleGeminiPricing2026}; SDK oficial \texttt{@google/genai} para Node.js; soporte de respuestas en formato JSON ajustadas a un esquema definido; modelo configurable mediante la variable de entorno \texttt{GEMINI\_MODEL} & Como toda opción basada en un servicio externo, su disponibilidad no depende del equipo; el prototipo lo mitiga con un mecanismo de respaldo por plantilla & \textbf{Elegido.} Ofrece el menor costo para el volumen de llamadas acotado de un prototipo, con una capacidad más que suficiente para la tarea \\
 \hline
 GPT-4o-mini (OpenAI) & Costo por token bajo (USD~0,15 por millón de tokens de entrada y USD~0,60 por millón de tokens de salida) \parencite{OpenAIPricing2026}; SDK oficial \texttt{openai} para Node.js, maduro y ampliamente documentado & Costo por token superior al de Gemini 3.5 Flash-Lite para una tarea en la que ambos modelos ofrecen una capacidad suficiente & Descartado: a igual adecuación para la tarea, su costo resulta mayor que el de la opción elegida \\
 \hline
@@ -232,7 +252,7 @@ Claude Haiku 4.5 (Anthropic) & SDK oficial \texttt{@anthropic-ai/sdk} para Node.
 
 La elección se inclinó por Gemini 3.5 Flash-Lite, y el criterio decisivo fue el costo: para un prototipo con un volumen de llamadas acotado, ofrece el costo por token más conveniente entre las opciones evaluadas, con una capacidad de generación de texto más que suficiente para la tarea concreta que debe resolver, redactar un mensaje breve a partir de datos ya estructurados, sin que se requiera el razonamiento complejo propio de un modelo \emph{frontier}. La latencia, por su parte, no tuvo un peso relevante en la decisión: el procesamiento es por lotes y no en tiempo real —característica que forma parte de las exclusiones de alcance del prototipo detalladas en la Introducción—, y las recomendaciones se generan de forma periódica en el flujo del CU-03 y no en respuesta directa a una acción del comerciante, por lo que la aplicación no resulta sensible a la latencia de la manera en que lo sería una interfaz conversacional interactiva.
 
-La integración se implementa mediante el SDK oficial \texttt{@google/genai}, invocando el modelo \texttt{gemini-3.5-flash-lite}. La solicitud define un esquema de respuesta en formato JSON con dos campos: \texttt{message}, que contiene el mensaje en lenguaje natural que se presenta al comerciante, y \texttt{detail\_reason}, que expone el motivo de la recomendación. Al exigir una respuesta ajustada a ese esquema, el backend recibe una salida con estructura predecible, que puede validar y persistir sin necesidad de interpretar texto libre.
+La integración se implementa mediante el SDK oficial \texttt{@google/genai}, invocando el modelo \texttt{gemini-3.5-flash-lite}. El modelo utilizado es configurable sin modificar el código: la variable de entorno \texttt{GEMINI\_MODEL} sobreescribe el valor por defecto, lo que permite actualizar el modelo ante eventuales discontinuaciones o la disponibilidad de versiones mejoradas del mismo nivel de costo. La solicitud define un esquema de respuesta en formato JSON con dos campos: \texttt{message}, que contiene el mensaje en lenguaje natural que se presenta al comerciante, y \texttt{detail\_reason}, que expone el motivo de la recomendación. Al exigir una respuesta ajustada a ese esquema, el backend recibe una salida con estructura predecible, que puede validar y persistir sin necesidad de interpretar texto libre.
 
 Un aspecto central de esta integración es qué información viaja hacia el proveedor externo. El backend no envía datos personales de clientes: ni nombres, ni direcciones de correo electrónico, ni montos de compra individuales forman parte de la solicitud. Lo que se envía a la API de Gemini es exclusivamente el dato estructurado de la recomendación ya generada por el motor de reglas: el tipo de recomendación (reposición, promoción, ajuste de precio o retención de cliente), el nombre del producto o variante involucrado, y las métricas agregadas correspondientes ---stock actual, velocidad de rotación, variación porcentual de precio o días transcurridos sin actualización, según el tipo de señal---. El prompt construido por el backend incorpora, además, el rubro comercial de la tienda (RF-06), utilizado únicamente para ajustar el tono y el vocabulario del mensaje generado a las particularidades de ese rubro. Ninguno de estos datos permite identificar a un cliente individual de la tienda.
 
@@ -303,6 +323,69 @@ Levantar el entorno de desarrollo completo requiere ejecutar tres procesos en si
 
 La configuración de cada capa se administra mediante variables de entorno independientes en cada carpeta del monorepo. El backend concentra las credenciales sensibles de la aplicación (\texttt{Client ID} y \texttt{Client Secret} de Tiendanube), mientras que el frontend recibe únicamente el \texttt{Client ID}, dato público necesario para inicializar el SDK Nexo del lado del navegador. Esta separación no es incidental: mantiene el \texttt{Client Secret} fuera del código que se ejecuta en el navegador del usuario, en línea con el rol del backend como intermediario autenticado descripto en la Sección~\ref{sec:backend-node-express}. Cabe señalar, además, que Vite solo lee las variables de entorno del frontend al iniciar el proceso, por lo que una modificación en su archivo de configuración requiere reiniciar el servidor de desarrollo correspondiente para que los nuevos valores se apliquen.
 
+\subsection{Infraestructura y despliegue}
+\label{sec:infraestructura}
+
+El prototipo está diseñado para ejecutarse como tres servicios independientes: la API (\texttt{backend/src/index.js}), el worker de procesamiento asíncrono (\texttt{backend/src/worker.js}) y el frontend estático servido con nginx. La separación entre API y worker responde a la arquitectura de cola de trabajos basada en pg-boss: los procesos de alta latencia ---sincronización de datos, ejecución del motor de análisis, pronóstico de demanda, segmentación de clientes y consulta diaria del tipo de cambio--- corren en el worker como trabajos en segundo plano, mientras que la API permanece sin estado y disponible para responder las consultas del frontend. La cola está alojada en la misma base de datos PostgreSQL de Neon, lo que elimina la necesidad de una infraestructura de mensajería adicional.
+
+El repositorio incluye un \texttt{docker-compose.yml} que levanta el entorno de desarrollo completo ---backend, worker y frontend--- mediante un único comando, con recarga en caliente. Un perfil adicional (\texttt{local-db}) incorpora una instancia de PostgreSQL local como alternativa a Neon, de modo que cualquier persona pueda clonar el repositorio y ejecutar el sistema completo sin depender de servicios externos; esto es un requisito de reproducibilidad del prototipo.
+% VERIFICAR-COD: R5 — completar con URL de producción de Railway, servicios activos (api, worker, frontend), Neon como base compartida y variables de entorno configuradas, una vez verificado el despliegue productivo.
+
+\subsection{Seguridad}
+\label{sec:seguridad}
+
+Esta subsección consolida los controles de seguridad implementados en el prototipo. El análisis de amenazas que guió las decisiones aplica el modelo STRIDE ---suplantación de identidad (\emph{Spoofing}), manipulación de datos (\emph{Tampering}), repudio (\emph{Repudiation}), divulgación de información (\emph{Information Disclosure}), denegación de servicio (\emph{Denial of Service}) e incremento de privilegios (\emph{Elevation of Privilege})--- sobre los componentes del sistema descripto en la Figura~\ref{fig:comp-diagram}.
+
+\subsubsection{Autenticación y aislamiento entre tiendas}
+\label{sec:autenticacion}
+
+El backend no mantiene estado de sesión en el servidor: cada solicitud se autentifica de forma independiente a partir del token enviado en el encabezado \texttt{Authorization}. Para tiendas de Tiendanube, el frontend obtiene un JWT de sesión mediante el SDK Nexo; el backend lo verifica como JWT HS256 firmado con \texttt{TIENDANUBE\_CLIENT\_SECRET} mediante \texttt{timingSafeEqual} y comprueba su expiración. Para tiendas de WooCommerce, el complemento de WordPress envía un token de dos segmentos firmado con HMAC; el registro de la plataforma lo valida y resuelve la tienda correspondiente. En ambos casos, el middleware establece el objeto \texttt{req.store} y ninguna ruta acepta un \texttt{store\_id} externo: toda consulta filtra por la tienda de la sesión verificada, lo que impide que una tienda acceda a los datos de otra.
+
+\subsubsection{Cifrado de credenciales}
+\label{sec:cifrado-credenciales}
+
+Los datos sensibles almacenados en la base de datos se cifran con AES-256-GCM: el token de acceso OAuth de Tiendanube y las credenciales del plugin de WooCommerce (\texttt{consumer\_key}, \texttt{consumer\_secret} y \texttt{plugin\_secret}). El módulo \texttt{backend/src/security/crypto.js} genera un vector de inicialización aleatorio por operación y produce una cadena con el formato \texttt{1:<iv\_hex>:<tag\_hex>:<ciphertext\_hex>}, que incluye el \emph{tag} de autenticación del modo GCM para detectar cualquier alteración del texto cifrado. La clave de 32 bytes se lee de la variable de entorno \texttt{TOKEN\_ENCRYPTION\_KEY}; si no está configurada o no tiene la longitud correcta, el proceso se niega a arrancar. La configuración de la protección de datos en reposo en el entorno de producción se documenta como parte del despliegue.
+% VERIFICAR-COD: R5 — verificar que TOKEN_ENCRYPTION_KEY esté cargada en el entorno de producción de Railway y que los tokens cifrados sean correctamente descifrados en producción (C-11).
+
+\subsubsection{Verificación de webhooks}
+\label{sec:webhooks-hmac}
+
+Los \emph{webhooks} de Tiendanube se verifican con HMAC-SHA256: el middleware \texttt{requireWebhookHmac} captura el cuerpo crudo de la solicitud antes del parseo JSON, calcula el HMAC con \texttt{TIENDANUBE\_CLIENT\_SECRET} y compara el resultado con el encabezado \texttt{x-linkedstore-hmac-sha256} mediante \texttt{timingSafeEqual}. Una firma inválida devuelve~401 y registra el intento en el log. Este control protege los tres \emph{webhooks} de privacidad (\texttt{/api/webhooks/store-redact}, \texttt{customers-redact} y \texttt{customers-data-request}) contra solicitudes no autorizadas que podrían desencadenar borrados de datos.
+
+\subsubsection{Privacidad y Ley 25.326}
+\label{sec:privacidad-ley}
+
+Los tres \emph{webhooks} de privacidad implementan los derechos de los titulares de datos personales previstos en la Ley~25.326 de Protección de los Datos Personales de la República Argentina \parencite{Ley25326} y en el Reglamento General de Protección de Datos (RGPD) de la Unión Europea:
+
+\begin{itemize}
+    \item \textbf{Supresión de la tienda} (\texttt{store-redact}): elimina en una transacción todos los datos de la tienda ---categorías, productos, variantes, fotos de stock, clientes, pedidos, recomendaciones, pronósticos, segmentación, brazos del bandit y configuraciones--- incluyendo la propia entrada de la tienda.
+    \item \textbf{Supresión del cliente} (\texttt{customers-redact}): anonimiza al cliente (nombre, correo electrónico, DNI, teléfono, dirección y notas) y elimina su segmentación, conservando sus pedidos sin datos personales porque son necesarios para las métricas del motor de análisis.
+    \item \textbf{Acceso} (\texttt{customers-data-request}): reúne todos los datos del cliente que el sistema almacena para su entrega al titular.
+\end{itemize}
+
+El procesamiento de cada solicitud es idempotente: recibir la misma solicitud dos veces no duplica ni revierte el borrado. La tabla \texttt{PRIVACY\_REQUESTS} actúa como registro de auditoría con el tipo de solicitud, los identificadores de la tienda y del cliente, y las marcas temporales de recepción y procesamiento. La finalidad del tratamiento de datos se limita a la generación de recomendaciones comerciales; el prototipo no cede datos a terceros y puede suprimir o anonimizar los datos de un titular ante una solicitud fundada.
+
+\subsubsection{Anonimización de datos enviados al proveedor de IA}
+\label{sec:anonimizacion-llm}
+
+El prototipo utiliza la capa gratuita de la API de Gemini, cuyos términos de servicio permiten que el contenido enviado se use para mejorar los productos de Google. El módulo \texttt{backend/src/security/llmSanitizer.js} construye el contenido del \emph{prompt} a partir de una lista blanca de campos permitidos: tipo de recomendación, rubro, métricas numéricas y nombres de productos y variantes. Los nombres de clientes se reemplazan por el marcador \texttt{\{\{cliente\}\}} antes de la llamada a la API; el backend restaura el nombre real en el texto devuelto por Gemini antes de persistirlo. El módulo también elimina correos electrónicos, DNIs (secuencias de siete u ocho dígitos) y enlaces de cualquier texto de la tienda.
+
+\subsubsection{Mitigación de inyección de prompt}
+\label{sec:prompt-injection}
+
+Los nombres de productos, variantes y clientes que provienen de la tienda son datos no confiables que podrían contener instrucciones diseñadas para manipular el comportamiento del modelo de lenguaje. El prototipo aplica tres controles complementarios:
+
+\begin{enumerate}
+    \item \textbf{Separación de instrucciones y datos:} el \emph{system prompt} contiene exclusivamente las instrucciones para el modelo; la información de la recomendación viaja en el contenido del usuario delimitada por las etiquetas \texttt{<datos\_tienda>} y \texttt{</datos\_tienda>}. El \emph{system prompt} instruye explícitamente al modelo a tratar todo el contenido del bloque solo como datos y a ignorar cualquier pedido o enlace que aparezca en él.
+    \item \textbf{Sanitización de los textos de la tienda:} la función \texttt{sanitizeStoreText} normaliza cada texto antes de incluirlo en el bloque: elimina caracteres de control e invisibles (categorías Unicode $\{Cc\}$ y $\{Cf\}$, separadores de línea y párrafo), reemplaza los delimitadores del bloque (\texttt{<} y \texttt{>}) y los marcadores del sanitizador (\texttt{\{\{} y \texttt{\}\}}) para que ningún texto de la tienda pueda imitarlos, y aplica un límite de 120 caracteres por campo.
+    \item \textbf{Validación de la respuesta:} la función \texttt{validateOutput} verifica que el texto generado cumpla con criterios predefinidos: largo máximo por campo (\texttt{message}: 300 caracteres; \texttt{detail\_reason}: 1\,200), ausencia de URLs o dominios, y mención del objetivo de la recomendación. Una respuesta que no supera la validación se descarta y el sistema usa la plantilla de respaldo sin exponer el error al usuario.
+\end{enumerate}
+
+\subsubsection{Endurecimiento general}
+\label{sec:endurecimiento}
+
+El backend aplica encabezados de seguridad mediante \texttt{helmet}, con una política de \texttt{Content-Security-Policy} configurada para que la aplicación funcione dentro de los \emph{iframes} de Tiendanube y WordPress. El acceso desde otros orígenes queda restringido mediante CORS al origen del frontend, y un limitador de tasa (\texttt{express-rate-limit}) aplica umbrales más estrictos en los \emph{endpoints} de escritura y en el \emph{endpoint} de generación manual. La validación de entradas en todos los \emph{endpoints} se implementa con Zod: una solicitud con cuerpo inválido devuelve~400 con un mensaje descriptivo. Los registros de sistema omiten automáticamente los campos sensibles. Como limitación del prototipo, la gestión de secretos se realiza mediante variables de entorno sin un sistema de rotación automatizado; la incorporación de un servicio dedicado queda como trabajo futuro (RNF-18).
+
 \section{Validación del sistema}
 \label{sec:validacion}
 
@@ -364,7 +447,8 @@ Quedan excluidos de la medición de cobertura los siguientes archivos, por no co
 \subsection{Resultados de cobertura}
 \label{sec:resultados-cobertura}
 
-La Tabla~\ref{tab:resultados-cobertura} presenta los resultados de cobertura obtenidos para cada capa. \TODO{completar con los reportes de cobertura una vez ejecutadas las pruebas, e incluir el reporte como evidencia.}
+% VERIFICAR-COD: cobertura c8 — correr npm run test:coverage en backend y frontend; completar la tabla con los porcentajes reales e incluir el reporte como evidencia (Tabla~\ref{tab:resultados-cobertura}).
+La Tabla~\ref{tab:resultados-cobertura} presenta los resultados de cobertura obtenidos para cada capa.
 
 \begin{table}[h]
 \centering
