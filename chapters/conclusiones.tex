@@ -1,0 +1,98 @@
+\chapter{Conclusiones}
+\label{cha:conclusiones}
+
+Este capítulo contrasta el objetivo general y los objetivos específicos planteados en la Introducción con los resultados medidos sobre el prototipo, e indica para cada uno si se cumplió, si se cumplió en parte o si no se cumplió. A continuación, resume los aportes principales del trabajo, explicita sus limitaciones, incluido lo que el prototipo no llegó a implementar, y presenta las líneas de trabajo futuro que se desprenden de ellas.
+
+\section{Cumplimiento de los objetivos}
+\label{sec:conclusiones-objetivos}
+
+\subsection{Objetivos específicos}
+\label{sec:conclusiones-especificos}
+
+Cada objetivo específico de la Sección~\ref{sec:objetivos-especificos} incluye una cota numérica que el prototipo debía demostrar. La Tabla~\ref{tab:conclusiones-objetivos} compara cada cota con el valor obtenido.
+
+\begin{table}[!htbp]
+\centering
+\caption{Cumplimiento de los objetivos específicos}
+\label{tab:conclusiones-objetivos}
+\renewcommand{\arraystretch}{1.3}
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{|>{\centering\arraybackslash}m{0.6cm}|>{\raggedright\arraybackslash}m{4.4cm}|>{\raggedright\arraybackslash}m{5.4cm}|>{\raggedright\arraybackslash}m{2.6cm}|}
+\hline
+\textbf{N.º} & \textbf{Cota} & \textbf{Resultado} & \textbf{Estado} \\
+\hline
+1 & Análisis completo de una tienda en menos de 10 segundos sin el modelo de lenguaje; latencia del panel menor a 300 ms en el 95\% de las consultas & Entre 7,4 y 8,4 segundos (mediana), con un máximo de 9,2 segundos; percentil 95 de la latencia entre 204 y 236 ms & Cumplido \\
+\hline
+2 & WAPE inferior al 30\% sobre las ventas totales de cada tienda; silueta de al menos 0,4 & WAPE de 16,6\%, 28,1\% y 27,7\%; silueta de 0,662, 0,546 y 0,444 & Cumplido sobre el conjunto sintético \\
+\hline
+3 & 100\% de las recomendaciones con texto explicativo, aun sin el modelo de lenguaje & 178 de 178 recomendaciones con texto: 67 redactadas por el modelo y 111 por la plantilla de respaldo & Cumplido \\
+\hline
+4 & Cobertura de al menos el 85\% de las líneas de los módulos de análisis y de integración con WooCommerce; pruebas de punta a punta con las dos plataformas & 99,5\% de las líneas de esos módulos, con 344 pruebas que pasan; pruebas de punta a punta con la tienda de desarrollo de Tiendanube y con una tienda WooCommerce & Cumplido \\
+\hline
+\end{tabular}
+
+\smallskip
+\noindent\textit{Fuente: elaboración propia sobre la base de los resultados de la Sección~\ref{sec:evaluacion-modelos} y de la Sección~\ref{sec:resultados-cobertura}.}
+\end{table}
+% VERIFICAR-COD: cobertura c8 — los números del objetivo 4 (99,5% de líneas en los módulos de análisis y de WooCommerce, 344 pruebas) salen de docs/cobertura.md del repositorio del código; confirmar que coincidan con la Tabla de resultados de cobertura cuando se complete en R-D6 parte 2.
+
+El primer objetivo se cumple con margen en las dos cotas. El análisis completo de una tienda, que comprende el pronóstico, la segmentación y el motor de reglas, tardó entre 7,4 y 8,4 segundos sin la redacción del modelo de lenguaje y nunca superó los 9,2 segundos, y el 95\% de las consultas con las que el panel carga las recomendaciones se respondió en menos de 240 milisegundos (Tablas~\ref{tab:eval-pipeline} y~\ref{tab:eval-latencia}). Con la redacción de Gemini, el análisis tarda entre 41 y 63 segundos; ese tiempo no lo percibe el comerciante, porque el análisis se ejecuta en segundo plano después de cada sincronización. Ambas mediciones corresponden a la escala del conjunto sintético y a un backend ejecutado en una computadora personal, por lo que pueden diferir de las de un despliegue con más tiendas.
+
+El segundo objetivo se cumple en los términos en que se formuló, pero el resultado debe leerse junto con la comparación con las referencias. El WAPE sobre las ventas totales quedó por debajo del 30\% en las tres tiendas, y la silueta, por encima de 0,4 (Tablas~\ref{tab:eval-wape} y~\ref{tab:eval-silueta}). Sin embargo, solo en la tienda de gastronomía, de demanda alta y diaria, el modelo supera a las dos referencias ingenuas; en las de indumentaria y electrónica, de demanda intermitente, queda a la par de ellas, y por variante el error supera el 100\%. A su vez, la segmentación recupera los tres perfiles de lealtad que el generador asignó a los clientes. Ambas métricas se midieron sobre datos sintéticos, por lo que demuestran que los métodos funcionan sobre series y clientes con la estructura que el generador introdujo, y no que alcancen la misma precisión en una tienda real.
+
+El tercer objetivo se cumple: las 178 recomendaciones generadas en la medición de rendimiento contaron con su texto explicativo. La medición se realizó con la capa gratuita de la API de Gemini, que rechazó por exceso de cuota buena parte de las solicitudes, de modo que el resultado demuestra en condiciones reales el mecanismo de respaldo que el objetivo exigía: cuando el modelo no responde, la recomendación conserva su texto, generado por la plantilla. La priorización según los resultados anteriores, que el mismo objetivo menciona, funciona como se diseñó, aunque solo pudo verificarse sobre un historial simulado (Sección~\ref{sec:eval-bandit}).
+
+El cuarto objetivo se cumple para los módulos que define: los de análisis (pronóstico, segmentación, motor de reglas, evaluación del impacto, bandit y tipo de cambio) y los de integración con WooCommerce alcanzan el 99,5\% de cobertura de líneas. La sincronización inicial, las recomendaciones, los \emph{webhooks} y la aplicación dentro del panel se probaron de punta a punta con una tienda WooCommerce, y la carga de la aplicación dentro del panel con la tienda de desarrollo de Tiendanube. La meta más amplia que fija el RNF-20, en cambio, no se alcanza en todo el sistema: contando todos los archivos del backend, la cobertura de líneas es del 83,1\%, porque el arranque del servidor y del proceso en segundo plano, las rutas de autenticación y de \emph{webhooks} de Tiendanube y las escrituras de la sincronización requieren una base de datos o una tienda reales y se validaron de punta a punta, sin pruebas automatizadas.
+% VERIFICAR-COD: cobertura c8 — completar la cobertura del frontend (npm run test:coverage en frontend) y confirmar el 83,1% del backend completo contra la Tabla de resultados de cobertura.
+
+\subsection{Objetivo general}
+\label{sec:conclusiones-general}
+
+El objetivo general planteaba desarrollar un prototipo funcional que transforme los datos operativos de tiendas de comercio electrónico en recomendaciones accionables para emprendedores, con el fin de mejorar su toma de decisiones comerciales. El prototipo cumple la primera parte de ese objetivo: se conecta a tiendas de Tiendanube y de WooCommerce, sincroniza sus productos, variantes, clientes y órdenes, y produce recomendaciones concretas, adaptadas al rubro, priorizadas y explicadas en lenguaje natural, que el comerciante consulta dentro del mismo panel de administración en el que opera, y cuyo resultado el sistema evalúa para ajustar la priorización siguiente. Los cuatro objetivos específicos, que desagregan esa capacidad, se cumplen.
+% VERIFICAR-COD: R5 — si el despliegue en Railway queda verificado, agregar aquí que el prototipo se encuentra desplegado y accesible desde las dos plataformas, con la URL de producción.
+
+La segunda parte, que las recomendaciones mejoren la toma de decisiones de los emprendedores, no puede afirmarse con la evidencia disponible. Demostrarla requiere que comerciantes reales usen el prototipo durante varias semanas y que se observe qué recomendaciones ejecutan y con qué resultado, y ninguna tienda real operó con el prototipo durante el proyecto. Por ese motivo, el objetivo general se considera parcialmente cumplido: el trabajo demuestra que es técnicamente viable producir recomendaciones accionables a partir de los datos de una tienda, pero no todavía que esas recomendaciones mejoren las decisiones de quienes las reciben.
+
+\section{Aportes principales}
+\label{sec:conclusiones-aportes}
+
+El primer aporte es la arquitectura del motor de recomendaciones como un sistema híbrido en tres capas (Sección~\ref{sec:motor-ia}): modelos predictivos de pronóstico de demanda y de segmentación de clientes, reglas con umbrales diferenciados por rubro y un bandit con muestreo de Thompson que prioriza los tipos de recomendación según sus resultados. El modelo de lenguaje se limita a redactar el texto de cada recomendación a partir de los números que calcularon las capas anteriores, sin intervenir en qué se recomienda ni en qué orden. Esta separación hace que cada recomendación sea explicable y reproducible a partir de los datos que la originaron, y que una falla del proveedor del modelo de lenguaje degrade solo la redacción y no el análisis.
+
+El segundo aporte es el ciclo de retroalimentación cerrado, ausente en las alternativas relevadas en el Estado del Arte. El sistema registra la ejecución de cada recomendación, ya sea porque el comerciante la confirma o porque la infiere a partir de los cambios de stock y de precio de la tienda, compara el resultado esperado con el real una vez transcurrida la ventana de evaluación y usa ese resultado para actualizar la priorización. La comparación se presenta al comerciante como una correlación indicativa y no como una prueba de causalidad, con lo que el sistema explicita el alcance de lo que mide.
+
+El tercer aporte es la arquitectura multiplataforma (Sección~\ref{sec:multiplataforma}). Un modelo de datos canónico y una interfaz de adaptadores permitieron integrar WooCommerce como segunda plataforma sin modificar el núcleo de análisis, con la misma aplicación dentro del panel de cada plataforma. Esta arquitectura responde a la dependencia de un único proveedor de datos que el análisis estratégico identificó como la principal fuente de riesgo del proyecto, tanto en la matriz FODA cruzado como en el poder de negociación de los proveedores del modelo de Porter, y reduce la incorporación de nuevas plataformas al desarrollo de su adaptador.
+
+El cuarto aporte es el tratamiento de la seguridad y la privacidad como parte del diseño (Sección~\ref{sec:seguridad}): el cifrado con AES-256-GCM de los tokens y credenciales almacenados, el aislamiento estricto entre tiendas, la verificación de la firma de los \emph{webhooks}, la implementación de los derechos de supresión y de acceso previstos en la Ley~25.326 mediante los \emph{webhooks} de privacidad, la anonimización de los datos que se envían al proveedor del modelo de lenguaje y las mitigaciones frente a la inyección de instrucciones a través de los textos de la tienda.
+
+A estos aportes técnicos se suma la evaluación de los modelos con una declaración explícita de sus límites (Sección~\ref{sec:evaluacion-modelos}): el registro del origen de los datos de cada tienda permite informar en todo momento qué proporción de los datos es sintética y calcular las métricas solo sobre tiendas reales cuando existan. En el plano del negocio, el análisis de viabilidad indica que el servicio es sostenible en los escenarios base y optimista a partir de 55 suscriptores pagos (Sección~\ref{sec:viabilidad-conclusion}), con la adopción y el precio como variables críticas.
+
+\section{Limitaciones}
+\label{sec:conclusiones-limitaciones}
+
+Las conclusiones anteriores están sujetas a las siguientes limitaciones:
+
+\begin{itemize}
+    \item \textbf{Datos sintéticos.} El 100\% de las órdenes con las que se evaluó el prototipo es sintético. Muchos parámetros del generador son supuestos de diseño, fijados para que aparezcan los escenarios de las historias de usuario, y las métricas se miden sobre datos que provienen de los mismos supuestos que los modelos aprenden (Sección~\ref{sec:eval-limitaciones}). La tienda de desarrollo de Tiendanube y la tienda WooCommerce de prueba validan la integración técnica, pero no el comportamiento del motor con ventas reales.
+    \item \textbf{Bandit sin uso real.} El bandit aprendió de un historial simulado cuyas tasas de éxito fijó el equipo, por lo que demuestra el mecanismo de actualización y de priorización, pero no qué recomendaciones resultan exitosas en tiendas reales. Las distribuciones previas por rubro incluyen ese historial, y la ejecución inferida del historial se asignó al azar, por lo que tampoco pudo evaluarse la precisión de la inferencia.
+    \item \textbf{Muestra del user research.} Las cinco entrevistas surgieron de un muestreo por conveniencia, no incluyen el rubro electrónica y una de ellas, la de E01, está atravesada por un vínculo personal con una de las autoras (Sección~\ref{sec:metodologia-entrevistas}). Sus hallazgos, incluidos los indicios de disposición a pagar, son cualitativos y no generalizables. La sesión de brainstorming validó el diseño desde perfiles técnicos y de producto, no desde emprendedores del segmento.
+    \item \textbf{Escala y entorno de medición.} Los tiempos se midieron con tres tiendas de entre 17 y 32 variantes con ventas, desde una computadora personal. La mayor parte del tiempo del motor corresponde a escrituras individuales en la base de datos, y la redacción con Gemini se midió en la capa gratuita, que limitó la cantidad de textos redactados por el modelo.
+    \item \textbf{Cobertura de pruebas fuera de los módulos de análisis.} El backend completo alcanza el 83,1\% de cobertura de líneas, por debajo de la meta del RNF-20; la sincronización con Tiendanube, el arranque de los procesos y las rutas de autenticación se validaron solo de punta a punta.
+    \item \textbf{Funcionalidades no implementadas.} La vista independiente del ranking de productos más vendidos (HU-04) no se incorporó a la interfaz. La acción de cada recomendación lleva al comerciante a la sección correspondiente del panel, pero no ejecuta el cambio en la plataforma. La confirmación de la utilidad de una recomendación se infiere, sin una consulta directa al comerciante. La gestión de secretos se realiza mediante variables de entorno, sin rotación automatizada. En WooCommerce, cada tienda se aloja en el servidor de su comerciante, que el backend debe poder alcanzar.
+    \item \textbf{Supuestos del análisis económico.} Los parámetros de adopción y de bajas de los escenarios surgen de indicios cualitativos y no de una medición, y los flujos se calculan antes de impuestos (Sección~\ref{sec:viabilidad-conclusion}).
+\end{itemize}
+% VERIFICAR-COD: cobertura c8 — agregar la cobertura del frontend si queda por debajo del 85%.
+% VERIFICAR-COD: R5 — si el despliegue en Railway no se completa, agregar como limitación que el prototipo solo se ejecutó en entornos de desarrollo.
+
+\section{Trabajo futuro}
+\label{sec:conclusiones-futuro}
+
+Las limitaciones anteriores definen las líneas de trabajo futuro, ordenadas según su relevancia para validar la propuesta:
+
+\begin{enumerate}
+    \item \textbf{Validación con tiendas reales.} Conectar tiendas de emprendedores que operen con el prototipo durante varias semanas, con su consentimiento, y aplicar sobre ellas el protocolo de la Sección~\ref{sec:eval-limitaciones}: medir el error del pronóstico frente a las referencias y la silueta de la segmentación, medir qué proporción de las recomendaciones se ejecuta y con qué impacto, contrastar la inferencia de la ejecución con la confirmación del comerciante y recalcular las distribuciones previas del bandit sin el historial simulado. Con los mismos usuarios, validar el precio y la conversión del período de prueba que el análisis económico deja como supuestos.
+    \item \textbf{User research ampliado.} Repetir las entrevistas con una muestra mayor, convocada de forma abierta y que incluya el rubro electrónica, y realizar una sesión de validación con emprendedores del segmento.
+    \item \textbf{Nuevas plataformas y modos de uso.} Integrar Shopify mediante un nuevo adaptador, ofrecer un modo de uso independiente de las plataformas y publicar la aplicación en la tienda de aplicaciones de Tiendanube y en el Woo Marketplace.
+    \item \textbf{Infraestructura.} Migrar la infraestructura a AWS, agrupar las escrituras del motor de reglas para reducir su tiempo de ejecución, redactar los textos con una cuenta paga del proveedor del modelo de lenguaje y gestionar los secretos con un servicio dedicado con rotación automatizada.
+    \item \textbf{Funcionalidades.} Ejecutar la acción de una recomendación con un clic, mediante escrituras en la API de la plataforma; incorporar la vista del ranking de productos más vendidos (HU-04); y desarrollar las ideas del brainstorming clasificadas como futuras (Sección~\ref{sec:brainstorming-resultados}): la consulta directa sobre la utilidad de una recomendación, la separación visual entre alertas urgentes y sugerencias estratégicas, el impacto acumulado de las recomendaciones ejecutadas, un reporte mensual con un resumen semanal de recomendaciones y el seguimiento de acciones realizadas fuera de la plataforma, como las publicaciones en redes sociales.
+\end{enumerate}
