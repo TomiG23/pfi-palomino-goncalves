@@ -7,6 +7,7 @@ Los emprendedores que venden a través de una tienda en línea disponen de un vo
 Desarrollar un prototipo funcional que permita transformar datos operativos de tiendas de e-commerce en recomendaciones accionables, orientado a emprendedores que no cuentan con recursos para contratar analistas de negocio, con el fin de mejorar la toma de decisiones comerciales en la Ciudad Autónoma de Buenos Aires durante el año 2026.
 
 \section{Objetivos Específicos}
+\label{sec:objetivos-especificos}
 
 El presente proyecto se plantea los siguientes objetivos específicos:
 
@@ -21,6 +22,7 @@ El presente proyecto se plantea los siguientes objetivos específicos:
 \end{enumerate}
 
 \section{Alcance}
+\label{sec:alcance}
 
 El proyecto contempla el diseño y desarrollo de un prototipo funcional con cobertura geográfica limitada a la Ciudad Autónoma de Buenos Aires, Argentina, orientado a emprendedores. A los fines de este trabajo, se denomina emprendedores a los comercios de pequeña escala que reúnen tres condiciones: un tamaño de menos de diez personas ocupadas, incluidos los emprendimientos unipersonales, umbral con el que la Comisión Europea define a la microempresa \parencite{ComisionEuropea2003}, y la ausencia de un área o una persona dedicada al análisis de datos; la venta en línea a través de una tienda propia en Tiendanube o en WooCommerce, de forma exclusiva o junto con otros canales, como las redes sociales o un local físico; y la pertenencia a alguno de los tres rubros sobre los que el motor de análisis aplica reglas diferenciadas: gastronomía, indumentaria o electrónica. Los comercios de otros rubros pueden utilizar el prototipo, pero reciben recomendaciones con parámetros genéricos.
 
@@ -53,6 +55,7 @@ El foco estará en demostrar la viabilidad de generar valor comercial dentro de 
     \item Carga manual de datos mediante archivos CSV.
 
     \item Despliegue productivo a escala industrial: el sistema opera como un prototipo funcional. El despliegue del prototipo en un proveedor de nube y su posterior migración a AWS quedan como trabajo futuro.
+    % VERIFICAR-COD: R5 — si el prototipo queda desplegado en Railway, reescribir: el despliegue en un proveedor de nube deja de ser trabajo futuro y solo la migración a AWS lo sigue siendo.
 
     \item Procesamiento de datos en tiempo real: los datos se procesan mediante trabajos asincrónicos en segundo plano (sincronización, pronóstico y motor de análisis), y no como un flujo continuo.
 
