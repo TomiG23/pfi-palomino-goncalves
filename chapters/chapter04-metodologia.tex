@@ -403,9 +403,9 @@ Las pruebas unitarias verifican de forma aislada las unidades de código con ló
 \subsection{Pruebas del backend}
 \label{sec:pruebas-backend}
 
-Las pruebas del backend, desarrollado en Node.js con Express bajo el sistema de módulos CommonJS (Sección~\ref{sec:backend-node-express}), se implementan con Jest como framework de pruebas y con Supertest para ejercitar los endpoints de la API REST mediante solicitudes HTTP, sin necesidad de levantar el servidor en un puerto. La cobertura se mide con istanbul, el proveedor de cobertura por defecto de Jest.
+Las pruebas del backend, desarrollado en Node.js con Express bajo el sistema de módulos CommonJS (Sección~\ref{sec:backend-node-express}), se implementan con el ejecutor de pruebas integrado en Node.js (\texttt{node:test}) y las aserciones de \texttt{node:assert}, sin dependencias de prueba externas. Las rutas de la API REST se prueban montándolas sobre una aplicación Express de prueba, con el mismo procesamiento del cuerpo de las solicitudes que el servidor real; la aplicación escucha en un puerto asignado por el sistema operativo y recibe solicitudes HTTP reales mediante \texttt{fetch}, de modo que se ejercitan juntos las rutas, los \emph{middlewares} de autenticación y de verificación de firmas, y los servicios. La cobertura se mide con c8, que utiliza la cobertura nativa del motor V8.
 
-Las dependencias externas se reemplazan por \emph{mocks}: el cliente de Prisma, de modo que las pruebas no requieran una base de datos PostgreSQL en ejecución; la API de Tiendanube, consumida mediante axios; y la API del proveedor de inteligencia artificial (Sección~\ref{sec:generacion-mensajes-ia}). De este modo, las pruebas resultan deterministas y no dependen de la disponibilidad ni del costo de servicios de terceros.
+Las dependencias externas se reemplazan por \emph{mocks} de dos formas. Los servicios que reciben la base de datos como parámetro (pronóstico, segmentación, evaluación del impacto y bandit) se prueban con una base falsa en memoria. Los módulos que cargan directamente el cliente de Prisma, el cliente HTTP de las plataformas, el cliente del proveedor de inteligencia artificial (Sección~\ref{sec:generacion-mensajes-ia}) o la cola de trabajos se reemplazan antes de cargar el código bajo prueba, en la caché de módulos de Node.js o mediante \texttt{mock.module}. Como resguardo, antes de cada archivo de prueba la conexión a la base se redirige a una dirección inexistente, de modo que ninguna prueba pueda llegar a la base de datos compartida si un reemplazo no se aplica. De este modo, las pruebas resultan deterministas y no dependen de la disponibilidad ni del costo de servicios de terceros.
 
 \subsection{Pruebas del frontend}
 \label{sec:pruebas-frontend}
@@ -417,20 +417,20 @@ El SDK Nexo y las llamadas al backend se simulan: en ejecución, Nexo depende de
 \subsection{Meta de cobertura}
 \label{sec:meta-cobertura}
 
-Se establece como meta una cobertura mínima del 85\% en cada una de las cuatro métricas habituales (líneas, sentencias, funciones y ramas), considerando de forma conjunta las pruebas unitarias y de integración, y medida por separado para el backend y para el frontend. El umbral se configura como \emph{threshold} de la herramienta correspondiente (\texttt{coverageThreshold} en Jest y \texttt{coverage.thresholds} en Vitest), de modo que la ejecución de las pruebas falla si alguna de las métricas queda por debajo del 85\%. La Tabla~\ref{tab:herramientas-prueba} resume las herramientas y la meta definidas para cada capa.
+La meta, definida en el RNF-20, es una cobertura mínima del 85\% de las líneas, medida por separado para el backend y para el frontend y considerando de forma conjunta las pruebas unitarias y de integración. Los umbrales configurados en las herramientas cumplen otra función: impedir retrocesos. En el backend, c8 se ejecuta con verificación de cobertura y umbrales de 83\% de líneas y sentencias, 89\% de ramas y 86\% de funciones, fijados en el nivel alcanzado, de modo que la ejecución falla si la cobertura baja de ese nivel. En el frontend, Vitest exige el 85\% de líneas, ramas y funciones a la capa de servicios (\texttt{src/services}), que concentra la comunicación con el backend. La Tabla~\ref{tab:herramientas-prueba} resume las herramientas y el umbral configurado en cada capa.
 
 \begin{table}[h]
 \centering
-\caption{Herramientas de prueba y meta de cobertura por capa}
+\caption{Herramientas de prueba y umbral de cobertura por capa}
 \label{tab:herramientas-prueba}
 \renewcommand{\arraystretch}{1.3}
-\begin{tabular}{|m{2.1cm}|m{4.3cm}|m{4.4cm}|m{3.8cm}|}
+\begin{tabular}{|m{2.1cm}|m{4.3cm}|m{3.4cm}|m{4.8cm}|}
 \hline
-\textbf{Capa} & \textbf{Herramientas de prueba} & \textbf{Proveedor de cobertura} & \textbf{Meta} \\
+\textbf{Capa} & \textbf{Herramientas de prueba} & \textbf{Proveedor de cobertura} & \textbf{Umbral configurado} \\
 \hline
-Backend & Jest, Supertest & istanbul (proveedor por defecto de Jest) & 85\% en líneas, sentencias, funciones y ramas \\
+Backend & \texttt{node:test}, \texttt{node:assert}, aplicación Express de prueba con \texttt{fetch} & c8 (cobertura nativa de V8) & 83\% en líneas y sentencias, 89\% en ramas y 86\% en funciones, sobre todo \texttt{src/} \\
 \hline
-Frontend & Vitest, React Testing Library, jsdom & \texttt{@vitest/} \texttt{coverage-v8} & 85\% en líneas, sentencias, funciones y ramas \\
+Frontend & Vitest, React Testing Library, jsdom & \texttt{@vitest/} \texttt{coverage-v8} & 85\% en líneas, ramas y funciones de \texttt{src/services} \\
 \hline
 \end{tabular}
 \end{table}
@@ -441,17 +441,18 @@ Frontend & Vitest, React Testing Library, jsdom & \texttt{@vitest/} \texttt{cove
 Quedan excluidos de la medición de cobertura los siguientes archivos, por no contener lógica propia del sistema o por no formar parte del sistema en ejecución:
 
 \begin{itemize}
-    \item \textbf{Punto de entrada del servidor y \texttt{main.jsx}:} se limitan a inicializar la aplicación, montando el servidor de Express o el árbol de componentes de React, sin lógica de negocio propia.
-    \item \textbf{Cliente de Prisma y \texttt{nexoClient.js}:} son \emph{wrappers} que instancian el cliente de una biblioteca externa, sin lógica propia; su comportamiento se reemplaza por \emph{mocks} en las pruebas.
-    \item \textbf{Migraciones de Prisma:} son código generado automáticamente a partir del esquema de datos.
-    \item \textbf{Script de seed y carpeta \texttt{scripts/}:} son herramientas de desarrollo que no forman parte del sistema en ejecución.
+    \item \textbf{Clientes de las API externas del backend} (\texttt{tiendanube/api.js}, \texttt{tiendanube/auth.js} y \texttt{woocommerce/api.js}): se limitan a realizar las llamadas HTTP a las plataformas y se validaron de punta a punta con las tiendas de desarrollo.
+    \item \textbf{\texttt{main.jsx}:} se limita a montar el árbol de componentes de React, sin lógica propia.
+    \item \textbf{Migraciones y seed de Prisma, y carpeta \texttt{scripts/}:} son código generado o herramientas de desarrollo que no forman parte del sistema en ejecución.
     \item \textbf{Archivos de prueba y \emph{mocks}:} no constituyen código de producción.
 \end{itemize}
+
+El resto del código sí se mide, aunque ninguna prueba lo cargue: en particular, el punto de entrada del servidor, el proceso en segundo plano y el cliente de Prisma cuentan en el total del backend.
 
 \subsection{Resultados de cobertura}
 \label{sec:resultados-cobertura}
 
-La Tabla~\ref{tab:resultados-cobertura} presenta los resultados de cobertura obtenidos para cada capa con la herramienta c8 (\texttt{all: true}).
+La Tabla~\ref{tab:resultados-cobertura} presenta los resultados de cobertura obtenidos para cada capa: en el backend, con c8 configurado para contar todos los archivos de \texttt{src/} aunque ninguna prueba los cargue (\texttt{all: true}); en el frontend, con \texttt{@vitest/coverage-v8} sobre todos los archivos de \texttt{src/}. Ambas mediciones se realizaron el 19/10/2026 sobre la rama principal del código, con todas las pruebas aprobadas.
 
 \begin{table}[h]
 \centering
@@ -462,13 +463,13 @@ La Tabla~\ref{tab:resultados-cobertura} presenta los resultados de cobertura obt
 \hline
 \textbf{Capa} & \textbf{Líneas} & \textbf{Funciones} & \textbf{Ramas} \\
 \hline
-Backend (344 pruebas) & 83\% & 87\% & 89\% \\
+Backend (350 pruebas) & 83,2\% & 86,7\% & 89,6\% \\
 \hline
-Frontend (53 pruebas) & 70\% & n/d & n/d \\
+Frontend (53 pruebas) & 68,0\% & 59,7\% & 60,8\% \\
 \hline
 \end{tabular}
 \end{table}
 
-La meta establecida en el RNF-20 es del 85\% de cobertura de líneas. El backend queda a 2 puntos de la meta: los módulos de análisis y de integración con WooCommerce superan el 99,5\%, pero el punto de entrada del servidor (\texttt{index.js}), el proceso en segundo plano (\texttt{worker.js}) y las rutinas de sincronización (\texttt{syncOrder.js}, 9\%; \texttt{syncCustomer.js}, 17\%) presentan baja cobertura porque su ejecución requiere una base de datos o una tienda real, y se validaron de extremo a extremo en lugar de con pruebas unitarias automatizadas. El frontend alcanza el 70\%, distante de la meta, dado que la mayor parte de la superficie de la interfaz no cuenta con pruebas unitarias. Ambos valores constituyen una limitación del prototipo; alcanzar la meta completa se deja como trabajo futuro.
+La meta establecida en el RNF-20 es del 85\% de cobertura de líneas. El backend queda a 1,8 puntos de la meta: los módulos de análisis y de integración con WooCommerce superan el 99,5\%, pero el punto de entrada del servidor (\texttt{index.js}), el proceso en segundo plano (\texttt{worker.js}) y las rutinas de sincronización (\texttt{syncOrder.js}, 9\%; \texttt{syncCustomer.js}, 17\%) presentan baja cobertura porque su ejecución requiere una base de datos o una tienda real, y se validaron de extremo a extremo en lugar de con pruebas unitarias automatizadas. El frontend alcanza el 68,0\%, distante de la meta: la capa de servicios cumple su umbral del 85\%, pero la mayor parte de la superficie de la interfaz no cuenta con pruebas unitarias. Ambos valores constituyen una limitación del prototipo; alcanzar la meta completa se deja como trabajo futuro.
 
 \input{chapters/evaluacion-modelos}
