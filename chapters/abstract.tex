@@ -1,3 +1,13 @@
 \chapter*{Abstract}
+\addcontentsline{toc}{chapter}{Abstract}
 
-Completar. Recordar que el abstract contiene lo mismo que el resumen, pero en inglés.
+Argentine e-commerce is experiencing sustained growth, yet small-scale online store owners lack analytical tools that are simultaneously accessible, integrated, and prescriptive. Available solutions are limited to descriptive reports that record past events without indicating what action to take; international platforms with prescriptive capabilities present cost, language, and market-fit barriers that make them inaccessible to this segment.
+
+This work describes the design, implementation, and evaluation of Decidata, a prototype system for actionable recommendations in e-commerce stores. The system integrates natively into the Tiendanube store administration panel and, through a multi-platform adapter, into WooCommerce as well. Based on each store's historical sales data, the analysis engine applies simple exponential smoothing and Holt-Winters for demand forecasting, RFM customer segmentation with k-means clustering, and a multi-armed bandit with Thompson Sampling to select and prioritize the recommendations with the highest expected impact. Recommendations are phrased in natural language using Google's Gemini 1.5 Flash model and are differentiated according to each store's commercial segment: gastronomy, clothing, or electronics.
+
+User research was conducted through five in-depth interviews with e-commerce entrepreneurs and a brainstorming session with participants from technical and product backgrounds. The process followed a Design Thinking methodology to translate the identified needs into user stories and formal requirements.
+
+The prototype includes 344 automated tests on the backend (83\% line coverage) and 53 tests on the frontend (70\% line coverage), and was evaluated using synthetic data generated for three demonstration stores, one per commercial segment. A strategic analysis and an economic-financial viability study complete the proposal, validating the existence of a market gap and indicators of willingness to pay in the target segment.
+
+\bigskip
+\noindent\textbf{Keywords:} e-commerce, prescriptive recommendations, demand forecasting, customer segmentation, multi-armed bandit, Tiendanube, WooCommerce, artificial intelligence.

@@ -1,33 +1,13 @@
 \chapter*{Resumen}
+\addcontentsline{toc}{chapter}{Resumen}
 
-%% Si se quiere enviar este resumen en una p\'agina a alguien, descomentar esto.
+El comercio electrónico argentino atraviesa un crecimiento sostenido, pero los emprendedores que operan tiendas en línea de pequeña escala carecen de herramientas analíticas que sean simultáneamente accesibles, integradas y prescriptivas. Las soluciones disponibles se limitan a reportes descriptivos que registran lo ocurrido sin indicar qué acción conviene tomar; las plataformas internacionales con capacidades prescriptivas presentan barreras de costo, idioma y adecuación al mercado local que las vuelven inaccesibles para este segmento.
 
-%\begin{center}
-%\textbf{\large Universidad Argentina De la Empresa}
+El presente trabajo describe el diseño, la implementación y la evaluación de Decidata, un prototipo de sistema de recomendaciones accionables para tiendas de e-commerce. El sistema se integra de forma nativa en el panel de administración de Tiendanube y, mediante un adaptador multiplataforma, también en WooCommerce. A partir de los datos históricos de ventas de cada tienda, el motor de análisis aplica suavizado exponencial simple y Holt-Winters para el pronóstico de demanda, segmentación de clientes mediante RFM y k-means, y un bandit multi-brazo con Thompson Sampling para seleccionar y priorizar las recomendaciones de mayor impacto esperado. Las recomendaciones se redactan en lenguaje natural mediante el modelo Gemini 1.5 Flash de Google y se diferencian según el rubro comercial de la tienda: gastronomía, indumentaria o electrónica.
 
-%\textbf{Facultad de Ingenier\'{\i}a y Ciencias Exactas}
+La investigación de usuarios se realizó mediante cinco entrevistas en profundidad con emprendedores de comercio electrónico y una sesión de brainstorming con participantes técnicos y de producto. El proceso siguió una metodología de Design Thinking para traducir las necesidades relevadas en historias de usuario y requerimientos formales.
 
-%\textbf{Departamento de Tecnolog\'{\i}a Inform\'atica}
+El prototipo cuenta con 344 pruebas automatizadas en el backend (83\% de cobertura de líneas) y 53 pruebas en el frontend (70\% de cobertura), y fue evaluado con datos sintéticos generados para tres tiendas de demostración, una por rubro. El análisis estratégico y de viabilidad económico-financiera completan la propuesta, validando la existencia de una brecha de mercado y de indicios de disposición a pagar en el segmento objetivo.
 
-%\end{center}
-
-%\begin{center}
-%\large Ingenier\'{\i}a en Inform\'atica
-%\end{center}
-
-%\begin{center}
-%\textbf{\large Título de la PFI}
-%\end{center}
-
-%\begin{center}
-%Apellido, Nombres
-%Apellido, Nombres
-%\end{center}
-
-%\noindent 
-Acá va el resumen. \Fermat{He encontrado una demostración absolutamente maravillosa, pero el margen de esta hoja es demasiado estrecho para incluirla}
-
-Con el siguiente comando se imprime el interlineado en el documento pdf. \\
-Interlineado simple: 12pt.\\
-Interlineado esperado: 18pt.\\
-Interlineado exacto de este documento: \the\baselineskip.
+\bigskip
+\noindent\textbf{Palabras clave:} comercio electrónico, recomendaciones prescriptivas, pronóstico de demanda, segmentación de clientes, bandit multi-brazo, Tiendanube, WooCommerce, inteligencia artificial.
