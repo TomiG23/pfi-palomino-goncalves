@@ -8,7 +8,7 @@
 
 | Archivo | Contenido |
 |---|---|
-| `cover/284ef8e2-6978-41c9-868c-e8f23e315f9b.pdf` | Carátula oficial UADE (incluida con `\includepdf`; no editable como `.tex`) |
+| `cover/caratula_nueva_Tesis.pdf` | Carátula oficial UADE (incluida con `\includepdf`; no editable como `.tex`) |
 | `chapters/title.tex` | Página de título interna: título, autores, tutora, año, logo UADE |
 | `chapters/summary.tex` | Resumen en español (`\chapter*{Resumen}`) |
 | `chapters/abstract.tex` | Abstract en inglés (`\chapter*{Abstract}`) |
