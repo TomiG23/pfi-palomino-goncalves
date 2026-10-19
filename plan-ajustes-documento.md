@@ -2,6 +2,95 @@
 
 ---
 
+## Estado al 18/10, cierre del día
+
+### Rangos de página del PDF (195 pp.)
+
+| Sección | Páginas |
+|---------|---------|
+| Resumen | 1 |
+| Abstract | 2 |
+| Agradecimientos | 3 |
+| Índice / Listas figuras y tablas | 4–10 |
+| Cap. 1 Introducción | 11–14 |
+| Cap. 2 Antecedentes | 15–31 |
+| Cap. 3 Análisis Estratégico | 32–58 |
+| Cap. 4 Desarrollo del negocio | 59–67 |
+| Cap. 5 Requerimientos | 68–98 |
+| Cap. 6 Metodología de desarrollo | 99–143 |
+| Cap. 7 Conclusiones | 144–148 |
+| Bibliografía | 149–153 |
+| Anexo A Cronograma | 155–156 |
+| Anexo B Delfina Fernández | 157–165 |
+| Anexo C Morena Cejas | 166–172 |
+| Anexo D Pablo Terrera | 173–179 |
+| Anexo E Julián Fabbi | 180–184 |
+| Anexo F Shakira | 185–189 |
+| Anexo G Brainstorming | 190–195 |
+
+Sin duplicados: cada archivo incluido exactamente una vez.
+`chapter02.tex` y `chapter03.tex` (plantillas vacías) existen en disco pero no están enganchados a `main.tex`.
+
+### Bloques de Romi: resumen de estado
+
+| Bloque | Descripción | Estado | Último commit |
+|--------|-------------|--------|---------------|
+| R-D1 | Portada, títulos, estructura, listas de figuras/tablas | Cerrado | `b677993` y previos |
+| R-D1b | Antecedentes separados (chapter01-marco + chapter01-estado) | Cerrado | `04897c3` |
+| R-D2 | Estado del Arte: Océano Azul, Curva de Valor, ERIC, conclusión | Cerrado | `e1e7833` |
+| R-D3 | Brainstorming: guía, fotos, sesión 10/10 como validación | Cerrado | `94610a9` |
+| R-D4 | Negocio: Business Model Canvas y marca Decidata | Cerrado | `eab0d58` |
+| R-D5 | RNF afirmativos, renumerados (13→10, +RNF 13–20), alcance sin ref rota | Cerrado | `e0c407a` |
+| R-D6 Parte 1 | Metodología, seguridad, Nimbus, ERD texto, Gemini config, ciclo de vida | Cerrado | `a57ef4a` |
+| R-D6 Parte 2 | Cobertura real c8 (C-08/A-7): tabla, limitación y conclusiones | Cerrado | `4fbecc4` |
+| R-D6 Parte 2 | Infraestructura Railway (A-3), cifrado en prod (C-11) | **Pendiente** — requiere despliegue en Railway (R5) | — |
+| R-D7 | Pasada final: enganche de capítulos, PyME→emprendedores, entrevistas con nombres reales, estructura, resumen, abstract | Cerrado | `72fd518` |
+
+### Bloques de Tomi: resumen de estado
+
+| Bloque | Estado | Último commit |
+|--------|--------|---------------|
+| T-D6 Conclusiones | Cerrado | `0740674` (merge `53183fb`) |
+
+### Marcas pendientes (`VERIFICAR-COD` y `TODO`)
+
+| Archivo | Línea | Tipo | Qué falta | Depende de |
+|---------|-------|------|-----------|------------|
+| chapter00.tex | 59 | `VERIFICAR-COD: R5` | Si Railway queda desplegado, reescribir que despliegue ya no es trabajo futuro | Despliegue en producción |
+| chapter04-metodologia.tex | 150 | `VERIFICAR-COD` | Regenerar `erd_diagram.png` con tablas nuevas del schema.prisma | Tarea manual (prisma-erd-generator) |
+| chapter04-metodologia.tex | 243 | `VERIFICAR-COD` | Precio actualizado de `gemini-3.5-flash-lite` con URL y fecha de consulta | Dato externo (Google AI Studio) |
+| chapter04-metodologia.tex | 332 | `VERIFICAR-COD: R5` | URL de producción Railway, servicios activos (api, worker, frontend) | Despliegue en producción |
+| chapter04-metodologia.tex | 348 | `VERIFICAR-COD: R5` | Verificar `TOKEN_ENCRYPTION_KEY` cargada en Railway y cifrado funciona en prod | Despliegue en producción |
+| conclusiones.tex | 52 | `VERIFICAR-COD: R5` | Si Railway desplegado: agregar URL productiva y servicios activos | Despliegue en producción |
+| conclusiones.tex | 83 | `VERIFICAR-COD: R5` | Si Railway **no** desplegado: agregar como limitación | Despliegue en producción |
+| negocio-modelo.tex | 69 | `TODO-LOGO` | Insertar logo de Decidata cuando esté disponible | Tarea manual (diseño externo) |
+| chapter05-requerimientos.tex | 908 | `TODO` | Captura: ejecución inferida | Captura de pantalla pendiente |
+| chapter05-requerimientos.tex | 915 | `TODO` | Captura: comparación esperado vs. real | Captura de pantalla pendiente |
+| chapter05-requerimientos.tex | 922 | `TODO` | Captura: preparación anticipada | Captura de pantalla pendiente |
+| chapter05-requerimientos.tex | 929 | `TODO` | Captura: fecha clave | Captura de pantalla pendiente |
+| chapter05-requerimientos.tex | 936 | `TODO` | Captura: app en WordPress/WooCommerce | Captura de pantalla pendiente |
+
+### Tareas manuales (fuera de Claude Code)
+
+1. **Logo Decidata** — diseñar e insertar en `negocio-modelo.tex:69` (reemplazar `TODO-LOGO`).
+2. **Carátula** — regenerar `cover/` con el título nuevo y sin datos de la tutora (N-6). Verificar que el `\includepdf` de `main.tex` apunte al PDF correcto.
+3. **Diagrama entidad-relación** — correr `prisma-erd-generator` con el `schema.prisma` actual; exportar como `images/erd_diagram.png`. Tablas que deben aparecer: `VariantSnapshot`, `DemandForecast`, `ForecastRun`, `CustomerSegment`, `SegmentationRun`, `BanditArm`, `BanditArmHistory`, `RubroPrior`, `PrivacyRequest`; campos WooCommerce en `Store`. Eliminar `% VERIFICAR-COD` de `chapter04-metodologia.tex:150`.
+4. **Precio de Gemini** — buscar precio de `gemini-3.5-flash-lite` en Google AI Studio (precio/fecha de consulta octubre 2026); completar `chapter04-metodologia.tex:243` y eliminar el comentario.
+5. **5 capturas de pantalla** — insertar en `chapter05-requerimientos.tex` reemplazando los 5 `TODO` (líneas 908, 915, 922, 929, 936): ejecución inferida, comparación esperado/real, preparación anticipada, fecha clave y app en WordPress.
+6. **Agradecimientos** — `chapters/acknowledgments.tex` tiene solo la estructura vacía (`\chapter*{Agradecimientos}`). Completar el texto antes de la entrega final.
+
+### Pendientes de Tomi
+
+1. **Exclusiones de alcance en la Introducción** (`chapter00.tex`): verificar que la tercera exclusión diga "Tiendanube y WooCommerce" (y no solo "Tiendanube"); agregar `\label{sec:alcance}` en la línea siguiente a `\section{Alcance}` si se quieren referencias cruzadas; revisar el `% VERIFICAR-COD: R5` de la línea 59 y decidir si el despliegue en Railway se concreta para la entrega final.
+2. **Origen de la tienda WooCommerce** — la captura de la app embebida en WordPress (`chapter05-requerimientos.tex:936`) requiere una tienda WooCommerce activa; Tomi la tiene; confirmar que puede tomar y proveer la captura.
+
+### Decisiones de diseño registradas
+
+- **Entrevistas con nombres reales**: los cinco entrevistados (Delfina Fernández, Morena Cejas, Pablo Terrera, Julián Fabbi, Shakira) dieron consentimiento explícito para publicar con nombre propio, grabado en la sesión. Se usa nombre real en `chapter03`, `chapter05`, los cinco anexos de entrevistas y los títulos de los mismos. Commit `72fd518`.
+- **Brainstorming anónimo**: los participantes del brainstorming se identifican solo por rol (sin nombres ni empresa). `brainstorming.tex` y `anexo-brainstorming.tex` verificados — no contienen nombres propios.
+
+---
+
 ## Estado al 17/10, cierre del día
 
 ### Bloques de Romi: resumen de estado
