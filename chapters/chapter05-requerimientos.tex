@@ -6,7 +6,7 @@ El presente capítulo formaliza los requerimientos del prototipo a partir de tre
 \section{Requerimientos Funcionales}
 \label{sec:requerimientos-funcionales}
 
-Los requerimientos funcionales describen las capacidades que el sistema debe ofrecer. Cada uno se identifica con el prefijo RF (Requerimiento Funcional) y un número correlativo.
+Los requerimientos funcionales describen las capacidades que el sistema debe ofrecer. Cada uno se identifica con el prefijo RF (Requerimiento Funcional) y un número correlativo (Tabla~\ref{tab:requerimientos-funcionales}).
 
 \begin{longtable}{|m{1.7cm}|m{10.6cm}|m{2.7cm}|}
 \caption{Requerimientos funcionales del sistema}\label{tab:requerimientos-funcionales}\\
@@ -96,7 +96,7 @@ RF-21 & El sistema debe permitir al usuario deshacer el registro de ejecución m
 \section{Requerimientos No Funcionales}
 \label{sec:requerimientos-no-funcionales}
 
-Los requerimientos no funcionales especifican restricciones técnicas, atributos de calidad y condiciones del entorno que el sistema debe satisfacer. Se identifican con el prefijo RNF.
+Los requerimientos no funcionales especifican restricciones técnicas, atributos de calidad y condiciones del entorno que el sistema debe satisfacer. Se identifican con el prefijo RNF (Tabla~\ref{tab:requerimientos-no-funcionales}).
 
 \begin{longtable}{|m{1.5cm}|m{8.4cm}|m{2.4cm}|m{2.6cm}|}
 \caption{Requerimientos no funcionales del sistema}\label{tab:requerimientos-no-funcionales}\\
@@ -194,7 +194,7 @@ Las historias de usuario describen funcionalidades desde la perspectiva del usua
 
 Como dueño/a de una tienda en Tiendanube, quiero recibir una alerta cuando un producto está próximo a quedarse sin stock, para poder reponer insumos o mercadería antes de perder ventas.
 
-\noindent\textbf{Evidencia empírica:} al ser consultada sobre si Tiendanube le avisaba con anticipación antes de quedarse sin stock de una prenda, Delfina Fernández respondió: \enquote{No, no, no. Eso no} (Anexo B); la única notificación que recibe es posterior al quiebre, cuando el stock ya llegó a cero. Julián Fabbi describió una dinámica similar: \enquote{No te avisa más nada que el colorcito, y cuando te quedás sin stock sí te llega un mensajito} (Anexo E).
+\noindent\textbf{Evidencia empírica:} al ser consultada sobre si Tiendanube le avisaba con anticipación antes de quedarse sin stock de una prenda, E01 respondió: \enquote{No, no, no. Eso no} (Anexo B); la única notificación que recibe es posterior al quiebre, cuando el stock ya llegó a cero. E04 describió una dinámica similar: \enquote{No te avisa más nada que el colorcito, y cuando te quedás sin stock sí te llega un mensajito} (Anexo E).
 
 \noindent\textbf{Criterios de aceptación:}
 \begin{itemize}
@@ -211,7 +211,7 @@ Como dueño/a de una tienda en Tiendanube, quiero recibir una alerta cuando un p
 
 Como dueño/a de un emprendimiento de producción artesanal, quiero que el sistema me indique qué productos conviene tener preparados antes del fin de semana, para anticiparme a la demanda esperada y no producir reactivamente.
 
-\noindent\textbf{Evidencia empírica:} Delfina Fernández expresó que una funcionalidad de este tipo \enquote{estaría buenísimo, porque más que nada a mí me sirve por el material. Nunca sé si comprar más o si me los voy a quedar sin vender} (Anexo B). Su modelo de producción manual hace que la anticipación sea crítica: bordar una remera lleva tiempo y no puede reaccionar a la demanda en tiempo real.
+\noindent\textbf{Evidencia empírica:} E01 expresó que una funcionalidad de este tipo \enquote{estaría buenísimo, porque más que nada a mí me sirve por el material. Nunca sé si comprar más o si me los voy a quedar sin vender} (Anexo B). Su modelo de producción manual hace que la anticipación sea crítica: bordar una remera lleva tiempo y no puede reaccionar a la demanda en tiempo real.
 
 \noindent\textbf{Criterios de aceptación:}
 \begin{itemize}
@@ -227,7 +227,7 @@ Como dueño/a de un emprendimiento de producción artesanal, quiero que el siste
 
 Como dueño/a de una tienda de indumentaria, quiero saber cuándo un producto de temporada está perdiendo rotación, para decidir si lanzar una promoción, hacer un combo o reducir el precio antes de que quede sin vender.
 
-\noindent\textbf{Evidencia empírica:} Morena Cejas relató que se quedó con stock de bermudas al pasar la temporada de calor y tuvo que armar combos con remeras para liquidarlas (Anexo C). La decisión fue reactiva y basada en intuición; una alerta temprana habría permitido actuar antes.
+\noindent\textbf{Evidencia empírica:} E02 relató que se quedó con stock de bermudas al pasar la temporada de calor y tuvo que armar combos con remeras para liquidarlas (Anexo C). La decisión fue reactiva y basada en intuición; una alerta temprana habría permitido actuar antes.
 
 \noindent\textbf{Criterios de aceptación:}
 \begin{itemize}
@@ -243,7 +243,7 @@ Como dueño/a de una tienda de indumentaria, quiero saber cuándo un producto de
 
 Como emprendedor, quiero conocer cuáles son los productos que más se venden, para enfocar mis esfuerzos de reposición, contenido y publicidad.
 
-\noindent\textbf{Evidencia empírica:} Julián Fabbi indicó que lo que más le gustaría saber es \enquote{qué vende más. De todos los artículos que tengo cargados en la tienda, ¿cuál es el que más ventas tuvo?} (Anexo E). Delfina Fernández también expresó interés en saber a qué producto correspondían las visitas únicas que le mostraba Tiendanube (Anexo B), si bien esta última señal (visitas) no está disponible en la API pública consumida por el prototipo y queda fuera de su alcance actual.
+\noindent\textbf{Evidencia empírica:} E04 indicó que lo que más le gustaría saber es \enquote{qué vende más. De todos los artículos que tengo cargados en la tienda, ¿cuál es el que más ventas tuvo?} (Anexo E). E01 también expresó interés en saber a qué producto correspondían las visitas únicas que le mostraba Tiendanube (Anexo B), si bien esta última señal (visitas) no está disponible en la API pública consumida por el prototipo y queda fuera de su alcance actual.
 
 \noindent\textbf{Criterios de aceptación:}
 \begin{itemize}
@@ -261,7 +261,7 @@ Como emprendedor, quiero conocer cuáles son los productos que más se venden, p
 
 Como dueño/a de un emprendimiento de indumentaria estampada, quiero recibir una alerta cuando mis precios llevan demasiado tiempo sin actualizarse, para evitar vender sin margen de ganancia.
 
-\noindent\textbf{Evidencia empírica:} Shakira relató haber vendido \$35 millones de pesos esencialmente al costo por no haber actualizado los precios a tiempo frente a la suba del dólar y de los insumos: \enquote{Me di cuenta tarde} (Anexo F). Al preguntarle qué funcionalidad le resultaría más valiosa, respondió: \enquote{Si pudiera tener una alerta automática que me diga 'tus precios no se actualizaron en X días y el costo de los insumos subió', eso sería ideal} (Anexo F).
+\noindent\textbf{Evidencia empírica:} E05 relató haber vendido \$35 millones de pesos esencialmente al costo por no haber actualizado los precios a tiempo frente a la suba del dólar y de los insumos: \enquote{Me di cuenta tarde} (Anexo F). Al preguntarle qué funcionalidad le resultaría más valiosa, respondió: \enquote{Si pudiera tener una alerta automática que me diga 'tus precios no se actualizaron en X días y el costo de los insumos subió', eso sería ideal} (Anexo F).
 
 \noindent\textbf{Criterios de aceptación:}
 \begin{itemize}
@@ -277,7 +277,7 @@ Como dueño/a de un emprendimiento de indumentaria estampada, quiero recibir una
 
 Como emprendedor, quiero que el sistema me sugiera activar promociones antes de fechas de alto tráfico comercial (Hot Sale, Black Friday, Navidad, eventos sectoriales), para capitalizar los picos de demanda estacionales con anticipación.
 
-\noindent\textbf{Evidencia empírica:} Julián Fabbi reportó que sus mejores períodos de venta coincidieron deliberadamente con Navidad y la Feria del Libro, pero que la misma estrategia falló a mitad de año sin entender bien por qué (Anexo E). Morena Cejas también identificó las efemérides comerciales como los momentos de mayor venta (Anexo C). Shakira confirmó que el Hot Sale y el Black Friday son sus dos picos más grandes (Anexo F).
+\noindent\textbf{Evidencia empírica:} E04 reportó que sus mejores períodos de venta coincidieron deliberadamente con Navidad y la Feria del Libro, pero que la misma estrategia falló a mitad de año sin entender bien por qué (Anexo E). E02 también identificó las efemérides comerciales como los momentos de mayor venta (Anexo C). E05 confirmó que el Hot Sale y el Black Friday son sus dos picos más grandes (Anexo F).
 
 \noindent\textbf{Criterios de aceptación:}
 \begin{itemize}
@@ -311,7 +311,7 @@ Como usuario del sistema, quiero poder marcar que ejecuté una recomendación re
 
 Como dueño/a de una tienda, quiero ver si una recomendación que ejecuté tuvo impacto positivo en las métricas del producto, para confiar progresivamente en las sugerencias del sistema.
 
-\noindent\textbf{Evidencia empírica:} Shakira condicionó su disposición a pagar a poder verificar el valor en la práctica: \enquote{Necesito ver que realmente sirve antes de comprometerme} (Anexo F). Morena Cejas lo expresó de forma más directa: \enquote{Si me sirve en ventas, y esta herramienta realmente me ayuda a vender, la pago} (Anexo C).
+\noindent\textbf{Evidencia empírica:} E05 condicionó su disposición a pagar a poder verificar el valor en la práctica: \enquote{Necesito ver que realmente sirve antes de comprometerme} (Anexo F). E02 lo expresó de forma más directa: \enquote{Si me sirve en ventas, y esta herramienta realmente me ayuda a vender, la pago} (Anexo C).
 
 \noindent\textbf{Criterios de aceptación:}
 \begin{itemize}
@@ -327,7 +327,7 @@ Como dueño/a de una tienda, quiero ver si una recomendación que ejecuté tuvo 
 
 Como dueño/a de un negocio gastronómico, quiero que las recomendaciones consideren las particularidades operativas de mi rubro (rotación de productos y estacionalidad horaria de la demanda), para recibir sugerencias relevantes a mi contexto y no recomendaciones genéricas pensadas para otro tipo de comercio.
 
-\noindent\textbf{Evidencia empírica:} Pablo Terrera, dueño de una cafetería, describió en detalle las particularidades de la gestión gastronómica: anticipación de compras por fechas (chocolate en febrero para Pascuas), variaciones de costos de insumos lácteos y la necesidad de stockearse antes de un aumento (Anexo D). Estas dinámicas son radicalmente distintas a las de indumentaria o electrónica, validando la necesidad de diferenciación.
+\noindent\textbf{Evidencia empírica:} E03, dueño de una cafetería, describió en detalle las particularidades de la gestión gastronómica: anticipación de compras por fechas (chocolate en febrero para Pascuas), variaciones de costos de insumos lácteos y la necesidad de stockearse antes de un aumento (Anexo D). Estas dinámicas son radicalmente distintas a las de indumentaria o electrónica, validando la necesidad de diferenciación.
 
 \noindent\textbf{Criterios de aceptación:}
 \begin{itemize}
@@ -359,7 +359,7 @@ Como comerciante, quiero identificar clientes que no realizan compras hace un ti
 
 Como dueño/a de una tienda de electrónica que factura en pesos argentinos, quiero recibir una alerta cuando el tipo de cambio haya variado significativamente desde la última actualización de mis precios, para poder ajustarlos antes de perder margen frente a la suba del dólar.
 
-\noindent\textbf{Evidencia empírica:} si bien esta historia no proviene de una entrevista específica del rubro electrónica, se deriva del mismo problema estructural relatado por Shakira para indumentaria (Anexo F): la pérdida de margen por desactualización de precios frente a variaciones cambiarias es una dinámica compartida por cualquier rubro con insumos dolarizados, y electrónica es el caso paradigmático en el mercado argentino (Sección 2.4).
+\noindent\textbf{Evidencia empírica:} si bien esta historia no proviene de una entrevista específica del rubro electrónica, se deriva del mismo problema estructural relatado por E05 para indumentaria (Anexo F): la pérdida de margen por desactualización de precios frente a variaciones cambiarias es una dinámica compartida por cualquier rubro con insumos dolarizados, y electrónica es el caso paradigmático en el mercado argentino (Sección 2.4).
 
 \noindent\textbf{Criterios de aceptación:}
 \begin{itemize}
@@ -731,7 +731,7 @@ Postcondiciones & La tienda WooCommerce queda registrada en el sistema con crede
 \section{Trazabilidad entre artefactos}
 \label{sec:trazabilidad-artefactos}
 
-La siguiente tabla resume la trazabilidad entre las historias de usuario, los requerimientos funcionales y los casos de uso, permitiendo verificar que cada necesidad identificada está cubierta en múltiples niveles de especificación.
+La Tabla~\ref{tab:trazabilidad} resume la trazabilidad entre las historias de usuario, los requerimientos funcionales y los casos de uso, permitiendo verificar que cada necesidad identificada está cubierta en múltiples niveles de especificación.
 
 \begin{longtable}{|m{5.3cm}|m{5.4cm}|m{4.3cm}|}
 \caption{Trazabilidad entre historias de usuario, requerimientos funcionales y casos de uso}\label{tab:trazabilidad}\\
@@ -823,7 +823,7 @@ El panel de recomendaciones es la interfaz principal del prototipo: el espacio d
 \subsubsection{Análisis inicial de la tienda}
 \label{sec:mockup-analisis-inicial}
 
-La primera vez que un comerciante instala la aplicación, el sistema todavía no cuenta con recomendaciones generadas: recién está ejecutando la ingesta y el procesamiento de los datos de la tienda descriptos en el CU-02 (Sección~\ref{sec:cu-02}). Esta pantalla comunica ese estado de espera mediante un indicador de progreso y un mensaje que aclara que el proceso puede demorar unos minutos y que no requiere ninguna acción del usuario, evitando que el comerciante interprete la demora inicial como un error de la aplicación.
+La primera vez que un comerciante instala la aplicación, el sistema todavía no cuenta con recomendaciones generadas: recién está ejecutando la ingesta y el procesamiento de los datos de la tienda descriptos en el CU-02 (Sección~\ref{sec:cu-02}). Esta pantalla (Figura~\ref{fig:mockup-analisis-inicial}) comunica ese estado de espera mediante un indicador de progreso y un mensaje que aclara que el proceso puede demorar unos minutos y que no requiere ninguna acción del usuario, evitando que el comerciante interprete la demora inicial como un error de la aplicación.
 
 \begin{figure}[ht]
     \centering
@@ -838,7 +838,7 @@ La primera vez que un comerciante instala la aplicación, el sistema todavía no
 \subsubsection{Sin recomendaciones activas}
 \label{sec:mockup-sin-recomendaciones}
 
-Una vez completado el procesamiento, es posible que el motor de análisis no detecte ninguna señal accionable para el período evaluado, tal como contempla el flujo alternativo 3a del CU-04 (Sección~\ref{sec:cu-04}). En ese caso, el panel muestra un estado vacío que evita dejar al comerciante frente a una pantalla en blanco sin explicación, aclarando que las recomendaciones aparecerán automáticamente ni bien el sistema detecte una oportunidad en la tienda.
+Una vez completado el procesamiento, es posible que el motor de análisis no detecte ninguna señal accionable para el período evaluado, tal como contempla el flujo alternativo 3a del CU-04 (Sección~\ref{sec:cu-04}). En ese caso, el panel muestra un estado vacío (Figura~\ref{fig:mockup-sin-recomendaciones}) que evita dejar al comerciante frente a una pantalla en blanco sin explicación, aclarando que las recomendaciones aparecerán automáticamente ni bien el sistema detecte una oportunidad en la tienda.
 
 \begin{figure}[ht]
     \centering
@@ -853,7 +853,7 @@ Una vez completado el procesamiento, es posible que el motor de análisis no det
 \subsubsection{Listado de recomendaciones}
 \label{sec:mockup-listado-recomendaciones}
 
-Cuando existen recomendaciones activas, el panel las presenta como un conjunto de tarjetas filtrables por nivel de prioridad (\enquote{Urgente}, \enquote{Atención}, \enquote{Oportunidad}), en línea con el mecanismo de scoring dinámico descripto en RF-16. Cada tarjeta identifica el rubro o segmento de la señal detectada (gastronomía, indumentaria, electrónica o clientes), incluye la etiqueta \enquote{Generado por IA} en referencia al mensaje en lenguaje natural producido según RF-19, y expone una acción concreta acorde al tipo de recomendación (\enquote{Reponer stock}, \enquote{Ver opciones}, \enquote{Activar}, \enquote{Enviar cupón}), materializando el carácter accionable exigido en RF-07. Las recomendaciones ya marcadas como ejecutadas se distinguen con la etiqueta \enquote{Ejecutada} y redirigen a la vista de impacto en lugar de a una acción pendiente.
+Cuando existen recomendaciones activas, el panel las presenta como un conjunto de tarjetas (Figura~\ref{fig:mockup-listado-recomendaciones}) filtrables por nivel de prioridad (\enquote{Urgente}, \enquote{Atención}, \enquote{Oportunidad}), en línea con el mecanismo de scoring dinámico descripto en RF-16. Cada tarjeta identifica el rubro o segmento de la señal detectada (gastronomía, indumentaria, electrónica o clientes), incluye la etiqueta \enquote{Generado por IA} en referencia al mensaje en lenguaje natural producido según RF-19, y expone una acción concreta acorde al tipo de recomendación (\enquote{Reponer stock}, \enquote{Ver opciones}, \enquote{Activar}, \enquote{Enviar cupón}), materializando el carácter accionable exigido en RF-07. Las recomendaciones ya marcadas como ejecutadas se distinguen con la etiqueta \enquote{Ejecutada} y redirigen a la vista de impacto en lugar de a una acción pendiente.
 
 \begin{figure}[ht]
     \centering
@@ -883,7 +883,7 @@ Al seleccionar una tarjeta del listado, el comerciante accede al detalle de esa 
 \subsubsection{Impacto de una recomendación ejecutada}
 \label{sec:mockup-impacto-recomendacion}
 
-Transcurrida la ventana de evaluación de la recomendación ejecutada, el comerciante puede consultar su impacto (CU-06, Sección~\ref{sec:cu-06}) mediante una comparación de la métrica relevante. La pantalla incluye de forma explícita la aclaración de que se trata de una correlación indicativa y no de una relación de causalidad comprobada, en cumplimiento de RNF-10, satisfaciendo además la necesidad de validación expresada por los emprendedores entrevistados que condicionaron su disposición a pagar por la herramienta a poder verificar resultados concretos (HU-08, Sección~\ref{sec:hu-08}).
+Transcurrida la ventana de evaluación de la recomendación ejecutada, el comerciante puede consultar su impacto (CU-06, Sección~\ref{sec:cu-06}) mediante una comparación de la métrica relevante (Figura~\ref{fig:mockup-impacto-recomendacion}). La pantalla incluye de forma explícita la aclaración de que se trata de una correlación indicativa y no de una relación de causalidad comprobada, en cumplimiento de RNF-10, satisfaciendo además la necesidad de validación expresada por los emprendedores entrevistados que condicionaron su disposición a pagar por la herramienta a poder verificar resultados concretos (HU-08, Sección~\ref{sec:hu-08}).
 
 \begin{figure}[ht]
     \centering
