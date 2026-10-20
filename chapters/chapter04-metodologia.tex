@@ -147,14 +147,19 @@ Conviene precisar que PostgreSQL y MySQL resultaban ambos válidos para el proye
 
 El acceso a la base de datos se implementa mediante Prisma como \emph{Object-Relational Mapping} (ORM). Esta elección responde a los mismos criterios que guiaron la selección del resto del stack (Sección~\ref{sec:criterios-seleccion}): al tratarse de un equipo reducido de dos personas, Prisma permite definir el esquema de datos de forma declarativa en un único archivo, generar automáticamente un cliente tipado en JavaScript y gestionar las migraciones de forma reproducible, evitando la escritura manual de SQL y la duplicación de herramientas entre las capas del proyecto. El esquema de Prisma refleja directamente el modelo de datos presentado en la Figura~\ref{fig:erd-diagram}.
 
+\afterpage{%
+\begin{landscape}
 \begin{figure}[p]
     \centering
-    \includegraphics[angle=90, height=0.82\textheight]{./images/erd_diagram.png}
+    \includegraphics[width=\linewidth, height=0.8\textwidth, keepaspectratio]{./images/erd_diagram.png}
     \caption{Diagrama entidad-relación (ERD) del modelo de datos del prototipo, generado a partir del esquema de Prisma (\texttt{schema.prisma}). PK: clave primaria; FK: clave foránea; UQ: valor único; ?: campo opcional.}
     \label{fig:erd-diagram}
-\end{figure}
 
-\noindent\textit{Fuente: elaboración propia.}
+    \smallskip
+    \noindent\textit{Fuente: elaboración propia.}
+\end{figure}
+\end{landscape}
+}
 
 El esquema se organiza en torno a \texttt{STORES} como entidad raíz de aislamiento multi-tienda: la clave foránea \texttt{store\_id} se repite en \texttt{CATEGORIES}, \texttt{PRODUCTS}, \texttt{CUSTOMERS}, \texttt{ORDERS} y \texttt{RECOMMENDATIONS}, garantizando que los datos de cada comercio conectado permanezcan separados entre sí. Sobre esa base, \texttt{PRODUCTS} se vincula con \texttt{VARIANTS} en una relación uno a muchos, reflejando la distinción entre un producto y sus combinaciones concretas de talle, color u otro atributo descripta en la Sección~\ref{sec:adquisicion-datos} del Marco Teórico, mientras que \texttt{CATEGORIES} se relaciona con \texttt{PRODUCTS} a través de la tabla intermedia \texttt{PRODUCT\_CATEGORIES} y admite una jerarquía propia mediante \texttt{parent\_id}, lo que permite segmentar las recomendaciones por rubro comercial tal como se planteó en la Sección~\ref{sec:comportamiento-consumidor}. Los pedidos, por su parte, se modelan mediante \texttt{ORDERS} y su detalle \texttt{ORDER\_ITEMS}, que referencia cada variante junto con la cantidad y el precio de la operación, y \texttt{CUSTOMERS} conserva el campo \texttt{total\_spent} provisto directamente por la API de Tiendanube y descripto en esa misma sección.
 
