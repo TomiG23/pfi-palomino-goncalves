@@ -2,6 +2,32 @@
 
 ---
 
+## Estado al 20/10
+
+El PDF compila sin errores ni referencias rotas (221 páginas).
+
+### Resuelto desde el 18/10
+
+| Tema | Resolución | Correcciones |
+|------|------------|--------------|
+| Carátula | `cover/caratula_nueva_Tesis.pdf`, con el título definitivo | C-20, N-6 |
+| Cobertura de pruebas | Validación según el código (`node:test`, c8) y cobertura medida al 19/10: backend 83,2 %, frontend 68,0 % | C-08, A-7 |
+| Railway | Implementado: tres servicios (api, worker, frontend), nginx con `FRAME_ANCESTORS` y `API_UPSTREAM`, rama de producción de Neon. El documento describe el despliegue en presente; lo excluido es solo la escala industrial | A-3, C-11 |
+| Precio de Gemini | `gemini-3.5-flash-lite`, consulta del 19/10/2026; la elección se justifica por el nivel gratuito | A-1 |
+| Logo | Logotipo principal, variantes oscura y monocroma, íconos y favicon | N-3 |
+| Diagrama entidad-relación | Regenerado a partir del `schema.prisma` de origin/main (20 tablas) | N-4 |
+| Entrevistados | Nombre y apellido solo en la tabla de la metodología del cap. 3 y en los títulos de los anexos; en el resto, E01–E05 | C-04 |
+| Brainstorming | Participantes B01–B05 en una tabla del método, desarrollo de la sesión, conclusión, fotos de la sesión y matriz en el cuerpo, transcripción completa en el Anexo G | C-26 |
+| Figuras y tablas citadas | Mockups, fotos del brainstorming y tablas de RF, RNF y trazabilidad referenciadas desde el texto | Punto 9 de R-D7 |
+
+### Pendiente
+
+1. **Capturas de pantalla** (`chapter05-requerimientos.tex`, 5 `% TODO`): ejecución inferida, esperado contra real, preparación anticipada, fecha clave y app en WordPress.
+2. **Agradecimientos** (`chapters/acknowledgments.tex`): la sección está vacía; la escriben los autores.
+3. **Lectura final del PDF completo** entre los dos.
+
+---
+
 ## Estado al 18/10, cierre del día
 
 ### Rangos de página del PDF (195 pp.)
