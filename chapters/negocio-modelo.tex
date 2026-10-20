@@ -21,7 +21,7 @@ Autoservicio con período de prueba gratuito. La interfaz en lenguaje natural re
 
 \subsubsection*{5. Fuentes de ingresos}
 
-Suscripción mensual por tienda conectada, con plan base gratuito y plan pago con recomendaciones completas, historial y priorización por rubro. Los indicios de disposición a pagar relevados en la muestra entrevistada oscilan entre los \$30.000 y los \$60.000 mensuales (Sección~\ref{sec:triple-p-precio}); estos valores no son generalizables al conjunto del segmento.
+Suscripción mensual por tienda conectada, de 30.000 pesos, precedida por un período de prueba gratuito que permite al emprendedor comprobar el valor de las recomendaciones antes de pagar. Los indicios de disposición a pagar relevados en la muestra entrevistada oscilan entre los \$30.000 y los \$60.000 mensuales (Sección~\ref{sec:triple-p-precio}); estos valores no son generalizables al conjunto del segmento.
 
 \subsubsection*{6. Recursos clave}
 
@@ -37,10 +37,16 @@ Tiendanube (plataforma principal de distribución y fuente de datos); Google (Ge
 
 \subsubsection*{9. Estructura de costos}
 
-Infraestructura variable (Railway, Neon y costo de llamadas a la API de Gemini proporcional al volumen de tiendas activas); comisión de la tienda de aplicaciones de Tiendanube; costo del equipo de desarrollo y mantenimiento. El análisis de viabilidad económico-financiera con proyección de costos, escenarios de adopción, VAN, TIR y punto de equilibrio se desarrolla en la sección de viabilidad económico-financiera.
+Infraestructura variable (Railway, Neon y costo de llamadas a la API de Gemini proporcional al volumen de tiendas activas); comisión de la tienda de aplicaciones de Tiendanube; costo del equipo de desarrollo y mantenimiento. El análisis de viabilidad económico-financiera con proyección de costos, escenarios de adopción, VAN, TIR, período de recupero y punto de equilibrio se desarrolla en la Sección~\ref{sec:viabilidad-financiera}.
+
+\subsubsection*{Sustentabilidad del modelo}
+
+Los nueve bloques describen un modelo en el que el ingreso crece con cada tienda suscripta, mientras que la mayor parte del costo es fijo y no tecnológico: la infraestructura representa menos del 10\% de los costos operativos, y el mantenimiento y el soporte superan el 75\% (Sección~\ref{sec:viabilidad-costos}). El modelo se vuelve rentable cuando la base de suscriptores pagos cubre esos costos fijos, lo que ocurre a partir de los 55 suscriptores, y la distribución a través de las tiendas de aplicaciones permite alcanzar ese umbral sin una estructura comercial propia, a cambio de la comisión que retienen las plataformas.
 
 \section{Marca: Decidata}
 \label{sec:marca-decidata}
+
+La marca da al servicio una identidad reconocible dentro de los paneles de administración en los que opera. Esta sección presenta su nombre, la propuesta de valor que comunica, el tono, la paleta de colores y el logotipo con sus variantes de uso.
 
 \subsection{Nombre}
 \label{sec:marca-nombre}
@@ -66,10 +72,70 @@ El tono de Decidata es directo, práctico y empático con la carga operativa del
 
 La identidad visual de Decidata se construye sobre el sistema de diseño Nimbus de Tiendanube para garantizar coherencia dentro del panel de administración donde se integra la aplicación. El color primario es el azul institucional de Nimbus, empleado en elementos interactivos, llamadas a la acción y el logotipo. Los fondos y el texto secundario utilizan los tonos neutros del mismo sistema. Los estados de confirmación y éxito emplean el verde de Nimbus; las advertencias, el naranja; y los errores, el rojo. Esta elección no es estética sino funcional: el emprendedor que accede a Decidata dentro de su panel de Tiendanube no percibe un cambio de entorno visual, lo que reduce la fricción de adopción.
 
-% TODO-LOGO
-% Insertar aquí:
-% (1) figura del logotipo de Decidata (isotipo + tipografía),
-% (2) explicación del diseño: construcción sobre grilla, proporciones, tipografía,
-% (3) variantes: positivo sobre fondo claro, negativo sobre fondo oscuro,
-% (4) usos permitidos y restricciones (tamaño mínimo, zona de respeto).
-% Reemplazar este bloque cuando el logo esté diseñado y disponible.
+\subsection{Logotipo}
+\label{sec:marca-logo}
+
+El logotipo lleva a una imagen la misma idea que el nombre. El isotipo representa el paso del dato a la decisión: los puntos son los datos de la tienda y el trazo que parte de ellos es la acción que el sistema recomienda. En el logotipo, «Deci» se escribe en negrita y «data» en azul, de modo que el nombre repite esa idea: la decisión en primer plano, apoyada en los datos. La Figura~\ref{fig:logo-decidata} presenta la versión principal.
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=0.6\textwidth]{./images/logo-decidata-claro.png}
+    \caption{Logotipo principal de Decidata.}
+    \label{fig:logo-decidata}
+\end{figure}
+
+Cada variante responde a un contexto de uso. La versión clara, que es la principal, se usa sobre fondos blancos; la oscura, sobre fondos negros; y la monocroma, en impresiones en blanco y negro (Figura~\ref{fig:logo-variantes}). El isotipo se usa además aislado, como ícono, en cuatro versiones y un favicon (Figura~\ref{fig:logo-iconos}): el ícono azul identifica a la aplicación en la tienda de aplicaciones de Tiendanube y es también el que se usa como favicon.
+
+\begin{figure}[!htbp]
+    \centering
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{./images/logo-decidata-oscuro.png}
+        \caption{Variante oscura, para fondos negros.}
+        \label{fig:logo-oscuro}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{./images/logo-decidata-mono.png}
+        \caption{Variante monocroma, para impresión en blanco y negro.}
+        \label{fig:logo-mono}
+    \end{subfigure}
+    \caption{Variantes del logotipo de Decidata.}
+    \label{fig:logo-variantes}
+\end{figure}
+
+\begin{figure}[!htbp]
+    \centering
+    \begin{subfigure}[b]{0.18\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{./images/icono-claro.png}
+        \caption{Claro.}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.18\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{./images/icono-oscuro.png}
+        \caption{Oscuro.}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.18\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{./images/icono-azul.png}
+        \caption{Azul.}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.18\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{./images/icono-mono.png}
+        \caption{Monocromo.}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.12\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{./images/favicon.png}
+        \caption{Favicon.}
+    \end{subfigure}
+    \caption{Íconos y favicon de Decidata.}
+    \label{fig:logo-iconos}
+\end{figure}
