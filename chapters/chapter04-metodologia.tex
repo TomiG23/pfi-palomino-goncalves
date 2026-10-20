@@ -147,11 +147,10 @@ Conviene precisar que PostgreSQL y MySQL resultaban ambos válidos para el proye
 
 El acceso a la base de datos se implementa mediante Prisma como \emph{Object-Relational Mapping} (ORM). Esta elección responde a los mismos criterios que guiaron la selección del resto del stack (Sección~\ref{sec:criterios-seleccion}): al tratarse de un equipo reducido de dos personas, Prisma permite definir el esquema de datos de forma declarativa en un único archivo, generar automáticamente un cliente tipado en JavaScript y gestionar las migraciones de forma reproducible, evitando la escritura manual de SQL y la duplicación de herramientas entre las capas del proyecto. El esquema de Prisma refleja directamente el modelo de datos presentado en la Figura~\ref{fig:erd-diagram}.
 
-% VERIFICAR-COD: regenerar erd_diagram.png con las tablas del schema.prisma actual (variant_snapshots, demand_forecasts, forecast_runs, customer_segments, segmentation_runs, bandit_arms, bandit_arm_history, rubro_priors, privacy_requests y campos WooCommerce en stores).
-\begin{figure}[ht]
+\begin{figure}[p]
     \centering
-    \includegraphics[width=\textwidth]{./images/erd_diagram.png}
-    \caption{Diagrama entidad-relación (ERD) del modelo de datos del prototipo.}
+    \includegraphics[angle=90, height=0.82\textheight]{./images/erd_diagram.png}
+    \caption{Diagrama entidad-relación (ERD) del modelo de datos del prototipo, generado a partir del esquema de Prisma (\texttt{schema.prisma}). PK: clave primaria; FK: clave foránea; UQ: valor único; ?: campo opcional.}
     \label{fig:erd-diagram}
 \end{figure}
 
