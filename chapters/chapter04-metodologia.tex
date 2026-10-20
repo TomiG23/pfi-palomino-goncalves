@@ -188,7 +188,7 @@ El uso de ngrok como herramienta de túnel HTTPS es una consecuencia directa de 
 
 Esta elección se comparó puntualmente frente a Vercel, plataforma ya conocida por el equipo. Ambas herramientas, sin embargo, resuelven problemas distintos: ngrok es un túnel de desarrollo que expone un entorno local ya en ejecución, mientras que Vercel es una plataforma de despliegue que publica una aplicación empaquetada. La Tabla~\ref{tab:comparativo_tunel} resume esta comparación.
 
-Lo que definió la elección fue que ngrok resuelve la necesidad concreta de exponer el entorno local sin implicar un despliegue productivo, explícitamente fuera del alcance del proyecto según lo establecido en el Alcance. La limitación inicial de la URL cambiante entre sesiones, propia del uso por defecto del plan gratuito, se resolvió mediante el dominio fijo gratuito que ngrok ofrece, lo cual elimina la necesidad de reconfigurar manualmente la URL en la sección ``Aplicación de Prueba'' del panel de Partners de Tiendanube en cada reinicio del túnel. Vercel no queda descartado de forma definitiva: al no ser una alternativa peor sino una herramienta con otro propósito, se mantiene como opción a reevaluar para publicar la aplicación terminada en un entorno estable destinado a la demostración del prototipo.
+Lo que definió la elección fue que ngrok resuelve la necesidad concreta de exponer el entorno local durante el desarrollo, sin requerir un despliegue para cada prueba. La limitación inicial de la URL cambiante entre sesiones, propia del uso por defecto del plan gratuito, se resolvió mediante el dominio fijo gratuito que ngrok ofrece, lo cual elimina la necesidad de reconfigurar manualmente la URL en la sección ``Aplicación de Prueba'' del panel de Partners de Tiendanube en cada reinicio del túnel. Vercel no se descartó por ser una alternativa peor, sino por tener otro propósito: publicar una aplicación terminada. Esa necesidad, la de un entorno estable para el prototipo, se resolvió finalmente con el despliegue en Railway descripto en la Sección~\ref{sec:infraestructura}, que aloja la API y el proceso en segundo plano sin adaptarlos a un modelo \emph{serverless}.
 
 \begin{table}[h]
 \centering
@@ -219,7 +219,7 @@ SQLite & Configuración nula; adecuado para prototipos muy pequeños & No apto p
 \hline
 ngrok & Túnel de desarrollo: expone el entorno local al \emph{iframe} de Tiendanube de forma instantánea, preservando la actualización en caliente; dominio fijo disponible en su plan gratuito & La URL pública cambiaba entre sesiones bajo el uso por defecto del plan gratuito & \textbf{Elegido} para el entorno de desarrollo: resuelve exactamente la necesidad de exponer el entorno local \\
 \hline
-Vercel & Plataforma de despliegue: publica la aplicación en una URL pública y estable & Es una herramienta de \emph{deployment}, no un túnel de desarrollo; un backend Express tradicional requiere adaptación a su modelo \emph{serverless}; desplegar implica un despliegue productivo, fuera del alcance del proyecto & No aplicable al desarrollo; se reevalúa como opción para publicar la aplicación terminada para la demostración del prototipo \\
+Vercel & Plataforma de despliegue: publica la aplicación en una URL pública y estable & Es una herramienta de \emph{deployment}, no un túnel de desarrollo; un backend Express tradicional requiere adaptación a su modelo \emph{serverless} & No aplicable al desarrollo; para publicar el prototipo se optó por Railway (Sección~\ref{sec:infraestructura}) \\
 \hline
 \end{tabular}
 \end{table}
@@ -294,7 +294,7 @@ El flujo completo de comunicación, en el entorno de desarrollo, puede describir
     \item El frontend renderiza la respuesta dentro del \emph{iframe}, integrada visualmente al panel de administración mediante los componentes de Nimbus.
 \end{enumerate}
 
-Esta topología de red es propia del entorno de desarrollo y depende de un túnel de terceros (ngrok) en lugar de una infraestructura de \emph{hosting} propia. Tal como se detalla en la Sección~\ref{sec:tunel-ngrok}, esta elección fue evaluada frente a una plataforma de despliegue (Vercel) y resulta adecuada mientras el despliegue productivo permanezca fuera del alcance del prototipo; una eventual publicación formal en la tienda de aplicaciones de Tiendanube, señalada como trabajo futuro en el Alcance del proyecto, sí requeriría reemplazar este túnel por una solución de \emph{hosting} permanente.
+Esta topología de red es propia del entorno de desarrollo y depende de un túnel de terceros (ngrok) en lugar de una infraestructura de \emph{hosting} propia. Tal como se detalla en la Sección~\ref{sec:tunel-ngrok}, esta elección fue evaluada frente a una plataforma de despliegue (Vercel) y resulta adecuada para el desarrollo. El prototipo desplegado reemplaza el túnel por el servicio de nginx en Railway, que sirve la aplicación desde una URL pública y estable (Sección~\ref{sec:infraestructura}); lo que queda fuera del alcance es el despliegue a escala industrial, no el del prototipo.
 
 Esta arquitectura fue validada de manera funcional de extremo a extremo: la aplicación carga correctamente embebida dentro del \emph{iframe} del panel de administración de la tienda de desarrollo de Tiendanube, con el intercambio (\emph{handshake}) de Nexo funcionando de forma correcta entre el \emph{iframe} y la ventana padre.
 
