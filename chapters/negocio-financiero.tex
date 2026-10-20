@@ -28,7 +28,7 @@ Los costos se agrupan en cuatro rubros: infraestructura, comisiones de las tiend
 \hline
 \textbf{Concepto} & \textbf{Precio y base de cálculo} & \textbf{Costo estimado} \\
 \hline
-Railway (plan Pro) & USD 20 mensuales, que incluyen USD 20 de consumo; memoria a USD 10 por GB-mes y procesador a USD 20 por vCPU-mes \parencite{RailwayPricing2026}. Consumo estimado de los tres servicios: 1,1 GB y 0,2 vCPU, más 0,5 GB y 0,1 vCPU cada 100 tiendas activas & USD 20 mensuales hasta agotar el consumo incluido \\
+Railway (plan Hobby) & USD 5 mensuales, que incluyen USD 5 de consumo; el excedente se factura con la memoria a USD 10 por GB-mes y el procesador a USD 20 por vCPU-mes \parencite{RailwayPricing2026}. Consumo estimado de los tres servicios: 1,1 GB y 0,2 vCPU, más 0,5 GB y 0,1 vCPU cada 100 tiendas activas & USD 15 mensuales de base, más USD 7 cada 100 tiendas activas \\
 \hline
 Neon (plan Launch) & USD 0,106 por hora de unidad de cómputo (CU) y USD 0,35 por GB-mes de almacenamiento \parencite{NeonPricing2026}. El proceso de tareas consulta la cola cada 30 segundos, lo que mantiene el cómputo activo las 730 horas del mes; 0,25 CU hasta 100 tiendas, 0,5 CU hasta 300, 1 CU hasta 700 y 2 CU por encima; 0,5 GB más 50 MB por tienda & USD 19,5 mensuales con 0,25 CU \\
 \hline
@@ -52,7 +52,7 @@ Promoción & Presupuesto fijo, consistente con una distribución a través de la
 
 Dos supuestos completan la estructura. En primer lugar, el período de prueba gratuito definido en la estrategia de precio implica que una parte de las tiendas que consumen infraestructura todavía no paga; para reflejarlo, los costos que dependen de la cantidad de tiendas se calculan sobre 1,25 tiendas activas por cada suscriptor pago. En segundo lugar, el costo de la API de Gemini resulta marginal frente al resto: aun con el máximo supuesto de llamadas, no supera los diez centavos de dólar por tienda y por mes, y si el servicio no responde, el sistema recurre a un mensaje de respaldo por plantilla, por lo que una restricción de cuota no interrumpe el servicio.
 
-El costo de Railway de la tabla corresponde al servicio comercial. El prototipo se despliega hoy en el plan Hobby de Railway, de USD 5 mensuales \parencite{RailwayPricing2026}, que alcanza para el volumen de una demostración; la proyección usa el plan Pro porque su consumo incluido cubre los tres servicios con las tiendas activas de los escenarios, de modo que el costo de infraestructura proyectado no queda subestimado.
+El plan Hobby de Railway es el mismo en el que se despliega hoy el prototipo. Como el consumo estimado de los tres servicios supera los USD 5 incluidos en la suscripción, el costo que se proyecta no es el precio del plan sino el consumo efectivo, que crece con las tiendas activas.
 
 La lectura conjunta de la tabla muestra que el costo dominante no es tecnológico sino humano: en el escenario base, la infraestructura completa representa menos del 10\% de los costos operativos de cada año, mientras que el mantenimiento y el soporte superan el 75\%.
 
@@ -114,19 +114,19 @@ Comisión de la tienda de aplicaciones (30\%) & --- & $-$2.298 & $-$6.655 & $-$1
 \hline
 \textbf{Ingresos netos} & --- & \textbf{5.363} & \textbf{15.529} & \textbf{27.058} \\
 \hline
-Infraestructura (Railway, Neon, Gemini y dominio) & --- & $-$535 & $-$854 & $-$1.106 \\
+Infraestructura (Railway, Neon, Gemini y dominio) & --- & $-$510 & $-$854 & $-$1.106 \\
 \hline
 Promoción & --- & $-$1.200 & $-$1.200 & $-$1.200 \\
 \hline
 Mantenimiento y soporte & --- & $-$6.513 & $-$8.247 & $-$10.213 \\
 \hline
-\textbf{Costos operativos} & --- & \textbf{$-$8.249} & \textbf{$-$10.301} & \textbf{$-$12.518} \\
+\textbf{Costos operativos} & --- & \textbf{$-$8.223} & \textbf{$-$10.301} & \textbf{$-$12.518} \\
 \hline
 Inversión en puesta en producción & $-$3.733 & --- & --- & --- \\
 \hline
-\textbf{Flujo neto} & \textbf{$-$3.733} & \textbf{$-$2.886} & \textbf{5.228} & \textbf{14.540} \\
+\textbf{Flujo neto} & \textbf{$-$3.733} & \textbf{$-$2.860} & \textbf{5.228} & \textbf{14.540} \\
 \hline
-Flujo acumulado & $-$3.733 & $-$6.618 & $-$1.390 & 13.149 \\
+Flujo acumulado & $-$3.733 & $-$6.592 & $-$1.365 & 13.175 \\
 \hline
 \end{tabular}
 
@@ -152,15 +152,15 @@ La Tabla~\ref{tab:viabilidad-indicadores} resume los indicadores de los tres esc
 \hline
 \textbf{Indicador} & \textbf{Pesimista} & \textbf{Base} & \textbf{Optimista} \\
 \hline
-VAN (USD) & $-$9.198 & 3.759 & 32.590 \\
+VAN (USD) & $-$9.149 & 3.779 & 32.597 \\
 \hline
-TIR & No definida & 60,7\% & 237,3\% \\
+TIR & No definida & 60,9\% & 237,4\% \\
 \hline
 Período de recupero & No se recupera & Mes 26 & Mes 14 \\
 \hline
 Mes en que se alcanza el punto de equilibrio (55 suscriptores) & Mes 32 & Mes 12 & Mes 5 \\
 \hline
-VAN incluyendo el desarrollo del prototipo (USD) & $-$27.861 & $-$14.904 & 13.927 \\
+VAN incluyendo el desarrollo del prototipo (USD) & $-$27.812 & $-$14.884 & 13.935 \\
 \hline
 \end{tabular}
 
@@ -170,7 +170,7 @@ VAN incluyendo el desarrollo del prototipo (USD) & $-$27.861 & $-$14.904 & 13.92
 
 En el escenario pesimista el flujo neto es negativo en los tres años, por lo que la TIR no está definida y la inversión no se recupera dentro del horizonte. En el escenario base el VAN es positivo y la inversión se recupera en el mes 26. La TIR elevada de los escenarios base y optimista se explica por la escala reducida de la inversión inicial frente a los flujos que se generan a partir del año 2, y debe leerse junto con el VAN, que mide el valor creado en términos absolutos.
 
-El punto de equilibrio se alcanza con 55 suscriptores pagos. Por debajo de las 100 tiendas activas, los costos fijos mensuales suman USD 607 (mantenimiento de base, Railway, Neon, dominio y promoción) y cada suscriptor aporta un margen de contribución de USD 11,21, que resulta de restar al ingreso neto de USD 13,68 los costos variables de soporte, Gemini y almacenamiento asociados a sus 1,25 tiendas activas; el cociente entre ambos valores, redondeado hacia arriba, da 55 suscriptores. El escenario base llega a ese umbral al cierre del primer año.
+El punto de equilibrio se alcanza con 55 suscriptores pagos. Por debajo de las 100 tiendas activas, los costos fijos mensuales suman USD 602 (mantenimiento de base, consumo base de Railway, Neon, dominio y promoción) y cada suscriptor aporta un margen de contribución de USD 11,12, que resulta de restar al ingreso neto de USD 13,68 los costos variables de soporte, consumo adicional de Railway, Gemini y almacenamiento asociados a sus 1,25 tiendas activas; el cociente entre ambos valores, redondeado hacia arriba, da 55 suscriptores. El escenario base llega a ese umbral al cierre del primer año.
 
 Si, en cambio, se incluye como inversión el desarrollo del prototipo (USD 18.663), solo el escenario optimista resulta con un VAN positivo dentro de los tres años, con una TIR del 57,4\% y un recupero en el mes 24. El servicio puede sostenerse una vez lanzado, pero recuperar también el esfuerzo de desarrollo dentro de ese plazo requiere una adopción superior a la del escenario base.
 
@@ -190,25 +190,25 @@ La Tabla~\ref{tab:viabilidad-sensibilidad} muestra cómo varía el VAN del escen
 \hline
 \textbf{Variable} & \textbf{Variación} & \textbf{VAN (USD)} & \textbf{Recupero} \\
 \hline
-\multirow{2}{*}{Tasa de descuento} & 20\% & 5.907 & Mes 26 \\
+\multirow{2}{*}{Tasa de descuento} & 20\% & 5.929 & Mes 26 \\
 \cline{2-4}
- & 40\% & 2.172 & Mes 26 \\
+ & 40\% & 2.191 & Mes 26 \\
 \hline
-\multirow{2}{*}{Precio} & $-$20\% (24.000 pesos) & $-$1.367 & Mes 33 \\
+\multirow{2}{*}{Precio} & $-$20\% (24.000 pesos) & $-$1.347 & Mes 33 \\
 \cline{2-4}
- & +20\% (36.000 pesos) & 8.885 & Mes 22 \\
+ & +20\% (36.000 pesos) & 8.905 & Mes 22 \\
 \hline
-\multirow{2}{*}{Altas mensuales} & $-$20\% & $-$367 & Mes 31 \\
+\multirow{2}{*}{Altas mensuales} & $-$20\% & $-$341 & Mes 31 \\
 \cline{2-4}
- & +20\% & 7.907 & Mes 22 \\
+ & +20\% & 7.922 & Mes 22 \\
 \hline
-\multirow{2}{*}{Tasa de bajas mensual} & 7\% & 1.026 & Mes 29 \\
+\multirow{2}{*}{Tasa de bajas mensual} & 7\% & 1.047 & Mes 29 \\
 \cline{2-4}
- & 3\% & 7.293 & Mes 24 \\
+ & 3\% & 7.311 & Mes 24 \\
 \hline
-\multirow{2}{*}{Costos operativos} & +20\% & 131 & Mes 31 \\
+\multirow{2}{*}{Costos operativos} & +20\% & 155 & Mes 31 \\
 \cline{2-4}
- & $-$20\% & 7.387 & Mes 22 \\
+ & $-$20\% & 7.403 & Mes 22 \\
 \hline
 \end{tabular}
 
