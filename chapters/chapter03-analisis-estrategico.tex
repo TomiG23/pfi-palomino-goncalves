@@ -78,9 +78,9 @@ Lucía Méndez (Figura~\ref{fig:persona-lucia}), del rubro indumentaria, se cons
     \includegraphics[width=0.85\textwidth]{./images/user-persona-3-nicolas-acosta.jpg}
     \caption{User Persona: Nicolás Acosta (rubro electrónica).}
     \label{fig:persona-nicolas}
-\end{figure}
-
+\smallskip
 \noindent\textit{Fuente: elaboración propia.}
+\end{figure}
 
 Las tres personas comparten un mismo diagnóstico de fondo, ya adelantado en la sección~\ref{sec:metodologia-entrevistas}: disponen de datos, propios o de la plataforma que utilizan, pero no de una interpretación accionable de esos datos. Esta necesidad común se retoma de forma directa en las estrategias adaptativas (DO) de la matriz FODA cruzado desarrollada a continuación, orientadas a reducir la barrera de alfabetización analítica del segmento.
 
@@ -98,9 +98,9 @@ El mapa de Lucía Méndez (Figura~\ref{fig:empatia-lucia}), rubro indumentaria, 
     \includegraphics[width=\textwidth]{./images/mapa_empatia_lucia_mendez.jpg}
     \caption{Mapa de empatía: Lucía Méndez (rubro indumentaria).}
     \label{fig:empatia-lucia}
-\end{figure}
-
+\smallskip
 \noindent\textit{Fuente: elaboración propia.}
+\end{figure}
 
 \FloatBarrier
 
@@ -111,22 +111,22 @@ El mapa de Martín Reyes (Figura~\ref{fig:empatia-martin}), rubro gastronomía, 
     \includegraphics[width=\textwidth]{./images/mapa_empatia_martin_reyes.jpg}
     \caption{Mapa de empatía: Martín Reyes (rubro gastronomía).}
     \label{fig:empatia-martin}
-\end{figure}
-
+\smallskip
 \noindent\textit{Fuente: elaboración propia.}
+\end{figure}
 
 \FloatBarrier
 
-El mapa de Nicolás Acosta (Figura~\ref{fig:empatia-nicolas}), rubro electrónica, mantiene la misma salvedad metodológica señalada para su ficha de persona (Figura~\ref{fig:persona-nicolas}): al no contar con un de los Anexos B a F, se construyó a partir de las particularidades descriptas en el Marco Teórico y de patrones transversales de las otras entrevistas, y no a partir de un relato directo. El mapa expone dos frustraciones centrales: la desactualización de precios frente a movimientos del tipo de cambio (\enquote{¿El dólar subió y mis precios ya quedaron viejos?}), que retoma directamente el factor determinante del rubro electrónica señalado en la Sección~\ref{sec:comportamiento-consumidor} del Marco Teórico, y la fragmentación de métricas entre Tiendanube y Mercado Libre, que Nicolás termina consolidando de forma manual en Excel a fin de mes (\enquote{Métricas de cada plataforma por separado, nunca unificadas}). Ambos ejes son consistentes con los rasgos \enquote{Dependiente del tipo de cambio} y \enquote{Multicanal desintegrado} ya señalados en su ficha de persona.
+El mapa de Nicolás Acosta (Figura~\ref{fig:empatia-nicolas}), rubro electrónica, mantiene la misma salvedad metodológica señalada para su ficha de persona (Figura~\ref{fig:persona-nicolas}): al no contar con una entrevista del rubro electrónica entre las de los Anexos B a F, se construyó a partir de las particularidades descriptas en el Marco Teórico y de patrones transversales de las otras entrevistas, y no a partir de un relato directo. El mapa expone dos frustraciones centrales: la desactualización de precios frente a movimientos del tipo de cambio (\enquote{¿El dólar subió y mis precios ya quedaron viejos?}), que retoma directamente el factor determinante del rubro electrónica señalado en la Sección~\ref{sec:comportamiento-consumidor} del Marco Teórico, y la fragmentación de métricas entre Tiendanube y Mercado Libre, que Nicolás termina consolidando de forma manual en Excel a fin de mes (\enquote{Métricas de cada plataforma por separado, nunca unificadas}). Ambos ejes son consistentes con los rasgos \enquote{Dependiente del tipo de cambio} y \enquote{Multicanal desintegrado} ya señalados en su ficha de persona.
 
 \begin{figure}[ht]
     \centering
     \includegraphics[width=\textwidth]{./images/mapa_empatia_nicolas_acosta.jpg}
     \caption{Mapa de empatía: Nicolás Acosta (rubro electrónica).}
     \label{fig:empatia-nicolas}
-\end{figure}
-
+\smallskip
 \noindent\textit{Fuente: elaboración propia.}
+\end{figure}
 
 \FloatBarrier
 
@@ -144,9 +144,9 @@ La matriz FODA (Fortalezas, Oportunidades, Debilidades y Amenazas) es una herram
     \includegraphics[width=\textwidth]{./images/foda_cruzado_decidata.jpg}
     \caption{Matriz FODA Cruzado del proyecto.}
     \label{fig:foda-cruzado}
-\end{figure}
-
+\smallskip
 \noindent\textit{Fuente: elaboración propia.}
+\end{figure}
 
 En el plano interno, las fortalezas identificadas se apoyan mayormente en decisiones técnicas ya descriptas y validadas en la sección~\ref{sec:stack-tecnologico}. La integración con Tiendanube fue validada de punta a punta (F1): la aplicación embebida carga correctamente dentro del panel de administración de la tienda de desarrollo, con el intercambio de Nexo funcionando de forma correcta entre el \emph{iframe} y la ventana padre, tal como se documentó en la sección~\ref{sec:arquitectura-red}. A esto se suma que el motor de análisis está orientado a un enfoque prescriptivo y no meramente descriptivo (F2), que incorpora un mecanismo de retroalimentación con scoring dinámico basado en outcomes (F3), que diferencia sus recomendaciones según el rubro comercial, gastronomía, indumentaria y electrónica (F4), que se apoya en un stack tecnológico unificado en JavaScript adecuado a un equipo reducido de dos personas, según los criterios de selección descriptos en la sección~\ref{sec:criterios-seleccion} (F5), y que se apoya en evidencia cualitativa obtenida mediante entrevistas a emprendedores del segmento objetivo, en los Anexos B a F (F6). En contraposición, las debilidades reconocidas remiten en su mayoría a limitaciones propias de un desarrollo en etapa de prototipo: el proyecto no contempla, por definición de alcance, un despliegue productivo a escala industrial (D1); depende principalmente de Tiendanube como fuente de datos, la plataforma sobre la que opera la mayoría de los entrevistados, aunque el prototipo integra también WooCommerce (D2); todavía no operó con tiendas reales, por lo que la efectividad de sus recomendaciones no está validada (D3); y enfrenta una curva de aprendizaje propia del segmento de emprendedores, cuyos usuarios objetivo presentan una alfabetización analítica baja (D4), tal como se observó de manera recurrente en las entrevistas de los Anexos B a F.
 
@@ -166,9 +166,9 @@ El modelo de las cinco fuerzas de Porter permite evaluar la intensidad competiti
     \includegraphics[width=\textwidth]{./images/porter_decidata.jpg}
     \caption{Cinco Fuerzas de Porter aplicadas al proyecto.}
     \label{fig:porter}
-\end{figure}
-
+\smallskip
 \noindent\textit{Fuente: elaboración propia.}
+\end{figure}
 
 La rivalidad entre los competidores existentes se evalúa como baja. Tal como se desarrolló en la sección~\ref{sec:estado-arte}, Nubelytics, el antecedente local más próximo, ya entrega alertas y oportunidades con IA, pero sin gestión de inventario por rubro, sin estacionalidad y sin retroalimentación sobre las acciones ejecutadas, que constituyen el diferencial del proyecto (sección~\ref{sec:nubelytics}), mientras que las soluciones internacionales con capacidades prescriptivas, entre ellas Zebra Technologies, Conjura, Polar Analytics y Klaviyo, no operan localmente y presentan barreras de idioma, costo y adecuación al mercado latinoamericano que las vuelven inaccesibles para el segmento de emprendedores argentinos (sección~\ref{sec:herramientas-internacionales}). Ese nicho, en consecuencia, permanece vacante, lo que reduce sustancialmente la presión competitiva directa sobre el proyecto en esta etapa.
 
@@ -192,9 +192,9 @@ El FODA cruzado desarrollado en la Sección~\ref{sec:foda-cruzado} y las cinco f
     \includegraphics[width=0.85\textwidth]{./images/diagramaTripleP.png}
     \caption{Estrategia comercial Triple P del proyecto.}
     \label{fig:triple-p}
-\end{figure}
-
+\smallskip
 \noindent\textit{Fuente: elaboración propia.}
+\end{figure}
 
 \subsection{Producto}
 \label{sec:triple-p-producto}
@@ -219,7 +219,7 @@ Los ejes de plaza y promoción se desarrollan de forma conjunta porque, en la es
 
 La distribución es exclusivamente digital, a través de la tienda de aplicaciones de Tiendanube (\emph{App Store}), señalada como la oportunidad O4 en la matriz FODA cruzado de la Sección~\ref{sec:foda-cruzado}, y, para las tiendas WooCommerce, mediante el complemento de WordPress, cuya publicación en el Woo Marketplace queda como trabajo futuro. Esta decisión de plaza es consistente con el producto descripto en la Sección~\ref{sec:triple-p-producto}: al tratarse de una aplicación integrada mediante Nexo y Nimbus, su canal natural de distribución es el mismo directorio de aplicaciones donde el comerciante ya busca herramientas para su tienda, sin requerir una estrategia de adquisición independiente.
 
-La promoción, por su parte, se enfoca en un retorno de inversión medible, pesos ahorrados, ventas capturadas, pérdidas evitadas, y no en una descripción abstracta de capacidades analíticas. Este enfoque retoma de forma directa la estrategia preventiva DA3 de la Sección~\ref{sec:foda-cruzado} y responde a una necesidad relevada explícitamente en las los Anexos B a F: E02 condicionó su disposición a pagar al impacto directo en ventas (\enquote{si me sirve en ventas... la pago}, Anexo C), y E05 fue igual de explícita al señalar que \enquote{necesito ver que realmente sirve} antes de comprometerse (Anexo F). Comunicar la herramienta en términos de resultados económicos concretos no es, a la luz de estos testimonios, una preferencia estilística sino una condición para que la propuesta resulte persuasiva para este segmento.
+La promoción, por su parte, se enfoca en un retorno de inversión medible, pesos ahorrados, ventas capturadas, pérdidas evitadas, y no en una descripción abstracta de capacidades analíticas. Este enfoque retoma de forma directa la estrategia preventiva DA3 de la Sección~\ref{sec:foda-cruzado} y responde a una necesidad relevada explícitamente en los Anexos B a F: E02 condicionó su disposición a pagar al impacto directo en ventas (\enquote{si me sirve en ventas... la pago}, Anexo C), y E05 fue igual de explícita al señalar que \enquote{necesito ver que realmente sirve} antes de comprometerse (Anexo F). Comunicar la herramienta en términos de resultados económicos concretos no es, a la luz de estos testimonios, una preferencia estilística sino una condición para que la propuesta resulte persuasiva para este segmento.
 
 A esta comunicación centrada en resultados se suma una reducción explícita de la barrera analítica: el sistema no exige formación técnica para interpretar sus salidas, dado que cada recomendación se entrega en lenguaje natural (RNF-09) mediante la traducción automática de datos estructurados que ejecuta el backend a través de la API del proveedor de IA (RF-19, Sección~\ref{sec:generacion-mensajes-ia}). Esta característica es, en sí misma, un argumento de promoción: reduce la carga cognitiva que, según se relevó en la Sección~\ref{sec:metodologia-entrevistas}, constituye una de las principales fricciones del segmento objetivo frente a las herramientas analíticas existentes.
 

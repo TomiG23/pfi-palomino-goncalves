@@ -54,7 +54,7 @@ A estos dos criterios se suma una consideración de alcance ya establecida: el p
 \subsection{Organización del código: monorepo}
 \label{sec:monorepo}
 
-El proyecto se estructura como un \emph{monorepo}: backend y frontend conviven en un único repositorio, organizados en las carpetas \texttt{backend/} y \texttt{frontend/} respectivamente. Esta decisión responde al fuerte acoplamiento funcional entre ambas capas. Dado que gran parte de los cambios en el proyecto involucra simultáneamente la incorporación o modificación de un endpoint en el backend y su consumo correspondiente en el frontend, un esquema de monorepo permite que ambos cambios se integren en un único commit, evitando que las dos partes queden desincronizadas entre sí, un riesgo real en un esquema de múltiplos repositorios cuando cada uno versiona de forma independiente.
+El proyecto se estructura como un \emph{monorepo}: backend y frontend conviven en un único repositorio, organizados en las carpetas \texttt{backend/} y \texttt{frontend/} respectivamente. Esta decisión responde al fuerte acoplamiento funcional entre ambas capas. Dado que gran parte de los cambios en el proyecto involucra simultáneamente la incorporación o modificación de un endpoint en el backend y su consumo correspondiente en el frontend, un esquema de monorepo permite que ambos cambios se integren en un único commit, evitando que las dos partes queden desincronizadas entre sí, un riesgo real en un esquema de múltiples repositorios cuando cada uno versiona de forma independiente.
 
 La alternativa de un esquema multi-repo, con versionado y ciclos de despliegue independientes para cada capa, resulta apropiada cuando ambas partes deben evolucionar y desplegarse de forma desacoplada, típicamente en el marco de un despliegue productivo con múltiples equipos. Dado que, como se mencionó, el proyecto no contempla un despliegue productivo a escala industrial sino un prototipo funcional, esa ventaja del multi-repo no aplica en este contexto, mientras que sí se mantiene el costo de coordinación que impone. En consecuencia, el monorepo resulta la opción que mejor equilibra simplicidad operativa y consistencia entre las dos capas de la aplicación.
 
@@ -273,10 +273,9 @@ La Figura~\ref{fig:arquitectura-red} sintetiza el flujo completo de comunicació
     \includegraphics[width=\textwidth]{./images/diagrama_arquitectura_red.png}
     \caption{Arquitectura de red del prototipo en el entorno de desarrollo.}
     \label{fig:arquitectura-red}
-\end{figure}
-
-\vspace{6pt}
+\smallskip
 \noindent\textit{Fuente: elaboración propia.}
+\end{figure}
 
 El flujo completo de comunicación, en el entorno de desarrollo, puede describirse en los siguientes pasos:
 
@@ -308,10 +307,9 @@ Mientras que la Figura~\ref{fig:arquitectura-red} describe la topología de red 
     \includegraphics[width=\textwidth]{./images/diagramaComponentesDecidata.png}
     \caption{Diagrama de componentes del prototipo.}
     \label{fig:comp-diagram}
-\end{figure}
-
-\vspace{6pt}
+\smallskip
 \noindent\textit{Fuente: elaboración propia.}
+\end{figure}
 
 El frontend, embebido en el \emph{iframe} del panel de administración, se compone del cliente Nexo que resuelve el \emph{handshake} descripto en la Sección~\ref{sec:arquitectura-red} y del panel de recomendaciones que consume la API propia de la aplicación mediante HTTP. El backend concentra la lógica de negocio en seis módulos: el módulo OAuth, responsable de la autenticación descripta en el CU-01 (Sección~\ref{sec:cu-01}); el módulo de ingesta (ETL), que implementa el CU-02 (Sección~\ref{sec:cu-02}); el manejador de \emph{webhooks} de privacidad, correspondiente al CU-07 (Sección~\ref{sec:cu-07}); el consultor de tipo de cambio, correspondiente al CU-08 (Sección~\ref{sec:cu-08}); y el motor de reglas por rubro junto con el módulo de scoring dinámico, que en conjunto implementan el CU-03 (Sección~\ref{sec:cu-03}). Este último módulo delega en un generador de mensajes que invoca la API externa del proveedor de IA para traducir cada recomendación a lenguaje natural (RF-19). Todos los módulos del backend persisten y consultan su información a través de la base de datos PostgreSQL presentada en la Figura~\ref{fig:erd-diagram}, y los módulos que dependen de datos externos acceden a ellos exclusivamente a través de la API REST de Tiendanube, la API del proveedor de IA y la API pública de tipo de cambio.
 

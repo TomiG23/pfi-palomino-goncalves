@@ -400,10 +400,9 @@ La Figura~\ref{fig:flujo-diagram} sintetiza el flujo completo del proceso, desde
     \includegraphics[width=0.6\textwidth]{./images/flujo_diagram.png}
     \caption{Diagrama de flujo del proceso de generación y evaluación de recomendaciones.}
     \label{fig:flujo-diagram}
-\end{figure}
-
-\vspace{6pt}
+\smallskip
 \noindent\textit{Fuente: elaboración propia.}
+\end{figure}
 
 El flujo se inicia con la ingesta y el proceso ETL de los datos crudos de Tiendanube (CU-02, Sección~\ref{sec:cu-02}), que quedan persistidos en la base de datos relacional. A partir del rubro identificado (RF-06), el motor aplica las seis reglas del prototipo (Tabla~\ref{tab:motor-reglas}) —quiebre de stock, preparación anticipada, fecha clave, baja rotación, revisión de precio y riesgo de abandono—, que alimentan el módulo de scoring dinámico y la posterior generación de la recomendación en lenguaje natural (CU-03, Sección~\ref{sec:cu-03}). Una vez presentada al comerciante y, opcionalmente, ejecutada y registrada (CU-05, Sección~\ref{sec:cu-05}), el sistema evalúa su impacto comparando el valor observado en la ventana de evaluación contra el esperado, calculado con el pronóstico vigente al generar la recomendación, y retroalimenta el score de recomendaciones futuras (CU-06, Sección~\ref{sec:cu-06}), cerrando el mecanismo de retroalimentación descripto en la Sección~\ref{sec:feedback-loop} del Marco Teórico.
 
@@ -634,10 +633,9 @@ La Figura~\ref{fig:seq-feedback-loop} consolida en un diagrama de secuencia la i
     \includegraphics[width=\textwidth]{./images/diagramaSecuenciaDecidata.png}
     \caption{Diagrama de secuencia del ciclo de retroalimentación: registro de ejecución y evaluación de impacto (CU-05 y CU-06).}
     \label{fig:seq-feedback-loop}
-\end{figure}
-
-\vspace{6pt}
+\smallskip
 \noindent\textit{Fuente: elaboración propia.}
+\end{figure}
 
 \subsection{CU-07: Procesar webhook de privacidad}
 \label{sec:cu-07}
@@ -844,10 +842,9 @@ La primera vez que un comerciante instala la aplicación, el sistema todavía no
     \includegraphics[width=0.7\textwidth]{./images/mockup_analisis_inicial.jpeg}
     \caption{Pantalla de análisis inicial de los datos de la tienda.}
     \label{fig:mockup-analisis-inicial}
-\end{figure}
-
-\vspace{6pt}
+\smallskip
 \noindent\textit{Fuente: elaboración propia.}
+\end{figure}
 
 \subsubsection{Sin recomendaciones activas}
 \label{sec:mockup-sin-recomendaciones}
@@ -859,10 +856,9 @@ Una vez completado el procesamiento, es posible que el motor de análisis no det
     \includegraphics[width=0.7\textwidth]{./images/mockup_sin_recomendaciones.png}
     \caption{Estado vacío del panel cuando no hay recomendaciones activas.}
     \label{fig:mockup-sin-recomendaciones}
-\end{figure}
-
-\vspace{6pt}
+\smallskip
 \noindent\textit{Fuente: elaboración propia.}
+\end{figure}
 
 \subsubsection{Listado de recomendaciones}
 \label{sec:mockup-listado-recomendaciones}
@@ -874,10 +870,9 @@ Cuando existen recomendaciones activas, el panel las presenta como un conjunto d
     \includegraphics[width=0.75\textwidth]{./images/mockup_listado_recomendaciones.png}
     \caption{Listado de recomendaciones activas del panel.}
     \label{fig:mockup-listado-recomendaciones}
-\end{figure}
-
-\vspace{6pt}
+\smallskip
 \noindent\textit{Fuente: elaboración propia.}
+\end{figure}
 
 \subsubsection{Detalle de una recomendación}
 \label{sec:mockup-detalle-recomendacion}
@@ -889,10 +884,9 @@ Al seleccionar una tarjeta del listado, el comerciante accede al detalle de esa 
     \includegraphics[width=0.65\textwidth]{./images/mockup_detalle_recomendacion.png}
     \caption{Detalle de una recomendación individual.}
     \label{fig:mockup-detalle-recomendacion}
-\end{figure}
-
-\vspace{6pt}
+\smallskip
 \noindent\textit{Fuente: elaboración propia.}
+\end{figure}
 
 \subsubsection{Impacto de una recomendación ejecutada}
 \label{sec:mockup-impacto-recomendacion}
@@ -904,10 +898,9 @@ Transcurrida la ventana de evaluación de la recomendación ejecutada, el comerc
     \includegraphics[width=0.65\textwidth]{./images/mockup_impacto_recomendacion.png}
     \caption{Vista de impacto de una recomendación marcada como ejecutada (mockup de diseño).}
     \label{fig:mockup-impacto-recomendacion}
-\end{figure}
-
-\vspace{6pt}
+\smallskip
 \noindent\textit{Fuente: elaboración propia.}
+\end{figure}
 
 \subsection{Pantallas de la Implementación Final}
 \label{sec:capturas-implementacion}

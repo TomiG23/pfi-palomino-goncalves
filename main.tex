@@ -13,7 +13,7 @@
 \usepackage[T1]{fontenc} % Para poder copiar y pegar el texto desde un pdf
 \usepackage{lmodern}
 
-\usepackage[backend=biber, style=iso-authoryear, language=spanish]{biblatex}
+\usepackage[backend=biber, style=iso-authoryear, language=spanish, maxcitenames=2]{biblatex}
 \DeclareUnicodeCharacter{202F}{~} % Para reemplazar el caracter 202F por un espacio
 \bibliography{biblio.bib}
 \setcounter{tocdepth}{3}
@@ -52,8 +52,8 @@
 % \parbox[b] es para poner texto sobre el bottom
 \newpagestyle{ruled}{
 	\sethead{\includegraphics[width=3.7cm]{./images/UADE_LARGE}}
-			{\parbox[b]{0.60\textwidth}{\centering\small
-			 \MakeUppercase{Del dato a la decisión: recomendaciones accionables para e-commerce} \\
+			{\hspace*{2.4cm}\parbox[b]{0.64\textwidth}{\centering\small
+			 \MakeUppercase{Recomendaciones accionables para e-commerce} \\
 			 Gonçalves, T. · Palomino Gayoso, R. M.}}
 			{}\headrule{}
 	\setfoot[][][P\'agina \thepage\ de~\pageref*{LastPage}]{}{}{P\'agina \thepage\ de~\pageref*{LastPage}}\footrule{}
