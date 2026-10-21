@@ -110,7 +110,7 @@ El motor de análisis del prototipo consume los siguientes recursos de la API de
 
 \paragraph{Tienda (\texttt{/\{store\_id\}/store})}
 
-Durante la autenticación, una vez completado el flujo OAuth~2.0 descripto en la Sección~\ref{sec:estrategia-datos-ref}, el backend consulta el recurso \texttt{Store} mediante \texttt{GET /\{store\_id\}/store}, utilizando el \texttt{store\_id} y el \texttt{access\_token} obtenidos en ese mismo flujo. De este recurso se consume el campo \texttt{name}, que la API devuelve localizado, es decir, con un valor por cada idioma configurado en la tienda, y que permite identificar al comercio dentro del prototipo para asociarle sus métricas operativas.
+Durante la autenticación, una vez completado el flujo OAuth~2.0 descripto en el CU-01 (Sección~\ref{sec:cu-01}), el backend consulta el recurso \texttt{Store} mediante \texttt{GET /\{store\_id\}/store}, utilizando el \texttt{store\_id} y el \texttt{access\_token} obtenidos en ese mismo flujo. De este recurso se consume el campo \texttt{name}, que la API devuelve localizado, es decir, con un valor por cada idioma configurado en la tienda, y que permite identificar al comercio dentro del prototipo para asociarle sus métricas operativas.
 
 \paragraph{Pedidos (\texttt{/orders})}
 
