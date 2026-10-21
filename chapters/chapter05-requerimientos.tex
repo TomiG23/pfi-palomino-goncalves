@@ -49,7 +49,7 @@ RF-06 \textit{(corregido)} & El sistema debe identificar el rubro comercial de l
 RF-07 & El sistema debe generar recomendaciones prescriptivas accionables, expresadas en lenguaje natural, que indiquen al comerciante una acción concreta a ejecutar (por ejemplo: reponer un producto, lanzar una promoción, ajustar un precio). & Secciones~\ref{sec:objetivo-general} y~\ref{sec:business-intelligence} \\
 \hline
 
-RF-08 \textit{(corregido)} & El sistema debe detectar riesgos de quiebre de inventario acumulando la demanda pronosticada para cada producto/variante contra el stock actual para calcular los días hasta el agotamiento. Genera una alerta de reposición cuando ese valor cae por debajo del umbral del rubro (\texttt{stockout\_alert\_days}: gastronomía 3 días, indumentaria 14 días, electrónica 21 días) y la clasifica como urgente cuando cae por debajo del umbral secundario (\texttt{stockout\_urgent\_days}: gastronomía 1 día, indumentaria 5 días, electrónica 7 días). Esta regla solo se evalúa cuando el campo \texttt{stock\_management} de la variante sea \texttt{true}; si es \texttt{false}, el stock es infinito y no corresponde generar alerta de quiebre. & Sección~\ref{sec:recursos-campos}; E01, E04 y E05 (Anexos~\ref{anx:entrevista-e01}, \ref{anx:entrevista-e04} y~\ref{anx:entrevista-e05}) \\
+RF-08 \textit{(corregido)} & El sistema debe detectar riesgos de quiebre de inventario acumulando la demanda pronosticada para cada producto/variante contra el stock actual para calcular los días hasta el agotamiento. Genera una alerta de reposición cuando ese valor cae por debajo del umbral del rubro (\texttt{stockout\_alert\_days}: gastronomía 3 días, indumentaria 14 días, electrónica 21 días) y la clasifica como urgente cuando cae por debajo del umbral secundario (\texttt{stockout\_urgent\_days}: gastronomía 1 día, indumentaria 5 días, electrónica 7 días). Esta regla solo se evalúa cuando el campo \texttt{stock\_management} de la variante sea \texttt{true}; si es \texttt{false}, el stock es infinito y no corresponde generar alerta de quiebre. Además, cuando la plataforma informa por \emph{webhook} que una variante se quedó sin stock, el sistema emite una notificación (RF-22) y evalúa la regla de quiebre: con las unidades cargadas en la última reposición y los días que tardaron en agotarse, sugiere cuántas unidades reponer. & Sección~\ref{sec:recursos-campos}; E01, E04 y E05 (Anexos~\ref{anx:entrevista-e01}, \ref{anx:entrevista-e04} y~\ref{anx:entrevista-e05}) \\
 \hline
 
 RF-09 & El sistema debe identificar patrones de estacionalidad en las ventas mediante el análisis de series temporales construidas a partir de \texttt{created\_at}. & Sección~\ref{sec:comportamiento-consumidor} \\
@@ -67,7 +67,7 @@ RF-12 & El sistema debe segmentar la base de clientes según su nivel de activid
 RF-13 & El sistema debe identificar clientes en riesgo de abandono basándose en \texttt{last\_order\_date} (calculado según RF-04) y generar recomendaciones de retención o reactivación. & Sección~\ref{sec:recursos-campos} \\
 \hline
 
-RF-14 & El sistema debe permitir al usuario registrar si ejecutó una recomendación recibida, almacenando la fecha y el tipo de acción realizada. & Sección~\ref{sec:feedback-loop} \\
+RF-14 & El sistema debe permitir al usuario registrar si ejecutó una recomendación recibida, almacenando la fecha y el tipo de acción realizada, o descartarla; el descarte se registra y cuenta como fracaso en el \emph{bandit} (RF-16). & Sección~\ref{sec:feedback-loop} \\
 \hline
 
 RF-15 & El sistema debe medir el impacto de las recomendaciones ejecutadas comparando el valor observado en la ventana de evaluación contra el esperado, calculado con el pronóstico vigente al generar la recomendación, y presentar el resultado como correlación indicativa. & Sección~\ref{sec:feedback-loop} \\
@@ -89,6 +89,12 @@ RF-20 & El sistema debe generar una recomendación de revisión de precio cuando
 \hline
 
 RF-21 & El sistema debe permitir al usuario deshacer el registro de ejecución manual de una recomendación, siempre que no se haya completado aún la evaluación de impacto. El deshacer revierte la recomendación al estado activo y cancela la ventana de evaluación pendiente. & Sección~\ref{sec:feedback-loop} \\
+\hline
+
+RF-22 & El sistema debe emitir notificaciones para los avisos urgentes del día, como el agotamiento del stock de una variante, separadas de las recomendaciones. Las notificaciones no ocupan el cupo de recomendaciones activas, no actualizan el \emph{bandit} ni se someten a la medición de impacto. & Sección~\ref{sec:brainstorming-resultados} \\
+\hline
+
+RF-23 & El sistema debe mantener como máximo cuatro recomendaciones activas por tienda. El motor genera recomendaciones hasta completar el cupo, ordenando las candidatas primero por nivel de prioridad y después por la muestra de Thompson Sampling de su tipo. & Sección~\ref{sec:brainstorming-resultados} \\
 
 \hline
 \end{longtable}
@@ -204,9 +210,10 @@ Como dueño/a de una tienda en Tiendanube, quiero recibir una alerta cuando un p
     \item La regla solo se evalúa para variantes con \texttt{stock\_management} en \texttt{true}; las variantes de stock infinito quedan excluidas.
     \item Cuando los días hasta el quiebre caen por debajo del umbral de alerta del rubro, el sistema genera una recomendación de reposición, que se marca como urgente si caen por debajo del umbral urgente (Tabla~\ref{tab:motor-umbrales}).
     \item La recomendación incluye: nombre del producto/variante, stock actual, días estimados hasta el quiebre y la acción sugerida.
+    \item Cuando la plataforma informa por \emph{webhook} que una variante se quedó sin stock, el sistema emite una notificación inmediata (RF-22) y una recomendación de reposición con la cantidad sugerida, calculada a partir de las unidades cargadas en la última reposición y de los días que tardaron en agotarse.
 \end{itemize}
 
-\noindent\textbf{Requerimientos cubiertos:} RF-08, RF-03.
+\noindent\textbf{Requerimientos cubiertos:} RF-08, RF-03, RF-22.
 
 \subsection{HU-02 --- Recomendación de reposición anticipada}
 \label{sec:hu-02}
@@ -303,6 +310,7 @@ Como usuario del sistema, quiero poder marcar que ejecuté una recomendación re
     \item Al marcar una recomendación como ejecutada, el sistema registra la fecha y el identificador de la recomendación.
     \item El sistema puede inferir automáticamente la ejecución de una recomendación cuando detecta, en la sincronización incremental, un cambio de stock o de precio coherente con la acción sugerida (tipos inferibles: reposición de stock, revisión de precio, baja rotación y preparación anticipada). El usuario puede rechazar la inferencia si no fue él quien realizó la acción.
     \item El usuario puede deshacer el registro de una ejecución marcada manualmente, siempre que no se haya completado aún la evaluación de impacto (RF-21).
+    \item El usuario puede descartar una recomendación que no le interesa; el descarte se registra y cuenta como fracaso en el \emph{bandit} (RF-14).
     \item El sistema no obliga al usuario a ejecutar ni a registrar ninguna acción; el feedback es voluntario.
 \end{itemize}
 
@@ -475,7 +483,7 @@ Postcondiciones & Los datos de pedidos, productos, variantes y clientes están a
 
 \noindent 2a. Un endpoint devuelve error (token expirado, límite de tasa, error de servidor): el sistema reintenta con backoff exponencial y jitter. En caso de error 429, respeta el header \texttt{X-Rate-Limit-Reset} de la plataforma para determinar el tiempo de espera. Si el error persiste tras cinco intentos, el sistema registra el fallo y notifica al usuario.
 
-\noindent 5a \textit{(corregido)}. Los datos son insuficientes (tienda sin historial transaccional): el sistema opera con el conjunto de datos generado mediante el script de generación aleatoria controlada con semilla, según la estrategia descripta en la Sección 2.6.
+\noindent 5a. La tienda no tiene historial suficiente para el análisis: el sistema informa al comerciante que todavía no hay datos para generar recomendaciones y las genera a medida que se acumula historia. Una tienda real nunca recibe datos generados por script.
 
 \subsection{CU-03: Generar recomendaciones prescriptivas \textit{(corregido)}}
 \label{sec:cu-03}
@@ -581,7 +589,7 @@ Postcondiciones & La recomendación queda registrada como ejecutada con su fecha
 
 \noindent 3a. El comerciante decide no ejecutar la recomendación: no se requiere ninguna acción. El feedback es voluntario.
 
-\noindent 3b. El comerciante descarta la recomendación explícitamente: el sistema registra el descarte para ajustar el scoring futuro.
+\noindent 3b. El comerciante descarta la recomendación: el sistema registra el descarte con su fecha, retira la recomendación de las activas, libera su lugar en el cupo (RF-23) y la cuenta como fracaso en el \emph{bandit} de su tipo (RF-14, RF-16).
 
 \noindent 3c. \textit{Ejecución inferida:} en la siguiente sincronización incremental, el sistema detecta un cambio de stock o precio coherente con la acción sugerida (reposición, revisión de precio, baja rotación, preparación anticipada). El sistema marca la recomendación como ejecutada con fuente \texttt{inferred} y notifica al usuario, quien puede rechazar la inferencia si no fue él quien realizó la acción.
 
@@ -755,7 +763,7 @@ La Tabla~\ref{tab:trazabilidad} resume la trazabilidad entre las historias de us
 \hline
 \endlastfoot
 
-HU-01 (Stock bajo) & RF-08, RF-03 & CU-03, CU-04 \\
+HU-01 (Stock bajo) & RF-08, RF-03, RF-22 & CU-02, CU-03, CU-04 \\
 \hline
 HU-02 (Reposición anticipada) & RF-09, RF-07, RF-08 & CU-02, CU-03, CU-04 \\
 \hline
@@ -767,7 +775,7 @@ HU-05 (Precios desactualizados) & RF-07, RF-20, RF-11, RF-06 & CU-03, CU-04 \\
 \hline
 HU-06 (Promoción fecha clave) & RF-09, RF-07, RF-06 & CU-03, CU-04 \\
 \hline
-HU-07 (Feedback) & RF-14, RF-21 & CU-05 \\
+HU-07 (Feedback y descarte) & RF-14, RF-21 & CU-05, CU-06 \\
 \hline
 HU-08 (Impacto) & RF-15, RF-16 & CU-06 \\
 \hline
@@ -788,6 +796,10 @@ HU-11 (Tipo de cambio) & RF-20, RF-06 & CU-08, CU-03, CU-04 \\
 --- (Interfaz integrada) & RF-17 & CU-04 \\
 \hline
 --- (Webhooks privacidad) & RF-18 & CU-07 \\
+\hline
+--- (Notificaciones) & RF-22, RF-08 & CU-02 \\
+\hline
+--- (Cupo de recomendaciones activas) & RF-23 & CU-03 \\
 \hline
 
 \end{longtable}

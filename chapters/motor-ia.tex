@@ -6,7 +6,7 @@ El Marco Teórico presentó el enfoque híbrido en tres capas sobre el que se or
 \subsection{Flujo de datos entre las capas}
 \label{sec:motor-flujo}
 
-El motor se ejecuta en el proceso de tareas en segundo plano (\emph{worker}), separado de la API, y se encadena a la sincronización de los datos de cada tienda. La Figura~\ref{fig:motor-capas} resume el recorrido. Cada sincronización, ya sea la incremental, que se repite cada seis horas, o la que disparan los webhooks de la plataforma, deja los datos en el modelo canónico del sistema y encola el recálculo del pronóstico de demanda y de la segmentación de clientes (capa predictiva). Al terminar, se encola la ejecución del motor, que resuelve el rubro de la tienda, aplica las seis reglas sobre las predicciones (capa de reglas) y asigna a cada recomendación el puntaje de su tipo según el bandit (capa de priorización). Antes de guardarla, el modelo de lenguaje redacta su mensaje (capa de explicación). Cuando el comerciante abre el panel, la API ordena las recomendaciones activas con una muestra de Thompson Sampling del día.
+El motor se ejecuta en el proceso de tareas en segundo plano (\emph{worker}), separado de la API, y se encadena a la sincronización de los datos de cada tienda. La Figura~\ref{fig:motor-capas} resume el recorrido. Cada sincronización, ya sea la incremental, que se repite cada seis horas, o la que disparan los webhooks de la plataforma, deja los datos en el modelo canónico del sistema y encola el recálculo del pronóstico de demanda y de la segmentación de clientes (capa predictiva). Al terminar, se encola la ejecución del motor, que resuelve el rubro de la tienda, aplica las seis reglas sobre las predicciones (capa de reglas), asigna a cada recomendación el puntaje de su tipo según el bandit y completa hasta cuatro recomendaciones activas por tienda (capa de priorización). Antes de guardarla, el modelo de lenguaje redacta su mensaje (capa de explicación). Cuando el comerciante abre el panel, la API ordena las recomendaciones activas con una muestra de Thompson Sampling del día. Cuando un \emph{webhook} informa que una variante se quedó sin stock, la sincronización emite además una notificación para el comerciante y evalúa de inmediato la regla de quiebre de stock sobre esa variante.
 
 \begin{figure}[!htbp]
 \centering
@@ -88,7 +88,7 @@ El umbral de inactividad de la tienda es el máximo entre el piso del rubro y la
 \hline
 \textbf{Regla} & \textbf{Condición y variables} & \textbf{Prioridad} & \textbf{Puntaje} & \textbf{Esperado} \\
 \hline
-Quiebre de stock (RF-08, HU-01) & Días hasta agotar el stock $d$, acumulando la demanda pronosticada día por día; recomienda si $d \le$ umbral de alerta. Solo variantes con gestión de stock & Urgente si $d \le$ umbral urgente; si no, atención & $100\,(1 - d/\text{alerta})$ & Unidades pronosticadas en la ventana de impacto \\
+Quiebre de stock (RF-08, HU-01) & Días hasta agotar el stock $d$, acumulando la demanda pronosticada día por día; recomienda si $d \le$ umbral de alerta. Con el \emph{webhook} de stock agotado, sugiere las unidades a reponer a partir de la última reposición y de los días que tardó en agotarse. Solo variantes con gestión de stock & Urgente si $d \le$ umbral urgente o si el stock se agotó; si no, atención & $100\,(1 - d/\text{alerta})$ & Unidades pronosticadas en la ventana de impacto \\
 \hline
 Preparación anticipada (HU-02) & Día pico entre 2 y 7 días adelante con pronóstico $\ge$ 130\% del promedio reciente y al menos 1 unidad; excluye pronósticos de baja confianza y, dentro de una fecha clave, los productos no destacados & Atención si el pico está a 3 días o menos; si no, oportunidad & Suba porcentual del pico & Unidades pronosticadas en la ventana de impacto \\
 \hline
@@ -105,6 +105,8 @@ Riesgo de abandono (RF-13, HU-10) & Días sin comprar mayores que el umbral de i
 \smallskip
 \noindent\textit{Fuente: elaboración propia sobre la base del código del prototipo.}
 \end{table}
+
+\paragraph{Notificaciones.} Además de las recomendaciones, el sistema emite notificaciones: avisos urgentes del día que informan un hecho y no proponen una acción cuyo impacto pueda medirse, como que una variante se quedó sin stock. El panel las muestra separadas de las recomendaciones; no ocupan el cupo de recomendaciones activas, no actualizan el \emph{bandit} y no se someten a la medición de impacto (RF-22). El agotamiento del stock genera, además, una recomendación de reposición, que sí sigue el ciclo de las recomendaciones (Tabla~\ref{tab:motor-reglas}).
 
 \paragraph{Umbrales por rubro y constantes fijas.} Los umbrales que diferencian a los rubros se resumen en la Tabla~\ref{tab:motor-umbrales}. Se definieron a partir de las entrevistas de los Anexos B a F y de las particularidades de cada rubro descriptas en la Sección~\ref{sec:comportamiento-consumidor}, y se configuran sin modificar las reglas. Además de estos umbrales, el motor usa constantes iguales para todos los rubros: en la preparación anticipada, un pico de al menos 30\% sobre el promedio reciente, una anticipación mínima de 48 horas, un alcance de 7 días y el nivel de atención a 3 días o menos; en las fechas clave, una anticipación de 14 días y 5 productos destacados; en el abandono, el cuartil superior de CLV para la prioridad urgente; y en la inferencia de ejecuciones, una suba del stock de al menos 20\% del stock de base (como mínimo una unidad) para una reposición, un cambio de precio de al menos 1\% para una revisión de precio y una baja de al menos 5\% para una promoción por baja rotación.
 
@@ -195,12 +197,14 @@ La capa de priorización implementa el bandido multibrazo descripto en la Secci�
 
 \begin{itemize}
     \item \emph{éxito}, si se ejecutó y su impacto medido como esperado contra real fue positivo: se suma uno a $\alpha$;
-    \item \emph{fracaso}, si se ejecutó sin impacto positivo o sin dato para medirlo, o si venció sin ejecutarse: se suma uno a $\beta$.
+    \item \emph{fracaso}, si se ejecutó sin impacto positivo o sin dato para medirlo, si venció sin ejecutarse o si el comerciante la descartó: se suma uno a $\beta$.
 \end{itemize}
 
 Cada recomendación se cuenta una sola vez. Después de actualizar los brazos, se recalculan las distribuciones previas de cada rubro, agrupando cada resultado por el rubro con el que el motor generó la recomendación.
 
 \paragraph{Orden de las recomendaciones.} El panel ordena las recomendaciones activas con tres criterios sucesivos. Primero, el nivel de prioridad que fijó la regla: las urgentes, luego las de atención y por último las oportunidades. Dentro de un mismo nivel, la muestra de Thompson Sampling del tipo de cada recomendación, de mayor a menor. Dentro de un mismo tipo, el puntaje de la regla. Las muestras se toman con un generador pseudoaleatorio cuya semilla combina la tienda y el día, de modo que el orden no cambia durante el día y una demostración puede repetirse. El nivel de prioridad tiene precedencia sobre el aprendizaje porque responde a la urgencia del caso, como un quiebre de stock inminente, que el historial de éxitos de un tipo no debe postergar. Cada recomendación guarda, además, la media posterior de su brazo multiplicada por 100 como puntaje de referencia, y el panel muestra una explicación breve de lo aprendido; por ejemplo: «En tu tienda se ejecutaron 4 recomendaciones de este tipo y 3 de 4 evaluadas tuvieron impacto positivo».
+
+\paragraph{Cupo de recomendaciones activas.} Cada tienda tiene como máximo cuatro recomendaciones activas (RF-23), para que el panel muestre solo las acciones más relevantes. Cuando las reglas producen más candidatas que lugares libres, el motor completa el cupo en orden: primero por nivel de prioridad y, dentro de un mismo nivel, por la muestra de Thompson Sampling del tipo de cada candidata. Las candidatas que no entran se vuelven a evaluar en las siguientes ejecuciones del motor, a medida que se liberan lugares porque una recomendación se ejecuta, se descarta o vence. Las notificaciones no ocupan lugares del cupo.
 
 \subsection{Capa de explicación}
 \label{sec:motor-explicacion}

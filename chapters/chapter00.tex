@@ -59,7 +59,7 @@ El foco estará en demostrar la viabilidad de generar valor comercial dentro de 
 
     \item Despliegue productivo a escala industrial: el sistema es un prototipo funcional, desplegado en Railway con la capacidad propia de un prototipo (Sección~\ref{sec:infraestructura}), sin el dimensionamiento ni las garantías de disponibilidad de una operación a escala industrial. La migración a AWS queda como trabajo futuro.
 
-    \item Procesamiento de datos en tiempo real: los datos se procesan mediante trabajos asincrónicos en segundo plano (sincronización, pronóstico y motor de análisis), y no como un flujo continuo.
+    \item Procesamiento de datos en tiempo real: los datos se incorporan mediante sincronización incremental cada seis horas y mediante las sincronizaciones que disparan los \emph{webhooks} de la plataforma; no se procesa un flujo continuo de eventos.
 
     \item Módulos de autenticación, registro de usuarios o gestión de permisos, funcionalidades inherentes a las plataformas de comercio electrónico integradas.
 
