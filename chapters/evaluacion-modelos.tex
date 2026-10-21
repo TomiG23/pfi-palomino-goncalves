@@ -1,12 +1,16 @@
 \section{Evaluación de los modelos}
 \label{sec:evaluacion-modelos}
 
-Los modelos del motor se desarrollaron y se evaluaron sobre un conjunto de datos sintético, generado por un script propio según la estrategia descripta en la Sección~\ref{sec:estrategia-datos-ref}. Métricas obtenidas solo sobre datos sintéticos no demuestran el funcionamiento del sistema con datos reales, por lo que esta sección explicita cómo se generan esos datos, qué proporción de los datos disponibles representan, qué resultados obtiene cada capa del motor sobre ellos, incluidos los casos en que el modelo no supera a las referencias, y qué partes del sistema solo pueden validarse con su uso en tiendas reales. Los resultados se midieron el 17 de octubre de 2026 con el conjunto sintético recién generado, sobre una base de datos local, salvo los de rendimiento, que se midieron sobre una rama descartable de la base de datos en Neon, y cada uno puede reproducirse con un comando del repositorio del prototipo.
+Los modelos del motor se desarrollaron y se evaluaron sobre un conjunto de datos generado por un script propio (Sección~\ref{sec:eval-generacion}). Métricas obtenidas solo sobre datos generados no demuestran el funcionamiento del sistema con datos reales, por lo que esta sección explicita cómo se generan esos datos, qué proporción de los datos disponibles representan, qué resultados obtiene cada capa del motor sobre ellos, incluidos los casos en que el modelo no supera a las referencias, y qué partes del sistema solo pueden validarse con su uso en tiendas reales. Los resultados se midieron el 17 de octubre de 2026 con el conjunto recién generado, sobre una base de datos local, salvo los de rendimiento, que se midieron sobre una rama descartable de la base de datos en Neon, y cada uno puede reproducirse con un comando del repositorio del prototipo.
 
-\subsection{Generación del conjunto de datos sintético}
+\subsection{Generación del conjunto de datos}
 \label{sec:eval-generacion}
 
-El script simula, día por día, seis meses de operación de tres tiendas, una por rubro: MariCafé (gastronomía), Lucía Bordados (indumentaria) y TecnoShop BA (electrónica), cuyos catálogos modelan las User Personas de la Sección~\ref{sec:user-persona}. Todos los valores aleatorios provienen de un generador pseudoaleatorio con una semilla fija, de modo que con la misma semilla y la misma fecha de fin se generan exactamente los mismos datos. Para verificarlo, la generación y los reportes de evaluación se ejecutaron tres veces desde una base vacía, con la semilla \texttt{decidata-pfi-uade-2026} y el período del 16 de abril al 16 de octubre de 2026 (184 días), y las tres ejecuciones produjeron resultados idénticos.
+El desarrollo del prototipo se apoya en dos fuentes de datos complementarias. La primera es una tienda de desarrollo provista por el programa de Socios Tecnológicos de Tiendanube, que la plataforma asigna sin costo y de forma permanente, con acceso a la API real. En ella se instala la aplicación, se la autentica mediante OAuth 2.0 y se consumen los recursos reales de pedidos, productos y clientes, de modo que la integración se valida sobre la plataforma productiva y no sobre una simulación. Esa tienda, sin embargo, no acumula un historial de ventas que permita desarrollar y evaluar los modelos. La segunda fuente, que cubre esa necesidad, es un conjunto de datos generado por un script propio, sobre el que se obtuvieron los resultados de esta sección.
+
+El script no utiliza modelos generativos: aplica distribuciones de probabilidad y reglas de negocio codificadas por el equipo sobre el esquema de datos del sistema, de modo que el equipo controla la lógica que produce cada dato. Todos sus valores aleatorios provienen de un generador pseudoaleatorio con una semilla fija, \texttt{decidata-pfi-uade-2026} (Sección~\ref{sec:datos-semilla}): con la misma semilla y la misma fecha de fin, el script genera exactamente los mismos datos, lo que permite versionar y auditar el conjunto, y con otra semilla genera un escenario distinto. Para verificarlo, la generación y los reportes de evaluación se ejecutaron tres veces desde una base vacía, con esa semilla y el período del 16 de abril al 16 de octubre de 2026 (184 días), y las tres ejecuciones produjeron resultados idénticos.
+
+El script simula, día por día, seis meses de operación de tres tiendas, una por rubro: MariCafé (gastronomía), Lucía Bordados (indumentaria) y TecnoShop BA (electrónica), cuyos catálogos modelan las User Personas de la Sección~\ref{sec:user-persona}. Para cada una genera clientes, pedidos, reposiciones de stock y cambios de precio, y registra una foto del stock y del precio de cada variante cada vez que cambian, tal como lo haría la sincronización con una tienda real.
 
 La cantidad de órdenes de cada tienda en cada día $d$ resulta de multiplicar una base fija por los factores del calendario y por un ruido uniforme:
 
@@ -20,7 +24,7 @@ Cada parámetro del generador tiene una de cuatro fuentes: uno de los Anexos B a
 
 \begin{table}[!htbp]
 \centering
-\caption{Parámetros del generador sintético y su fuente}
+\caption{Parámetros del generador y su fuente}
 \label{tab:eval-parametros}
 \renewcommand{\arraystretch}{1.3}
 \footnotesize
@@ -73,7 +77,7 @@ Para que las afirmaciones sobre el conjunto generado no dependan de los parámet
 
 \begin{table}[!htbp]
 \centering
-\caption{Características medidas del conjunto sintético}
+\caption{Características medidas del conjunto generado}
 \label{tab:eval-perfil}
 \renewcommand{\arraystretch}{1.3}
 \footnotesize
@@ -105,15 +109,17 @@ Clientes inactivos según el umbral del rubro & 28,7\% & 26,8\% & 11,2\% \\
 \end{tabular}
 
 \smallskip
-\noindent\textit{Fuente: elaboración propia sobre la base del conjunto sintético generado el 17 de octubre de 2026.}
+\noindent\textit{Fuente: elaboración propia sobre la base del conjunto generado el 17 de octubre de 2026.}
 \end{table}
 
 Las tres tiendas cubren los dos perfiles de demanda que el motor debe manejar. La de gastronomía tiene una demanda alta y diaria, sin días sin ventas y con un patrón semanal marcado: es el caso en que el modelo de Holt-Winters dispone de datos suficientes. Las de indumentaria y electrónica tienen una demanda baja por variante, de alrededor de una unidad por día y con la mayoría de los días sin ventas: es el caso que el motor resuelve con un promedio móvil y marca como de baja confianza (Sección~\ref{sec:motor-predictiva}). Además, los catálogos contienen de forma deliberada los escenarios de las historias de usuario: el quiebre de stock (HU-01), la rotación decreciente (HU-03), el precio desactualizado (HU-05), las fechas clave (HU-06) y los clientes en riesgo (HU-10).
 
-\subsection{Proporción de datos sintéticos y reales}
+Los datos se alojan en una base de datos PostgreSQL provista por Neon, un servicio que permite crear ramas de la base de datos: copias aisladas de una rama de origen, creadas mediante un mecanismo de copia en escritura (\emph{copy-on-write}), en las que los cambios no afectan a las demás ramas \parencite{NeonBranching2026}. Esta característica permite que cada desarrollador trabaje sobre su propia rama, y genere y regenere en ella el conjunto tantas veces como sea necesario, mientras la rama principal conserva los datos de demostración compartidos. Como el script borra la base antes de cargarla, se niega a ejecutarse contra la rama principal salvo con una opción explícita, y el procedimiento previsto para recargar en ella los datos de demostración consiste en crear antes una rama de respaldo.
+
+\subsection{Proporción de datos generados y reales}
 \label{sec:eval-origen}
 
-Para que la proporción de datos sintéticos pueda informarse en cualquier momento, cada tienda registra el origen de sus datos: \texttt{seed}, para las tres tiendas del conjunto sintético; \texttt{script}, para las tiendas cargadas con otros scripts de generación, como la tienda WooCommerce de desarrollo; \texttt{dev\_tiendanube}, para la tienda de desarrollo de Tiendanube, cuyos datos se cargaron a mano y por script; y \texttt{real}, el valor que recibe por defecto toda tienda que se conecta a la aplicación. Un comando del prototipo informa, para cada origen, la cantidad de tiendas, órdenes, ítems, clientes y recomendaciones simuladas. La Tabla~\ref{tab:eval-origen} muestra el resultado sobre la base de datos compartida de desarrollo.
+Para que la proporción de datos generados pueda informarse en cualquier momento, cada tienda registra el origen de sus datos: \texttt{seed}, para las tres tiendas del conjunto generado; \texttt{script}, para las tiendas cargadas con otros scripts de generación, como la tienda WooCommerce de desarrollo; \texttt{dev\_tiendanube}, para la tienda de desarrollo de Tiendanube, cuyos datos se cargaron a mano y por script; y \texttt{real}, el valor que recibe por defecto toda tienda que se conecta a la aplicación. Un comando del prototipo informa, para cada origen, la cantidad de tiendas, órdenes, ítems, clientes y recomendaciones simuladas. La Tabla~\ref{tab:eval-origen} muestra el resultado sobre la base de datos compartida de desarrollo.
 
 \begin{table}[!htbp]
 \centering
@@ -126,19 +132,23 @@ Para que la proporción de datos sintéticos pueda informarse en cualquier momen
 \hline
 \textbf{Origen} & \textbf{Tiendas} & \textbf{Órdenes} & \textbf{Ítems} & \textbf{Clientes} \\
 \hline
-Conjunto sintético (\texttt{seed}) & 3 & 10.490 (97,7\%) & 20.013 (97,6\%) & 470 (92,0\%) \\
+Conjunto generado por script (\texttt{seed}) & 3 & 10.490 (97,7\%) & 20.013 (97,6\%) & 470 (92,0\%) \\
 \hline
 Tienda WooCommerce de desarrollo (\texttt{script}) & 1 & 244 (2,3\%) & 487 (2,4\%) & 41 (8,0\%) \\
+\hline
+Tienda de desarrollo de Tiendanube (\texttt{dev\_tiendanube}) & 0 & 0 & 0 & 0 \\
 \hline
 Tiendas reales (\texttt{real}) & 0 & 0 & 0 & 0 \\
 \hline
 \end{tabular}
 
 \smallskip
-\noindent\textit{Fuente: elaboración propia sobre la base de datos de desarrollo al 17 de octubre de 2026.}
+\noindent\textit{Fuente: elaboración propia sobre la base de datos de desarrollo al 21 de octubre de 2026.}
+
+\noindent\textit{Nota: los conteos corresponden a la base compartida de desarrollo, cargada con otra fecha de fin que el conjunto evaluado en las demás tablas de esta sección; por eso el total de órdenes difiere del de la Tabla~\ref{tab:eval-perfil}.}
 \end{table}
 
-El 100\% de las órdenes disponibles es sintético y ninguna proviene de la operación de una tienda real. Lo mismo ocurre con la tienda de desarrollo de Tiendanube: permite validar la integración con la API real, pero sus órdenes no corresponden a ventas reales. De las 560 recomendaciones de la base de desarrollo, 491 (87,7\%) pertenecen al historial simulado que se describe en la Sección~\ref{sec:eval-bandit}, y las 69 restantes las generó el motor sobre los mismos datos sintéticos.
+El 100\% de las órdenes disponibles fue generado por script y ninguna proviene de la operación de una tienda real. La tienda de desarrollo de Tiendanube no registra datos en esta base; aun cuando los registre, permite validar la integración con la API real, pero sus órdenes no corresponden a ventas reales. De las 774 recomendaciones de la base de desarrollo, 491 (63,4\%) pertenecen al historial simulado que se describe en la Sección~\ref{sec:eval-bandit}, y las 283 restantes las generó el motor sobre los mismos datos generados.
 
 Se decidió no incorporar conjuntos de datos públicos de comercio electrónico. El motor opera sobre el stock de cada variante, el historial de sus precios, el rubro de la tienda y el calendario comercial argentino, y adaptar un conjunto externo que no registre esa información habría requerido completarla con supuestos propios, con lo que el problema de origen de los datos se habría trasladado en lugar de resolverse. La validación con datos reales queda, por lo tanto, como una limitación del trabajo, que se trata en la Sección~\ref{sec:eval-limitaciones}.
 
@@ -171,7 +181,7 @@ TecnoShop BA & 4 / 0 / 13 & 119,3\% & \textbf{116,9\%} & 148,0\% & 27,7\% & \tex
 \smallskip
 \noindent\textit{Nota: variantes por modelo, en el orden Holt-Winters / suavizado exponencial simple / promedio móvil. En negrita, el menor error de cada nivel.}
 
-\noindent\textit{Fuente: elaboración propia sobre la base del conjunto sintético generado el 17 de octubre de 2026.}
+\noindent\textit{Fuente: elaboración propia sobre la base del conjunto generado el 17 de octubre de 2026.}
 \end{table}
 
 Los resultados difieren según el perfil de demanda. En gastronomía, donde todas las variantes usan Holt-Winters, el modelo supera a las dos referencias en los dos niveles, y para la serie total de la tienda reduce el error a menos de la mitad del de la referencia plana: 16,6\% frente a 35,8\%. En indumentaria y electrónica, en cambio, el modelo no aporta una mejora clara. Por variante, el error supera el 100\%: con alrededor de una unidad vendida por día y la mayoría de los días sin ventas, cualquier pronóstico diario de una variante comete un error mayor que el volumen que pronostica. A ese nivel, el modelo queda a la par de la referencia plana, apenas por debajo en indumentaria (124,3\% frente a 126,8\%) y apenas por encima en electrónica (119,3\% frente a 116,9\%), y solo supera con claridad a la referencia semanal ingenua, que repite los días sin ventas y los picos de la última semana. Para la serie total de la tienda, el error baja al rango del 25\% al 28\%, pero tampoco ahí el modelo es el mejor: en indumentaria lo supera la referencia semanal ingenua, y en electrónica, la plana. Estos resultados justifican que el motor use el promedio móvil en las variantes de demanda intermitente y marque sus pronósticos como de baja confianza: en ellas, el pronóstico sirve como estimación del volumen esperado, pero no como predicción precisa de las ventas de cada día.
@@ -203,7 +213,7 @@ TecnoShop BA & 89 & 3 & \textbf{0,444} / 0,357 / 0,379 & Campeones 51, en riesgo
 \end{tabular}
 
 \smallskip
-\noindent\textit{Fuente: elaboración propia sobre la base del conjunto sintético generado el 17 de octubre de 2026.}
+\noindent\textit{Fuente: elaboración propia sobre la base del conjunto generado el 17 de octubre de 2026.}
 \end{table}
 
 Las siluetas, entre 0,44 y 0,66, indican grupos separados. Este resultado debe leerse con la misma cautela que el del pronóstico: el generador asigna a los clientes tres perfiles de lealtad, y que la segmentación elija tres grupos en las tres tiendas muestra que el algoritmo recupera la estructura que el generador introdujo, no que los clientes de una tienda real se agrupen de la misma forma.
@@ -241,7 +251,7 @@ Promoción de fecha clave & 0,60 $\rightarrow$ 0,600 & 0,70 $\rightarrow$ 0,600 
 \smallskip
 \noindent\textit{Nota: en cada celda, la tasa fijada en el script $\rightarrow$ la media posterior aprendida.}
 
-\noindent\textit{Fuente: elaboración propia sobre la base del conjunto sintético generado el 17 de octubre de 2026.}
+\noindent\textit{Fuente: elaboración propia sobre la base del conjunto generado el 17 de octubre de 2026.}
 \end{table}
 
 En gastronomía y en indumentaria, los tres tipos que el bandit prioriza son los mismos tres con mayor tasa fijada; en electrónica, la reposición de stock queda primera aunque su tasa fijada es la tercera, porque su media aprendida, 0,793, quedó por encima de esa tasa. La promoción de fecha clave cuenta con solo cinco observaciones por tienda y su media queda cerca de la distribución previa.
@@ -251,7 +261,7 @@ Este resultado contiene una circularidad que debe declararse: el bandit aprendi�
 \subsection{Rendimiento}
 \label{sec:eval-rendimiento}
 
-El rendimiento se mide con un comando del prototipo que ejecuta, para cada tienda y como lo hace el proceso en segundo plano después de una sincronización, el pronóstico, la segmentación y el motor de reglas, y registra el tiempo de cada etapa, el total y la cantidad de recomendaciones generadas. Cada tienda se mide sin la redacción de Gemini, con las plantillas de respaldo, y con ella, en cuyo caso se registra cuántos textos redactó el modelo y cuántos recurrieron a la plantilla y por qué motivo. El mismo comando mide la latencia de la consulta de recomendaciones desde el panel. La medición se ejecutó el 17 de octubre de 2026 sobre una rama descartable de la base de datos en Neon, con el conjunto sintético recién generado y sin otros procesos activos sobre ella, desde una computadora personal en Buenos Aires conectada a la base por internet. Sin Gemini se realizaron tres ejecuciones por tienda y, con Gemini, una. La Tabla~\ref{tab:eval-pipeline} presenta los resultados.
+El rendimiento se mide con un comando del prototipo que ejecuta, para cada tienda y como lo hace el proceso en segundo plano después de una sincronización, el pronóstico, la segmentación y el motor de reglas, y registra el tiempo de cada etapa, el total y la cantidad de recomendaciones generadas. Cada tienda se mide sin la redacción de Gemini, con las plantillas de respaldo, y con ella, en cuyo caso se registra cuántos textos redactó el modelo y cuántos recurrieron a la plantilla y por qué motivo. El mismo comando mide la latencia de la consulta de recomendaciones desde el panel. La medición se ejecutó el 17 de octubre de 2026 sobre una rama descartable de la base de datos en Neon, con el conjunto recién generado y sin otros procesos activos sobre ella, desde una computadora personal en Buenos Aires conectada a la base por internet. Sin Gemini se realizaron tres ejecuciones por tienda y, con Gemini, una. La Tabla~\ref{tab:eval-pipeline} presenta los resultados.
 
 \begin{table}[!htbp]
 \centering
@@ -277,7 +287,7 @@ TecnoShop BA & 37 & 7,4 s (7,5 s) & 0,70 s & 0,50 s & 6,21 s & 63,3 s & 28 / 9 \
 \smallskip
 \noindent\textit{Nota: sin Gemini, mediana de tres ejecuciones y, entre paréntesis, la máxima. «Gemini / plantilla» indica cuántos textos redactó el modelo y cuántos recurrieron a la plantilla de respaldo.}
 
-\noindent\textit{Fuente: elaboración propia sobre la base del conjunto sintético generado el 17 de octubre de 2026.}
+\noindent\textit{Fuente: elaboración propia sobre la base del conjunto generado el 17 de octubre de 2026.}
 \end{table}
 
 Sin Gemini, el análisis completo de una tienda tarda entre 7,4 y 8,4 segundos, y nunca superó los 9,2 segundos. El pronóstico y la segmentación suman alrededor de 1,2 segundos; el resto corresponde al motor de reglas, cuyo tiempo se explica casi por completo por la latencia de red: cada recomendación se almacena con una escritura propia, una después de otra, y cada escritura viaja hasta la base de datos. Como referencia, la misma ejecución contra una base de datos local tarda 0,50 segundos en total para Lucía Bordados, por lo que agrupar las escrituras reduciría ese tiempo. Con Gemini, el análisis pasa a tardar entre 41 y 63 segundos, porque los textos se redactan de a uno. En esta medición se usó la capa gratuita de la API, que rechazó por exceso de cuota buena parte de las solicitudes: esas recomendaciones recibieron el texto de la plantilla de respaldo, de modo que las 178 recomendaciones generadas cuentan con su texto, 67 redactados por el modelo y 111 por la plantilla. El tiempo con Gemini es, por lo tanto, una cota inferior del que tendría una cuenta paga que redactara todos los textos.
@@ -306,7 +316,7 @@ TecnoShop BA & 159 & 128 ms & 107 ms & 228 ms & 364 ms \\
 \smallskip
 \noindent\textit{Nota: la consulta devuelve las recomendaciones activas, las ejecutadas y las vencidas en los últimos 30 días, incluido el historial simulado.}
 
-\noindent\textit{Fuente: elaboración propia sobre la base del conjunto sintético generado el 17 de octubre de 2026.}
+\noindent\textit{Fuente: elaboración propia sobre la base del conjunto generado el 17 de octubre de 2026.}
 \end{table}
 
 El 95\% de las consultas se respondió en menos de 240 milisegundos en las tres tiendas. Como el backend no se ejecutó en un proveedor de nube sino en una computadora personal, estas latencias incluyen la red entre esa computadora y la base de datos, y pueden diferir de las de un despliegue en producción.
@@ -320,8 +330,8 @@ La evaluación presentada tiene las siguientes limitaciones metodológicas:
     \item \textbf{Las métricas se miden sobre datos que provienen de los mismos supuestos que los modelos aprenden.} El patrón semanal, la estacionalidad, las fechas clave y los perfiles de lealtad que el pronóstico y la segmentación recuperan son los que el generador introdujo. Que los recuperen muestra que los métodos funcionan sobre series y clientes con esa estructura, pero no cuánto se parece esa estructura a la de una tienda real.
     \item \textbf{Muchos parámetros son supuestos de diseño.} Se eligieron para que aparezcan los escenarios de las historias de usuario, no se estimaron a partir de ventas reales, y algunas características resultantes son más favorables que las de una tienda típica: por ejemplo, entre el 86\% y el 98\% de los clientes vuelve a comprar, porque cada tienda tiene una base fija de entre 89 y 247 clientes con compras durante seis meses.
     \item \textbf{Las reglas y el bandit no pueden validarse sin uso real.} El impacto de una recomendación depende de lo que haga el comerciante, y el bandit aprendió de tasas de éxito fijadas por el equipo (Sección~\ref{sec:eval-bandit}).
-    \item \textbf{La medición depende de la fecha de referencia.} Si el conjunto sintético se evalúa con la fecha del día y su última orden es anterior, los días intermedios cuentan como días sin ventas y el error crece: con doce días de diferencia, el WAPE por variante de TecnoShop BA pasó del 119\% al 462\%. Por eso, las tiendas que no son reales se evalúan con el día siguiente a su última orden como fecha de referencia.
+    \item \textbf{La medición depende de la fecha de referencia.} Si el conjunto generado se evalúa con la fecha del día y su última orden es anterior, los días intermedios cuentan como días sin ventas y el error crece: con doce días de diferencia, el WAPE por variante de TecnoShop BA pasó del 119\% al 462\%. Por eso, las tiendas que no son reales se evalúan con el día siguiente a su última orden como fecha de referencia.
     \item \textbf{La escala es reducida.} Son tres tiendas de 17 a 32 variantes con ventas y de 89 a 247 clientes con compras, y los resultados, incluidos los tiempos de ejecución, valen para esa escala.
 \end{itemize}
 
-La validación con uso real requiere conectar tiendas de emprendedores que operen con la aplicación durante varias semanas. El registro del origen de los datos permite separar esas tiendas de las sintéticas, y el historial simulado está marcado como tal, de modo que las métricas pueden calcularse solo sobre datos reales. Sobre esas tiendas, la validación consistiría en: medir el WAPE del pronóstico frente a las mismas dos referencias, a medida que se acumule historia; calcular la silueta de la segmentación sobre sus clientes; medir qué proporción de las recomendaciones ejecutan los comerciantes y cuál es su impacto medido como esperado contra real; contrastar la inferencia de la ejecución con la confirmación explícita del comerciante; y observar si las distribuciones del bandit, calculadas sin el historial simulado, se alejan de las previas y mejoran el orden de las recomendaciones. Esta validación queda como trabajo futuro.
+La validación con uso real consiste en conectar la tienda real de un emprendedor del segmento, que opere con la aplicación durante varias semanas. El registro del origen de los datos permite separar esa tienda de las que tienen datos generados, y el historial simulado está marcado como tal, de modo que las métricas pueden calcularse solo sobre datos reales. Sobre esa tienda, la validación consistirá en: medir el WAPE del pronóstico frente a las mismas dos referencias, a medida que se acumule historia; calcular la silueta de la segmentación sobre sus clientes; medir qué proporción de las recomendaciones ejecutan los comerciantes y cuál es su impacto medido como esperado contra real; contrastar la inferencia de la ejecución con la confirmación explícita del comerciante; y observar si las distribuciones del bandit, calculadas sin el historial simulado, se alejan de las previas y mejoran el orden de las recomendaciones. Esta validación queda como trabajo futuro.

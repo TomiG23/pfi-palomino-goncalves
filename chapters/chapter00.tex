@@ -1,11 +1,12 @@
 \chapter{Introducción}
 \label{cha:introduccion}
 
-Los emprendedores que venden a través de una tienda en línea disponen de un volumen creciente de datos sobre sus ventas, su inventario y sus clientes, pero rara vez cuentan con el tiempo o la formación necesarios para convertirlos en decisiones. Las herramientas a su alcance presentan esos datos en tableros descriptivos que muestran qué ocurrió, sin indicar qué conviene hacer. El presente proyecto propone un prototipo que analiza los datos de la tienda y entrega recomendaciones concretas y priorizadas, explicadas en lenguaje natural, dentro del mismo panel de administración en el que el comerciante ya opera. Este capítulo presenta el objetivo general del proyecto, los objetivos específicos que lo desagregan y el alcance del prototipo, con los componentes que incluye y los que quedan fuera de él.
+Los emprendedores que se dedican al comercio electrónico (\emph{e-commerce}) y venden a través de una tienda en línea disponen de un volumen creciente de datos sobre sus ventas, su inventario y sus clientes, pero rara vez cuentan con el tiempo o la formación necesarios para convertirlos en decisiones. Las herramientas a su alcance presentan esos datos en tableros descriptivos que muestran qué ocurrió, sin indicar qué conviene hacer. El presente proyecto propone un prototipo que analiza los datos de la tienda y entrega recomendaciones concretas y priorizadas, explicadas en lenguaje natural, dentro del mismo panel de administración en el que el comerciante ya opera. Este capítulo presenta el objetivo general del proyecto, los objetivos específicos que lo desagregan y el alcance del prototipo, con los componentes que incluye y los que quedan fuera de él.
 
 \section{Objetivo General}
+\label{sec:objetivo-general}
 
-Desarrollar un prototipo funcional que permita transformar datos operativos de tiendas de e-commerce en recomendaciones accionables, orientado a emprendedores que no cuentan con recursos para contratar analistas de negocio, con el fin de mejorar la toma de decisiones comerciales en la Ciudad Autónoma de Buenos Aires durante el año 2026.
+Desarrollar un prototipo funcional que permita transformar datos operativos de tiendas en línea en recomendaciones accionables, orientado a emprendedores que no cuentan con recursos para contratar analistas de negocio, con el fin de mejorar la toma de decisiones comerciales en la Ciudad Autónoma de Buenos Aires durante el año 2026.
 
 \section{Objetivos Específicos}
 \label{sec:objetivos-especificos}
@@ -19,9 +20,10 @@ El presente proyecto se plantea los siguientes objetivos específicos:
 
     \item Generar recomendaciones personalizadas según el rubro y los datos de cada tienda, priorizadas según los resultados de las recomendaciones anteriores y explicadas en lenguaje natural, de modo que el 100\% de las recomendaciones cuente con un texto explicativo aun cuando el modelo de lenguaje no esté disponible.
 
-    \item Validar el funcionamiento del prototipo mediante pruebas automatizadas que cubran al menos el 85\% de las líneas de código de los módulos de análisis y de integración con WooCommerce, y mediante pruebas de punta a punta con las dos plataformas integradas.
+    \item Validar el funcionamiento del prototipo mediante pruebas automatizadas que cubran al menos el 85\% de las líneas de código del backend y del frontend, y mediante pruebas de punta a punta con las dos plataformas integradas.
 \end{enumerate}
 
+\bigskip
 \section{Alcance}
 \label{sec:alcance}
 
@@ -29,11 +31,12 @@ El proyecto contempla el diseño y desarrollo de un prototipo funcional con cobe
 
 
 \subsection{Componentes Incluidos}
+\label{sec:componentes-incluidos}
 
 \begin{enumerate}
     \item Identificación del negocio para obtener y asociar sus métricas operativas.
 
-    \item Adquisición y procesamiento de datos de e-commerce a través de la integración con las API de Tiendanube y WooCommerce, mediante una arquitectura de adaptadores que permite incorporar otras plataformas sin modificar el motor de análisis.
+    \item Adquisición y procesamiento de datos de comercio electrónico a través de la integración con las API de Tiendanube y WooCommerce, mediante una arquitectura de adaptadores que permite incorporar otras plataformas sin modificar el motor de análisis.
 
     \item Desarrollo de un motor de análisis para la detección de patrones y oportunidades comerciales, con enfoque en rubros específicos (gastronomía, indumentaria y electrónica).
 
@@ -41,7 +44,7 @@ El proyecto contempla el diseño y desarrollo de un prototipo funcional con cobe
 
     \item Implementación de un mecanismo de retroalimentación para evaluar el impacto de las recomendaciones ejecutadas.
 
-    \item Consulta diaria a una API pública de tipo de cambio (dólar oficial/blue) como dato de contexto auxiliar para las recomendaciones del rubro electrónica, distinguida de una integración de plataforma: se trata de una única llamada de solo lectura sin autenticación, sin relación de negocio con el proveedor externo, y no reemplaza ni complementa la fuente principal de datos transaccionales, que continúan siendo exclusivamente las API de las plataformas de comercio electrónico integradas.
+    \item Consulta diaria a una API pública de tipo de cambio (dólar oficial/blue) como dato de contexto auxiliar: en toda tienda cuya moneda es el peso, permite comparar cuánto varió el dólar desde la última actualización de precio de cada variante para recomendar revisarlo. Se distingue de una integración de plataforma porque se trata de una única llamada de solo lectura sin autenticación, sin relación de negocio con el proveedor externo, y no reemplaza ni complementa la fuente principal de datos transaccionales, que continúan siendo exclusivamente las API de las plataformas de comercio electrónico integradas.
 \end{enumerate}
 
 \subsection{Componentes Excluidos}
@@ -57,7 +60,7 @@ El foco estará en demostrar la viabilidad de generar valor comercial dentro de 
 
     \item Despliegue productivo a escala industrial: el sistema es un prototipo funcional, desplegado en Railway con la capacidad propia de un prototipo (Sección~\ref{sec:infraestructura}), sin el dimensionamiento ni las garantías de disponibilidad de una operación a escala industrial. La migración a AWS queda como trabajo futuro.
 
-    \item Procesamiento de datos en tiempo real: los datos se procesan mediante trabajos asincrónicos en segundo plano (sincronización, pronóstico y motor de análisis), y no como un flujo continuo.
+    \item Procesamiento de datos en tiempo real: los datos se incorporan mediante sincronización incremental cada seis horas y mediante las sincronizaciones que disparan los \emph{webhooks} de la plataforma; no se procesa un flujo continuo de eventos.
 
     \item Módulos de autenticación, registro de usuarios o gestión de permisos, funcionalidades inherentes a las plataformas de comercio electrónico integradas.
 
@@ -67,16 +70,16 @@ El foco estará en demostrar la viabilidad de generar valor comercial dentro de 
 \section{Estructura del documento}
 \label{sec:estructura-documento}
 
-El presente documento se organiza en los siguientes capítulos y anexos:
+El trabajo \emph{Del dato a la decisión: prototipo de recomendaciones accionables para e-commerce de emprendedores en Buenos Aires} se organiza en los siguientes capítulos y anexos:
 
 \begin{itemize}
-    \item \textbf{Capítulo~\ref{cha:antecedentes}: Antecedentes.} Presenta el estado del arte en herramientas de analítica para e-commerce, el marco teórico de los modelos aplicados y el contexto del mercado argentino.
-    \item \textbf{Capítulo~\ref{cha:analisis-estrategico}: Análisis Estratégico y de Competencias.} Aplica la matriz FODA cruzado y el modelo de las cinco fuerzas de Porter al proyecto, apoyándose en la evidencia empírica relevada mediante entrevistas.
-    \item \textbf{Capítulo de Desarrollo del negocio.} Presenta el modelo de negocio, la identidad de marca Decidata y el análisis de viabilidad económico-financiera.
+    \item \textbf{Capítulo~\ref{cha:antecedentes}: Antecedentes.} Presenta el Marco Teórico (Sección~\ref{sec:marco-teorico}), con los conceptos y modelos que sustentan el prototipo, y luego el Estado del Arte (Sección~\ref{sec:estado-arte}), con el contexto del mercado argentino y las herramientas de analítica para comercio electrónico.
+    \item \textbf{Capítulo~\ref{cha:analisis-estrategico}: Análisis Estratégico y de Competencias.} Valida el problema mediante entrevistas en profundidad (Sección~\ref{sec:metodologia-entrevistas}), aplica Design Thinking (Sección~\ref{sec:design-thinking}) y una sesión de brainstorming (Sección~\ref{sec:brainstorming}), y analiza el proyecto con la matriz FODA cruzado (Sección~\ref{sec:foda-cruzado}), las cinco fuerzas de Porter (Sección~\ref{sec:porter}) y la estrategia comercial Triple P (Sección~\ref{sec:triple-p}).
+    \item \textbf{Capítulo~\ref{cha:negocio}: Desarrollo del negocio.} Presenta el modelo de negocio (Sección~\ref{sec:modelo-negocio}), la identidad de marca Decidata (Sección~\ref{sec:marca-decidata}) y el análisis de viabilidad económico-financiera (Sección~\ref{sec:viabilidad-financiera}).
     \item \textbf{Capítulo~\ref{cha:requerimientos}: Requerimientos del Sistema.} Especifica los requerimientos funcionales y no funcionales, las historias de usuario con criterios de aceptación y los casos de uso del prototipo.
-    \item \textbf{Capítulo~\ref{cha:metodologia}: Metodología de desarrollo.} Describe la arquitectura del sistema, las decisiones técnicas de implementación, las secciones de motor de inteligencia artificial, arquitectura multiplataforma y evaluación de modelos, y la estrategia de validación mediante pruebas automatizadas.
+    \item \textbf{Capítulo~\ref{cha:metodologia}: Metodología de desarrollo.} Describe la metodología de trabajo (Sección~\ref{sec:metodologia}), la arquitectura y las tecnologías del sistema (Sección~\ref{sec:arquitectura-tecnologias}), el motor de inteligencia artificial (Sección~\ref{sec:motor-ia}), la arquitectura multiplataforma (Sección~\ref{sec:multiplataforma}), la validación mediante pruebas automatizadas (Sección~\ref{sec:validacion}) y la evaluación de los modelos (Sección~\ref{sec:evaluacion-modelos}).
     \item \textbf{Capítulo~\ref{cha:conclusiones}: Conclusiones.} Sintetiza el grado de cumplimiento de los objetivos, las limitaciones del prototipo y las líneas de trabajo futuro.
-    \item \textbf{Anexo~A: Cronograma de Proyecto.} Diagrama de Gantt y justificación de desvíos anticipados.
-    \item \textbf{Anexos~B a F: Entrevistas en profundidad.} Transcripciones de las cinco entrevistas realizadas con emprendedores de los rubros indumentaria, gastronomía e indumentaria estampada.
-    \item \textbf{Anexo~G: Brainstorming.} Registro de la sesión de ideación realizada con participantes de perfil técnico y de producto.
+    \item \textbf{Anexo~\ref{anx:cronograma}: Cronograma de Proyecto.} Diagrama de Gantt y justificación de desvíos anticipados.
+    \item \textbf{Anexos~\ref{anx:entrevista-e01} a~\ref{anx:entrevista-e05}: Entrevistas en profundidad.} Transcripciones de las cinco entrevistas realizadas con emprendedores de los rubros indumentaria, incluida la indumentaria estampada, gastronomía y venta de cómics y mangas.
+    \item \textbf{Anexo~\ref{anx:brainstorming}: Brainstorming.} Registro de la sesión de ideación realizada con participantes de perfiles técnicos, de producto y de marketing.
 \end{itemize}

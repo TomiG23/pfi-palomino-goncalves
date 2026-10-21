@@ -8,7 +8,7 @@ El trabajo de campo que sustenta los análisis de este capítulo no se limitó a
 
 La sección~\ref{sec:metodologia-entrevistas} argumentó con detalle por qué el diseño prescindió de encuestas cuantitativas como instrumento de relevamiento: un cuestionario cerrado solo puede medir lo que el investigador ya anticipó, e impone sobre el fenómeno una estructura de respuesta que el relevamiento buscaba precisamente descubrir. El mismo razonamiento se extiende, con matices, al brainstorming. Una encuesta cerrada sobre preferencias de funcionalidad hubiese forzado a los participantes a evaluar opciones predefinidas; el brainstorming libre, en cambio, permitió observar qué problemas y soluciones emergían de manera espontánea cuando se describía el contexto del emprendedor sin anticipar la respuesta.
 
-El complemento entre ambas herramientas es metodológicamente deliberado. Las entrevistas aportaron profundidad contextual desde la perspectiva del usuario final, el emprendedor que opera la tienda, e incluyeron a quienes experimentan en primera persona el problema que el sistema busca resolver. El brainstorming aportó divergencia técnica y de producto desde perfiles que no son el usuario final, sino quienes razonan sobre sistemas, datos e interfaces de forma profesional. Solo una de las participantes, B04, lleva un comercio: un negocio de indumentaria que comparte con su padre; por eso, todas las preguntas de la sesión se formularon en tercera persona, sobre las User Personas descriptas en la sección~\ref{sec:user-persona}, de modo de evitar que la experiencia personal de los participantes sesgara las ideas hacia contextos que no corresponden al segmento objetivo.
+El complemento entre ambas herramientas es metodológicamente deliberado. Las entrevistas aportaron profundidad contextual desde la perspectiva del usuario final, el emprendedor que opera la tienda, e incluyeron a quienes experimentan en primera persona el problema que el sistema busca resolver. El brainstorming aportó divergencia técnica, de producto y de marketing desde perfiles que, en su mayoría, no son el usuario final, sino quienes razonan sobre sistemas, datos e interfaces de forma profesional. B04, en cambio, es dueña de un comercio electrónico de indumentaria, que lleva con su padre, y aportó también la mirada de quien opera una tienda. Como el resto de los participantes no lleva un comercio, todas las preguntas de la sesión se formularon en tercera persona, sobre las User Personas descriptas en la sección~\ref{sec:user-persona}, de modo de evitar que la experiencia personal de los participantes sesgara las ideas hacia contextos que no corresponden al segmento objetivo.
 
 \subsection{Participantes, agenda y dinámica}
 \label{sec:brainstorming-participantes}
@@ -30,7 +30,7 @@ B02 & Braulio Jauregui & Desarrollador backend (Mercado Libre); estimó el esfue
 \hline
 B03 & Diego Dangona & Product Manager \\
 \hline
-B04 & Agostina Targarico & Marketing; lleva un comercio de indumentaria con su padre \\
+B04 & Agostina Targarico & Marketing; dueña de un comercio electrónico de indumentaria, que lleva con su padre \\
 \hline
 B05 & Gabriel Aran & Desarrollador backend (Mercado Libre); estimó el esfuerzo técnico en la matriz \\
 \hline
@@ -61,9 +61,9 @@ La dinámica siguió el protocolo de ideación divergente clásica: cantidad ant
 0:58--1:00 & Cierre & Fotografías de la matriz. \\
 \hline
 \end{tabular}
-\end{table}
-
+\smallskip
 \noindent\textit{Fuente: elaboración propia.}
+\end{table}
 
 \FloatBarrier
 
@@ -98,9 +98,9 @@ La Pregunta 2 enunció explícitamente las cuatro categorías de recomendaciones
     \end{subfigure}
     \caption{Desarrollo de la sesión de brainstorming del 10 de octubre de 2026.}
     \label{fig:brainstorming-sesion}
-\end{figure}
-
+\smallskip
 \noindent\textit{Fuente: elaboración propia.}
+\end{figure}
 
 \FloatBarrier
 
@@ -125,23 +125,23 @@ La ideación produjo más grupos de ideas de los que finalmente pasaron a la mat
     \includegraphics[width=\textwidth]{./images/brainstorming-3.jpeg}
     \caption{Matriz de impacto (Alto--Bajo) y esfuerzo (Poco--Mucho) con las ideas más votadas. Sesión del 10 de octubre de 2026.}
     \label{fig:brainstorming-matriz-completa}
-\end{figure}
-
+\smallskip
 \noindent\textit{Fuente: elaboración propia.}
+\end{figure}
 
 \FloatBarrier
 
 \subsubsection{Ideas que validan el diseño}
 
-Nueve de las 21 ideas de la matriz coinciden con funcionalidades ya implementadas en el sistema, propuestas por participantes que no conocían la implementación. Esta coincidencia constituye la principal lectura de la sesión: el razonamiento independiente de perfiles técnicos y de producto convergió con las decisiones de diseño tomadas por el equipo.
+Nueve de las 21 ideas de la matriz coinciden con funcionalidades ya implementadas en el sistema, propuestas por participantes que no conocían la implementación. Esta coincidencia constituye la principal lectura de la sesión: el razonamiento independiente de perfiles técnicos, de producto y de marketing convergió con las decisiones de diseño tomadas por el equipo.
 
 Entre las coincidencias más relevantes se destacan: la solicitud de feedback al usuario sobre la ejecución de una recomendación, implementada mediante las acciones de marcar como ejecutada, deshacer y declarar que la acción no fue realizada por el emprendedor (HU-07, Sección~\ref{sec:hu-07}); la segmentación de clientes en niveles alto, medio y bajo, correspondiente a la segmentación RFM con \emph{k}-means y valor de vida del cliente (CLV) de la Sección~\ref{sec:motor-ia}; los avisos de efemérides comerciales, implementados como recomendaciones de fecha clave con calendario por rubro (HU-06); la explicación del porqué de cada recomendación, presente en el detalle de cada tarjeta; y la detección de si el emprendedor implementó la recomendación, resuelta mediante la inferencia automática de la ejecución a partir de snapshots de stock y precio (Sección~\ref{sec:motor-ia}).
 
 La Pregunta 3 produjo un resultado que merece señalarse de forma explícita: los perfiles técnicos describieron de manera espontánea, sin conocer el diseño del motor, mecanismos que el sistema implementa. El análisis automático periódico propuesto por B02, que emite una recomendación solo cuando corresponde, coincide con los trabajos programados del proceso en segundo plano y con las reglas del motor, que generan una recomendación únicamente cuando se cumple su condición. La detección de la acción a partir del cambio en los datos, propuesta por B01 y B02, es la base de la inferencia de la ejecución, y la comparación con lo que hubiera ocurrido sin la acción es la del impacto esperado frente al real (HU-08). El acuerdo de que el feedback se pondera pero no prevalece sobre los datos coincide, a su vez, con el ciclo de retroalimentación que alimenta el bandit con Thompson Sampling (Sección~\ref{sec:motor-ia}).
 
-\subsubsection{Ideas parcialmente implementadas}
+\subsubsection{Ideas parcialmente implementadas o incorporadas a partir de la sesión}
 
-Seis ideas de la matriz corresponden a funcionalidades que el sistema implementa en parte. La diferenciación entre notificaciones y recomendaciones está presente mediante los niveles de prioridad urgente, atención y oportunidad, pero sin una separación visual explícita entre avisos de alerta y sugerencias de acción. La consulta al emprendedor sobre si la acción le resultó útil se reemplaza por la medición automática del impacto, sin un mecanismo de pregunta directa. El botón para ejecutar la acción desde la tarjeta existe como llamada a la acción, pero sin escritura hacia la plataforma, lo que limita su alcance a la navegación hacia la sección correspondiente. La idea de dar solo recomendaciones que generen un buen margen se aproxima mediante el bandit, que prioriza los tipos de recomendación que funcionaron en cada tienda, pero no filtra por margen, porque requeriría conocer el costo de cada producto. Finalmente, no hablar en imperativo y adaptar el tono al rubro dependen del modelo de lenguaje, que recibe el rubro como contexto, por lo que su aplicación efectiva depende del \emph{system prompt} de Gemini.
+Seis ideas de la matriz no estaban implementadas al momento de la sesión, o lo estaban en parte. Una de ellas se incorporó al sistema a partir de la sesión: la diferenciación entre notificaciones y recomendaciones que propuso B03. Las notificaciones, como el aviso de que una variante se quedó sin stock, se muestran separadas de las recomendaciones y no ocupan su cupo (RF-22, Sección~\ref{sec:motor-reglas}). Las otras cinco ideas se implementan en parte. La consulta al emprendedor sobre si la acción le resultó útil se reemplaza por la medición automática del impacto, sin un mecanismo de pregunta directa. El botón para ejecutar la acción desde la tarjeta existe como llamada a la acción, pero sin escritura hacia la plataforma, lo que limita su alcance a la navegación hacia la sección correspondiente. La idea de dar solo recomendaciones que generen un buen margen se aproxima mediante el bandit, que prioriza los tipos de recomendación que funcionaron en cada tienda, pero no filtra por margen, porque requeriría conocer el costo de cada producto. Finalmente, no hablar en imperativo y adaptar el tono al rubro dependen del modelo de lenguaje, que recibe el rubro como contexto, por lo que su aplicación efectiva depende del \emph{system prompt} de Gemini.
 
 \subsubsection{Trabajo futuro y descartadas}
 
@@ -150,9 +150,9 @@ Seis ideas se clasificaron como trabajo futuro o se descartaron con justificaci�
 \subsection{Conclusión de la sesión}
 \label{sec:brainstorming-conclusion}
 
-La sesión validó el núcleo del producto. De las 21 ideas de la matriz, nueve ya estaban implementadas y se reflejan en funcionalidades concretas del prototipo: las acciones de marcar como ejecutada, deshacer y «No fui yo» (HU-07); la inferencia automática de la ejecución a partir de los snapshots de stock y precio; la vista de impacto esperado frente al real (HU-08); las recomendaciones de fecha clave con calendario por rubro (HU-06) y sobre los productos más vendidos; las promociones sugeridas por la regla de rotación en caída; la segmentación RFM con \emph{k}-means (HU-10); el pronóstico con estacionalidad y la preparación anticipada (HU-02); y la explicación del porqué de cada recomendación y de su priorización. Otras seis quedaron implementadas en parte: la prioridad de cada recomendación distingue su urgencia, el impacto se mide sin preguntar al emprendedor, la tarjeta lleva a la sección del panel donde se ejecuta la acción, el bandit prioriza lo que funcionó sin filtrar por margen, y el tono depende del modelo de lenguaje. Las seis restantes pasan a trabajo futuro o se descartan. La parte pendiente del botón de la tarjeta, que la acción ejecute el cambio en la plataforma, surgió en el debate de la Pregunta 3 y se retoma en las Conclusiones como las acciones con un clic (Sección~\ref{sec:conclusiones-futuro}).
+La sesión validó el núcleo del producto. De las 21 ideas de la matriz, nueve ya estaban implementadas y se reflejan en funcionalidades concretas del prototipo: las acciones de marcar como ejecutada, deshacer y «No fui yo» (HU-07); la inferencia automática de la ejecución a partir de los snapshots de stock y precio; la vista de impacto esperado frente al real (HU-08); las recomendaciones de fecha clave con calendario por rubro (HU-06) y sobre los productos más vendidos; las promociones sugeridas por la regla de rotación en caída; la segmentación RFM con \emph{k}-means (HU-10); el pronóstico con estacionalidad y la preparación anticipada (HU-02); y la explicación del porqué de cada recomendación y de su priorización. Otras seis no estaban implementadas o lo estaban en parte: la separación entre notificaciones y recomendaciones se incorporó a partir de la sesión (RF-22), y en las cinco restantes el impacto se mide sin preguntar al emprendedor, la tarjeta lleva a la sección del panel donde se ejecuta la acción, el bandit prioriza lo que funcionó sin filtrar por margen, y el tono depende del modelo de lenguaje. Las seis restantes pasan a trabajo futuro o se descartan. La parte pendiente del botón de la tarjeta, que la acción ejecute el cambio en la plataforma, surgió en el debate de la Pregunta 3 y se retoma en las Conclusiones como las acciones con un clic (Sección~\ref{sec:conclusiones-futuro}).
 
 \subsection{Cierre del user research}
 \label{sec:brainstorming-cierre}
 
-El trabajo de campo de este capítulo combinó dos herramientas de user research con objetivos complementarios. Las entrevistas en profundidad de la sección~\ref{sec:metodologia-entrevistas} aportaron comprensión contextual desde la perspectiva del emprendedor, con énfasis en el \emph{por qué} de cada decisión y en la carga cognitiva que el sistema busca reducir. La sesión de brainstorming de la sección~\ref{sec:brainstorming} aportó validación técnica cruzada: más de un tercio de las 21 ideas de la matriz coincidió con funcionalidades ya implementadas, propuestas de forma independiente por perfiles que no conocían el diseño. Ambas herramientas se complementan sin solaparse: la primera indaga desde la experiencia vivida del usuario, la segunda desde el razonamiento técnico de quienes diseñan sistemas para ese usuario.
+El trabajo de campo de este capítulo combinó dos herramientas de user research con objetivos complementarios. Las entrevistas en profundidad de la sección~\ref{sec:metodologia-entrevistas} aportaron comprensión contextual desde la perspectiva del emprendedor, con énfasis en el \emph{por qué} de cada decisión y en la carga cognitiva que el sistema busca reducir. La sesión de brainstorming de la sección~\ref{sec:brainstorming} aportó validación técnica cruzada: más de un tercio de las 21 ideas de la matriz coincidió con funcionalidades ya implementadas, propuestas de forma independiente por perfiles que no conocían el diseño. Ambas herramientas se complementan sin solaparse: la primera indaga desde la experiencia vivida del usuario, la segunda desde el razonamiento de perfiles técnicos, de producto y de marketing que diseñan sistemas y productos para ese usuario.

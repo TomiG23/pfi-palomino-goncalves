@@ -13,7 +13,7 @@ En este contexto, la mayoría de los comercios dispone hoy de datos operativos e
 \subsection{Herramientas de analytics descriptivo: el estándar actual}
 \label{sec:analytics-descriptivo}
 
-Las herramientas de análisis más utilizadas por los comercios de e-commerce en Argentina pertenecen al nivel descriptivo. Tiendanube ofrece funcionalidades nativas de estadísticas en sus planes pagos, incluyendo desglose de ventas, comportamiento de productos y métricas de clientes \parencite{TiendanubeEstadisticas2025}. Sin embargo, esta información se presenta en forma de reportes y gráficos que requieren interpretación por parte del usuario.
+Las herramientas de análisis más utilizadas por las tiendas en línea de Argentina pertenecen al nivel descriptivo. Tiendanube ofrece funcionalidades nativas de estadísticas en sus planes pagos, incluyendo desglose de ventas, comportamiento de productos y métricas de clientes \parencite{TiendanubeEstadisticas2025}. Sin embargo, esta información se presenta en forma de reportes y gráficos que requieren interpretación por parte del usuario.
 
 Google Analytics, ampliamente integrado en las principales plataformas, ofrece análisis de tráfico y comportamiento, pero no genera recomendaciones comerciales \parencite{GoogleAnalytics2025}. Shopify Analytics presenta capacidades similares dentro de su ecosistema \parencite{ShopifyAnalytics2025}. Ninguna de estas herramientas indica al comerciante qué acción concreta debe tomar ni en qué momento.
 
@@ -38,12 +38,12 @@ Es una suite corporativa de analítica prescriptiva orientada a la gestión oper
 
 Puntos de contacto: Se comparte la hipótesis central de que las recomendaciones prescriptivas directas y automatizadas superan la eficiencia de los tableros descriptivos tradicionales para movilizar la acción comercial.
 
-Puntos de divergencia: Zebra amarra su software a un ecosistema cerrado de hardware propietario (lectores industriales y antenas RFID) para optimizar el retail físico masivo. El presente prototipo es un sistema agnóstico de hardware diseñado exclusivamente para flujos de datos de e-commerce, orientado a los emprendedores locales.
+Puntos de divergencia: Zebra amarra su software a un ecosistema cerrado de hardware propietario (lectores industriales y antenas RFID) para optimizar el retail físico masivo. El presente prototipo es un sistema agnóstico de hardware diseñado exclusivamente para flujos de datos de comercio electrónico, orientado a los emprendedores locales.
 
 \subsubsection{Conjura}
 \label{sec:conjura}
 
-Es una plataforma de business intelligence impulsada por IA y Machine Learning, orientada específicamente a marcas medianas y grandes del ecosistema de e-commerce global (Shopify, Amazon) \parencite{Conjura2025}.
+Es una plataforma de business intelligence impulsada por IA y Machine Learning, orientada específicamente a marcas medianas y grandes del ecosistema global de comercio electrónico (Shopify, Amazon) \parencite{Conjura2025}.
 
 Puntos de contacto: Coincide en el procesamiento automatizado de datos transaccionales de canales digitales para convertirlos en insights y recomendaciones comerciales que optimicen el rendimiento del negocio.
 
@@ -54,7 +54,7 @@ Puntos de divergencia: Su motor algorítmico se enfoca en variables financiero-p
 
 Es un concentrador de inteligencia de negocios diseñado para marcas nativas digitales (D2C) de escala internacional. Su propuesta se centra en centralizar datos dispersos de ventas y adquisición de clientes en un entorno unificado \parencite{PolarAnalytics2025}.
 
-Puntos de contacto: Ambos proyectos reconocen la necesidad crítica de unificar fuentes de datos dispersas de una tienda online para mejorar la toma de decisiones comerciales.
+Puntos de contacto: Ambos proyectos reconocen la necesidad crítica de unificar fuentes de datos dispersas de una tienda en línea para mejorar la toma de decisiones comerciales.
 
 Puntos de divergencia: Polar Analytics opera bajo un paradigma puramente descriptivo, organizando la información en dashboards para que un analista humano los interprete. Este proyecto elimina esa fricción interpretativa mediante la automatización del diagnóstico, entregando la recomendación directa al administrador. No contempla las particularidades del mercado latinoamericano ni ofrece recomendaciones diferenciadas por rubro.
 
@@ -67,8 +67,8 @@ Puntos de contacto: Se comparte el objetivo de potenciar las ventas mediante el 
 
 Puntos de divergencia: El alcance de Klaviyo es estrictamente externo y orientado al consumidor final (B2C), inyectando sugerencias en correos o SMS. El presente proyecto se orienta hacia adentro del negocio (B2B), actuando como sistema de soporte a las decisiones comerciales y operativas para el dueño o administrador de la tienda.
 
-\subsection{Conclusión del Estado del Arte}
-\label{sec:conclusion-estado-arte}
+\subsection{Comparación de las soluciones relevadas}
+\label{sec:comparacion-estado-arte}
 
 La Tabla~\ref{tab:comparativo_nubelytics} sintetiza los atributos evaluados para los cinco competidores identificados ---Nubelytics (Sección~\ref{sec:nubelytics}), Zebra Technologies / Reflexis (Sección~\ref{sec:zebra}), Conjura (Sección~\ref{sec:conjura}), Polar Analytics (Sección~\ref{sec:polar}) y Klaviyo (Sección~\ref{sec:klaviyo})--- junto con el presente proyecto. Cada celda se completó exclusivamente a partir de lo relevado en la sección correspondiente; cuando el material disponible no permitió determinar con certeza el estado de un atributo, se indica ``No documentado'' en lugar de presumirlo.
 
@@ -99,26 +99,12 @@ Validación de efectividad de recomendaciones & No & No documentado & No documen
 \hline
 Accesible para emprendedores argentinos (costo e idioma) & Sí & No & No & No & No & Sí \\
 \hline
-Integración nativa con plataforma de e-commerce local & Sí & No & No & No documentado & No documentado & Sí \\
+Integración nativa con plataforma de comercio electrónico local & Sí & No & No & No documentado & No documentado & Sí \\
 \hline
 	Soporte multiplataforma & Solo Tiendanube & No documentado & Sí & Sí & Sí & Tiendanube y WooCommerce (arquitectura de adaptadores) \\
 \hline
 \end{tabular}
 \end{table}
-
-Como refleja la comparación anterior, ninguna de las soluciones relevadas combina los siguientes atributos de forma simultánea:
-
-\begin{enumerate}
-    \item Recomendaciones prescriptivas y accionables que reemplacen la necesidad de interpretar tableros de control tradicionales.
-
-    \item Adaptación de la lógica de negocio a rubros específicos de consumo masivo altamente presentes en el entorno urbano (gastronomía, indumentaria, electrónica).
-
-    \item Integración nativa con la API de Tiendanube como plataforma dominante en el mercado argentino.
-
-    \item Accesibilidad técnica y financiera para emprendedores de la Ciudad Autónoma de Buenos Aires.
-
-    \item Un mecanismo de retroalimentación en bucle cerrado (feedback loop) que permita evaluar y mejorar la calidad de las recomendaciones en función de las decisiones reales del comerciante a lo largo del tiempo.
-\end{enumerate}
 
 \subsection{Estrategia del Océano Azul}
 \label{sec:oceano-azul}
@@ -130,7 +116,7 @@ Aplicadas al posicionamiento del presente proyecto frente al sector relevado, am
 \subsubsection{Curva de Valor}
 \label{sec:curva-valor}
 
-La Figura~\ref{fig:curva-valor} mapea el nivel de cada atributo estratégico en el sector relevado frente al propuesto por el presente proyecto. Los valores del sector se derivan del análisis presentado en esta sección: ``Nulo'' indica que ninguna herramienta relevada ofrece el atributo de forma confirmada; ``Bajo'' indica que al menos una lo ofrece parcialmente o que su estado no pudo confirmarse; ``Medio'' indica que la mitad o más del sector lo ofrece; ``Alto'' indica que el atributo es central en la propuesta de la mayoría de las herramientas relevadas. Los tres últimos factores corresponden a capacidades en las que el sector invierte intensamente (Google Analytics, Shopify Analytics, Polar Analytics, Conjura y Klaviyo), pero que el presente proyecto elimina o reduce deliberadamente por no aportar valor al emprendedor sin formación analítica (ver Tabla~\ref{tab:eric}).
+La Figura~\ref{fig:curva-valor} mapea el nivel de cada atributo estratégico en el sector relevado frente al propuesto por el presente proyecto. Los valores del sector se derivan del análisis presentado en esta sección: ``Nulo'' indica que ninguna herramienta relevada ofrece el atributo de forma confirmada; ``Bajo'' indica que al menos una lo ofrece parcialmente o que su estado no pudo confirmarse; ``Medio'' indica que la mitad o más del sector lo ofrece; ``Alto'' indica que el atributo es central en la propuesta de la mayoría de las herramientas relevadas. Los tres últimos factores corresponden a capacidades en las que el sector invierte intensamente (Google Analytics, Shopify Analytics, Polar Analytics, Conjura y Klaviyo), pero que el presente proyecto elimina o reduce deliberadamente por no aportar valor al emprendedor sin formación analítica (ver Tabla~\ref{tab:eric}). Google Analytics y Shopify Analytics no figuran en la Tabla~\ref{tab:comparativo_nubelytics}: el nivel de esos factores se apoya también en las herramientas descriptivas de la Sección~\ref{sec:analytics-descriptivo}.
 
 \begin{figure}[h]
 \centering
@@ -198,11 +184,28 @@ La Tabla~\ref{tab:eric} explicita las decisiones de diseño del presente proyect
 \hline
 \textbf{Reducir} & Fricción interpretativa entre dato y acción. Tiempo de respuesta ante cambios operativos críticos (stock, precios, estacionalidad). Alcance de integraciones con canales publicitarios externos. \\
 \hline
-\textbf{Incrementar} & Prescriptividad de las recomendaciones. Integración nativa con plataformas locales de e-commerce. Accesibilidad para emprendedores sin formación técnica especializada. \\
+\textbf{Incrementar} & Prescriptividad de las recomendaciones. Integración nativa con plataformas locales de comercio electrónico. Accesibilidad para emprendedores sin formación técnica especializada. \\
 \hline
 \textbf{Crear} & Retroalimentación algorítmica sobre outcomes de las recomendaciones. Validación de efectividad mediante comparación de comportamiento pre/post acción. Adaptación de la lógica por rubro comercial (gastronomía, indumentaria, electrónica). \\
 \hline
 \end{tabular}
 \end{table}
 
-El contexto del mercado descripto en la Sección~\ref{sec:contexto-mercado} refleja un ecosistema de comercio electrónico en expansión, con el canal digital representando el 25\,\% de las ventas totales del país \parencite{CACE2025}. En ese contexto, los emprendedores operan con datos disponibles pero con escasa capacidad para transformarlos en decisiones accionables sin apoyo analítico externo. Ninguna de las soluciones relevadas en esta sección combina simultáneamente la prescriptividad, la integración local, la adaptación por rubro y la retroalimentación sobre outcomes que caracterizan al presente proyecto. Esta combinación de atributos constituye la propuesta de valor diferencial y fundamenta tanto la pertinencia académica como la viabilidad práctica de la investigación.
+\subsection{Conclusión del Estado del Arte}
+\label{sec:conclusion-estado-arte}
+
+Como refleja la comparación de la Sección~\ref{sec:comparacion-estado-arte}, ninguna de las soluciones relevadas combina los siguientes atributos de forma simultánea:
+
+\begin{enumerate}
+    \item Recomendaciones prescriptivas y accionables que reemplacen la necesidad de interpretar tableros de control tradicionales.
+
+    \item Adaptación de la lógica de negocio a rubros específicos de consumo masivo altamente presentes en el entorno urbano (gastronomía, indumentaria, electrónica).
+
+    \item Integración nativa con la API de Tiendanube como plataforma dominante en el mercado argentino.
+
+    \item Accesibilidad técnica y financiera para emprendedores de la Ciudad Autónoma de Buenos Aires.
+
+    \item Un mecanismo de retroalimentación en bucle cerrado (feedback loop) que permita evaluar y mejorar la calidad de las recomendaciones en función de las decisiones reales del comerciante a lo largo del tiempo.
+\end{enumerate}
+
+El contexto del mercado descripto en la Sección~\ref{sec:contexto-mercado} refleja un ecosistema de comercio electrónico en expansión, con el canal digital representando el 25\,\% de las ventas totales del país \parencite{CACE2025}. En ese contexto, los emprendedores operan con datos disponibles pero con escasa capacidad para transformarlos en decisiones accionables sin apoyo analítico externo. Ninguna de las soluciones relevadas en esta sección combina simultáneamente la prescriptividad, la integración local, la adaptación por rubro y la retroalimentación sobre outcomes que caracterizan al presente proyecto. Esta combinación de atributos constituye la propuesta de valor diferencial y fundamenta tanto la pertinencia académica como la viabilidad práctica de la investigación. Más allá de su viabilidad comercial, el aporte del proyecto a la sociedad consiste en acercar la analítica prescriptiva, hoy reservada a empresas con analistas o con presupuesto para soluciones internacionales, a emprendedores sin formación técnica, cuyos negocios forman parte del tejido productivo local.
