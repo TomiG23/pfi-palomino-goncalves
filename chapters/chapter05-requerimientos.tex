@@ -157,7 +157,7 @@ RNF-11 & El sistema debe almacenar y utilizar la clave de API del proveedor de i
 RNF-12 & El sistema debe generar el conjunto de datos utilizado para complementar la tienda de desarrollo mediante un script de generación aleatoria controlada con semilla (\emph{seed}), sin utilizar modelos de inteligencia artificial generativa para su creación. & Integridad de datos & Sección 2.6 \\
 \hline
 
-RNF-13 & El sistema debe integrar las plataformas de e-commerce mediante adaptadores que implementan una interfaz canónica (\texttt{PlatformAdapter}). El motor de análisis y los trabajos de sincronización operan sobre esta interfaz y no dependen de ninguna plataforma concreta. En el prototipo se implementan los adaptadores de Tiendanube y WooCommerce. & Arquitectura & Plan 01 \\
+RNF-13 & El sistema debe integrar las plataformas de comercio electrónico mediante adaptadores que implementan una interfaz canónica (\texttt{PlatformAdapter}). El motor de análisis y los trabajos de sincronización operan sobre esta interfaz y no dependen de ninguna plataforma concreta. En el prototipo se implementan los adaptadores de Tiendanube y WooCommerce. & Arquitectura & Plan 01 \\
 \hline
 
 RNF-14 & El backend debe exponer una API HTTP sin estado: la identidad de la tienda se verifica en cada solicitud a partir del token de sesión recibido; no se conserva ninguna sesión en memoria del servidor entre solicitudes. & Arquitectura & Plan 01 \\

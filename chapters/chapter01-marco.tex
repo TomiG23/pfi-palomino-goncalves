@@ -3,12 +3,12 @@
 
 Esta sección desarrolla los conceptos que fundamentan el diseño del prototipo. Parte del problema que motiva el proyecto, la brecha entre la disponibilidad de datos y la capacidad de acción, y avanza luego sobre los niveles de madurez del analytics y los sistemas de recomendación, donde se presenta el enfoque híbrido en tres capas que organiza el resto de la sección: los modelos predictivos, las reglas de negocio por rubro y el aprendizaje por refuerzo para la priorización. A continuación se describen las particularidades de cada rubro comercial, en las que se apoyan las reglas de negocio; el pronóstico de series temporales y la segmentación de clientes, que conforman la capa predictiva; y el aprendizaje por refuerzo aplicado a la priorización. La sección se cierra con la adquisición y el procesamiento de los datos, la estrategia de datos del prototipo, los sistemas de soporte a la decisión y el ciclo de retroalimentación que permite mejorar las recomendaciones a lo largo del tiempo.
 
-\subsection{El problema de los datos sin interpretación en el e-commerce de emprendedores}
+\subsection{El problema de los datos sin interpretación en el comercio electrónico de emprendedores}
 \label{sec:problema-datos}
 
-El crecimiento sostenido del comercio electrónico en Argentina ha generado un volumen creciente de datos operativos en las tiendas online de emprendedores. Sin embargo, disponer de datos no equivale a disponer de conocimiento accionable. La mayoría de las herramientas disponibles para este segmento presentan la información en forma de cuadros de mando descriptivos: gráficos de columnas, gráficos circulares y métricas de resumen como facturación total o cantidad de clientes alcanzados.
+El crecimiento sostenido del comercio electrónico en Argentina ha generado un volumen creciente de datos operativos en las tiendas en línea de emprendedores. Sin embargo, disponer de datos no equivale a disponer de conocimiento accionable. La mayoría de las herramientas disponibles para este segmento presentan la información en forma de cuadros de mando descriptivos: gráficos de columnas, gráficos circulares y métricas de resumen como facturación total o cantidad de clientes alcanzados.
 
-Este tipo de visualización requiere que el usuario posea habilidades analíticas, visión estratégica y conocimiento del negocio para derivar conclusiones y ejecutar acciones concretas. En la práctica, los propietarios de tiendas online, especialmente emprendedores que no cuentan con analistas dedicados, actúan frecuentemente por intuición ante situaciones que podrían abordarse de forma anticipada y fundamentada: cuándo reponer stock, cuándo lanzar una promoción, cuándo ajustar precios ante un cambio de temporada o un riesgo de vencimiento de mercadería.
+Este tipo de visualización requiere que el usuario posea habilidades analíticas, visión estratégica y conocimiento del negocio para derivar conclusiones y ejecutar acciones concretas. En la práctica, los propietarios de tiendas en línea, especialmente emprendedores que no cuentan con analistas dedicados, actúan frecuentemente por intuición ante situaciones que podrían abordarse de forma anticipada y fundamentada: cuándo reponer stock, cuándo lanzar una promoción, cuándo ajustar precios ante un cambio de temporada o un riesgo de vencimiento de mercadería.
 
 Esta brecha entre la disponibilidad de datos y la capacidad de acción constituye el problema central que motiva el presente proyecto \parencite{Davenport2007, Provost2013}.
 
@@ -32,7 +32,7 @@ El presente proyecto se posiciona en el nivel prescriptivo: no busca mostrar qu�
 \subsection{Sistemas de recomendación}
 \label{sec:sistemas-recomendacion}
 
-Los sistemas de recomendación son componentes de software diseñados para sugerir ítems, acciones o decisiones relevantes a un usuario en función de datos disponibles. En el contexto del e-commerce, estos sistemas se han desarrollado principalmente para recomendar productos a consumidores finales. Sin embargo, su aplicación para recomendar acciones estratégicas a los propietarios de las tiendas representa un campo menos explorado y de alto valor potencial.
+Los sistemas de recomendación son componentes de software diseñados para sugerir ítems, acciones o decisiones relevantes a un usuario en función de datos disponibles. En el contexto del comercio electrónico, estos sistemas se han desarrollado principalmente para recomendar productos a consumidores finales. Sin embargo, su aplicación para recomendar acciones estratégicas a los propietarios de las tiendas representa un campo menos explorado y de alto valor potencial.
 
 Existen tres enfoques principales. El \emph{filtrado basado en contenido} analiza las características de los propios datos (por ejemplo, velocidad de rotación de un producto) para generar recomendaciones. El \emph{filtrado colaborativo} identifica patrones comunes entre múltiples usuarios o entidades similares. Los \emph{sistemas híbridos} combinan ambos enfoques para mejorar la precisión y la cobertura de las recomendaciones. \parencite{Ricci2015, Adomavicius2005}.
 
@@ -43,7 +43,7 @@ A estas tres capas puede sumarse un modelo de lenguaje de gran tamaño (LLM, por
 \subsection{Comportamiento del consumidor y particularidades por rubro}
 \label{sec:comportamiento-consumidor}
 
-El e-commerce no es un fenómeno homogéneo. Los patrones de compra, los ciclos de reposición y las variables críticas para la toma de decisiones varían significativamente según el rubro. El presente proyecto focaliza su análisis en tres categorías que se encuentran entre las de mayor volumen en el mercado argentino: gastronomía, indumentaria y electrónica.
+El comercio electrónico no es un fenómeno homogéneo. Los patrones de compra, los ciclos de reposición y las variables críticas para la toma de decisiones varían significativamente según el rubro. El presente proyecto focaliza su análisis en tres categorías que se encuentran entre las de mayor volumen en el mercado argentino: gastronomía, indumentaria y electrónica.
 
 En \emph{gastronomía}, las variables críticas incluyen la rotación de los productos, medida como la ausencia de ventas registradas durante un período configurable desde su alta en el catálogo, la estacionalidad semanal y horaria de la demanda, y la necesidad de anticipar aumentos de consumo en fechas específicas. En \emph{indumentaria}, predominan los ciclos estacionales marcados (verano/invierno), la gestión de talles y variantes, y la sensibilidad al precio durante períodos de liquidación. En \emph{electrónica}, el factor determinante es la desactualización de precios, medida como el tiempo transcurrido desde la última modificación del precio de una variante, en un mercado donde el retraso en el ajuste de precios frente a cambios de costos o de contexto económico puede erosionar el margen de forma significativa.
 
@@ -150,7 +150,7 @@ Esta combinación permite demostrar la viabilidad técnica de la integración co
 
 Los Sistemas de Soporte a la Decisión (DSS, por sus siglas en inglés) son herramientas de software que asisten a personas o equipos en la toma de decisiones complejas, combinando datos, modelos analíticos e interfaces de usuario. A diferencia de los sistemas de reporting tradicionales, los DSS no solo presentan información sino que guían activamente el proceso de decisión.
 
-Investigaciones en el campo de las ciencias del comportamiento y la economía conductual demuestran que los seres humanos toman mejores decisiones cuando reciben recomendaciones concretas y contextualizadas en lugar de conjuntos de datos que requieren interpretación propia. Este fenómeno es especialmente relevante en contextos de alta carga cognitiva o baja experiencia analítica, como es el caso de los emprendedores de e-commerce.
+Investigaciones en el campo de las ciencias del comportamiento y la economía conductual demuestran que los seres humanos toman mejores decisiones cuando reciben recomendaciones concretas y contextualizadas en lugar de conjuntos de datos que requieren interpretación propia. Este fenómeno es especialmente relevante en contextos de alta carga cognitiva o baja experiencia analítica, como es el caso de los emprendedores de comercio electrónico.
 
 Este principio sustenta la orientación prescriptiva de los sistemas de soporte a la decisión: presentar al usuario recomendaciones concretas, acompañadas de su justificación, en lugar de un conjunto de indicadores que debe interpretar por su cuenta \parencite{Power2002, Kahneman2011}.
 
