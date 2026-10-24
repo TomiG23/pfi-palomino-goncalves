@@ -67,7 +67,8 @@ RF-12 & El sistema debe segmentar la base de clientes según su nivel de activid
 RF-13 & El sistema debe identificar clientes en riesgo de abandono basándose en \texttt{last\_order\_date} (calculado según RF-04) y generar recomendaciones de retención o reactivación. & Sección~\ref{sec:recursos-campos} \\
 \hline
 
-RF-14 & El sistema debe permitir al usuario registrar si ejecutó una recomendación recibida, almacenando la fecha y el tipo de acción realizada, o descartarla; el descarte se registra y cuenta como fracaso en el \emph{bandit} (RF-16). & Sección~\ref{sec:feedback-loop} \\
+% PENDIENTE-IMPL: A4-bandit (efecto de cada motivo de descarte en el bandit)
+RF-14 \textit{(corregido)} & El sistema debe permitir al usuario registrar si ejecutó una recomendación recibida, almacenando la fecha y el tipo de acción realizada, o descartarla. Al descartar, el usuario elige un motivo: \enquote{No aplica a mi tienda}, \enquote{Ya lo hice por mi cuenta}, \enquote{No me interesa ahora} u \enquote{Otro}, con un texto opcional de hasta 200 caracteres; el sistema registra el motivo y la fecha, y el usuario puede deshacer el descarte. En el \emph{bandit} (RF-16), \enquote{No aplica a mi tienda} y \enquote{Otro} cuentan como fracaso; \enquote{Ya lo hice por mi cuenta} se registra como ejecución manual y cuenta como éxito, sin medición de impacto; y \enquote{No me interesa ahora} no actualiza el \emph{bandit}. & Sección~\ref{sec:feedback-loop} \\
 \hline
 
 RF-15 & El sistema debe medir el impacto de las recomendaciones ejecutadas comparando el valor observado en la ventana de evaluación contra el esperado, calculado con el pronóstico vigente al generar la recomendación, y presentar el resultado como correlación indicativa. & Sección~\ref{sec:feedback-loop} \\
@@ -82,7 +83,8 @@ RF-17 & El sistema debe presentar las recomendaciones en una interfaz web integr
 RF-18 & El sistema debe exponer los webhooks de privacidad exigidos por Tiendanube: \texttt{/api/webhooks/store-redact}, \texttt{customers-redact} y \texttt{customers-data-request}. & Sección~\ref{sec:backend-node-express} \\
 \hline
 
-RF-19 \textit{(corregido)} & El sistema debe traducir cada recomendación generada por el motor de análisis a un mensaje en lenguaje natural mediante la API de Google Gemini (\texttt{gemini-3.5-flash-lite} por defecto, configurable con la variable de entorno \texttt{GEMINI\_MODEL}), ejecutada desde el backend. Solo se envían a Gemini las métricas calculadas por el sistema; los datos personales de emprendedores y clientes se anonimizan previamente (RNF-19). El mensaje y su explicación de detalle se almacenan junto con la recomendación. Si la API no responde o la respuesta no supera la validación de salida, se utiliza una plantilla de texto predefinida como respaldo. & Sección~\ref{sec:business-intelligence}; E01, E02 y E05 (Anexos~\ref{anx:entrevista-e01}, \ref{anx:entrevista-e02} y~\ref{anx:entrevista-e05}) \\
+RF-19 \textit{(corregido)} & El sistema debe traducir cada recomendación generada por el motor de análisis a un mensaje en lenguaje natural mediante la API de Google Gemini (\texttt{gemini-3.5-flash-lite} por defecto, configurable con la variable de entorno \texttt{GEMINI\_MODEL}), ejecutada desde el backend. Solo se envían a Gemini las métricas calculadas por el sistema; los datos personales de emprendedores y clientes se anonimizan previamente (RNF-19). El mensaje y su explicación de detalle se almacenan junto con la recomendación; en las recomendaciones dirigidas a clientes, el modelo redacta además el texto del correo para el cliente, con un marcador en lugar de su nombre. % PENDIENTE-IMPL: B2 (Gemini redacta código, asunto y banner; no decide números)
+En las recomendaciones con una acción sugerida (RF-28), el modelo redacta también el código del cupón, el asunto del correo y el texto del aviso de la tienda, pero no decide ningún número: el porcentaje, la vigencia y el precio promocional los calcula el sistema (RF-30). Si la API no responde o la respuesta no supera la validación de salida, se utiliza una plantilla de texto predefinida como respaldo. & Sección~\ref{sec:business-intelligence}; E01, E02 y E05 (Anexos~\ref{anx:entrevista-e01}, \ref{anx:entrevista-e02} y~\ref{anx:entrevista-e05}) \\
 \hline
 
 RF-20 & El sistema debe generar una recomendación de revisión de precio cuando una variante supera los días sin cambios que fija su rubro (gastronomía 30 días, indumentaria 45 días, electrónica 15 días), contados desde la última sincronización en la que la variante llegó modificada (campo \texttt{updated\_at}). Además, debe consultar diariamente el tipo de cambio USD/ARS mediante una API pública externa y almacenar un registro histórico: para las tiendas cuya moneda principal (\texttt{main\_currency}) es el peso argentino, compara la variación del dólar desde esa fecha con el umbral del rubro (15\%, 10\% y 5\%, respectivamente) y, si la supera, presenta la recomendación como oportunidad. & Sección~\ref{sec:comportamiento-consumidor}; E05 (Anexo~\ref{anx:entrevista-e05}) \\
@@ -95,6 +97,52 @@ RF-22 & El sistema debe emitir notificaciones para los avisos urgentes del día,
 \hline
 
 RF-23 & El sistema debe mantener como máximo cuatro recomendaciones activas por tienda. El motor genera recomendaciones hasta completar el cupo, ordenando las candidatas primero por nivel de prioridad y después por la muestra de Thompson Sampling de su tipo. & Sección~\ref{sec:brainstorming-resultados} \\
+\hline
+
+RF-24 & El sistema debe generar, en las tiendas de indumentaria, una recomendación de liquidación por cambio de estación: entre 21 días antes y 42 días después del inicio de una estación del hemisferio sur, identifica por palabras clave en el nombre los productos de la estación que termina con al menos 3 unidades en stock, y sugiere un descuento para venderlos antes de que queden fuera de temporada. El impacto se mide como la proporción del stock disponible que se vendió en la ventana de evaluación. & Sección~\ref{sec:comportamiento-consumidor}; E02 (Anexo~\ref{anx:entrevista-e02}) \\
+\hline
+
+RF-25 & El sistema debe generar una recomendación de fidelización con los 3 clientes de mayor facturación en órdenes pagadas de los últimos 90 días que tengan correo electrónico, para premiarlos con un cupón. Se genera una por tienda cuando no hay otra activa del mismo tipo, y complementa la segmentación y el CLV de RF-12. & Secciones~\ref{sec:segmentacion} y~\ref{sec:recursos-campos} \\
+\hline
+
+% PENDIENTE-IMPL: A3-conversion (orders.coupon_code se sincroniza, pero la conversión del cupón todavía no se calcula)
+RF-26 & El sistema debe permitir al usuario enviar por correo electrónico un cupón a los clientes de una recomendación de riesgo de abandono o de fidelización: el usuario elige hasta 10 clientes de la lista, edita el asunto y el cuerpo del correo, propuestos por el sistema, y confirma el envío. Cada correo lleva el nombre de la tienda como remitente, la dirección de la tienda como respuesta y un pie para darse de baja. El sistema registra cada envío con su estado, impide que la misma recomendación se envíe dos veces, la marca como ejecutada si salió al menos un correo y mide la conversión a partir del cupón aplicado en las órdenes. & Secciones~\ref{sec:segmentacion} y~\ref{sec:feedback-loop} \\
+\hline
+
+% PENDIENTE-IMPL: A5-default (sin preferencia guardada, el backend muestra el resultado apenas se mide; el modal preselecciona 14)
+RF-27 & El sistema debe permitir al usuario elegir, para cada nivel de prioridad (urgente, atención y oportunidad), cuántos días después de ejecutar una recomendación quiere ver su resultado: 7, 14 o 30 días. El valor recomendado y predeterminado es 14 días; el mínimo de 7 días es el tiempo necesario para reunir ventas suficientes para que la medición tenga sentido. La elección determina cuándo se muestra el resultado, no la ventana con la que se mide (RF-15). & Sección~\ref{sec:feedback-loop}; Sección~\ref{sec:brainstorming-resultados} \\
+\hline
+
+% PENDIENTE-IMPL: B1 (aplicar la acción con un clic)
+RF-28 & El sistema debe presentar cada recomendación de descuento o de cupón con la acción armada, con sus valores editables: el código, el porcentaje y la vigencia del cupón, o el precio promocional de cada variante. Al confirmar con un botón que describe lo que va a ocurrir (\enquote{Crear cupón en mi tienda} o \enquote{Aplicar precio promocional}), el sistema aplica la acción en la tienda de Tiendanube mediante su API y marca la recomendación como ejecutada con origen \enquote{aplicada desde Decidata}. El sistema nunca aplica una acción sin la confirmación del usuario. La opción \enquote{Prefiero hacerlo yo} copia los datos para cargarlos a mano. En los cupones, el código creado se precarga en el correo de RF-26. & Sección~\ref{sec:dss}; Sección~\ref{sec:brainstorming-resultados} \\
+\hline
+
+% PENDIENTE-IMPL: B1 (deshacer la acción aplicada)
+RF-29 & El sistema debe permitir al usuario deshacer una acción aplicada desde Decidata mientras no se haya completado la evaluación de impacto ni se haya enviado el cupón por correo: borra el cupón creado o vacía el precio promocional de las variantes, registra la fecha del deshacer y devuelve la recomendación al estado activo. & Sección~\ref{sec:feedback-loop} \\
+\hline
+
+% PENDIENTE-IMPL: B2 (descuento sugerido con piso de margen)
+RF-30 & El sistema debe calcular el descuento sugerido sin el modelo de lenguaje: el porcentaje surge de una tabla por rubro y por días sin vender de la variante (Tabla~\ref{tab:motor-descuentos}) y, si la variante tiene costo cargado (\texttt{cost}, RF-11), se acota para que el precio con descuento no quede por debajo del costo multiplicado por 1,10. La vigencia predeterminada es de 14 días. Antes de sugerir un cupón, el sistema consulta los cupones vigentes de la tienda y, si hay uno equivalente, recomienda difundirlo en lugar de crear otro. & Sección~\ref{sec:comportamiento-consumidor}; E04 (Anexo~\ref{anx:entrevista-e04}) \\
+\hline
+
+% PENDIENTE-IMPL: B4 (carrito abandonado)
+RF-31 & El sistema debe generar una recomendación de recupero de carritos abandonados cuando existan carritos abandonados en los últimos 7 días con al menos un producto con stock, y sugerir un cupón de recupero enviado por correo a esos clientes. & Sección~\ref{sec:klaviyo}; E03 (Anexo~\ref{anx:entrevista-e03}) \\
+\hline
+
+% PENDIENTE-IMPL: B4 (segunda compra)
+RF-32 & El sistema debe generar una recomendación de segunda compra para los clientes con una sola compra, realizada hace entre 30 y 60 días, y sugerir un cupón para incentivar que vuelvan, enviado por correo. & Sección~\ref{sec:segmentacion} \\
+\hline
+
+% PENDIENTE-IMPL: B4 (curva de talles rota)
+RF-33 & El sistema debe detectar, en las tiendas de indumentaria, los productos con la curva de talles rota: con al menos cuatro talles, stock solo en los talles extremos y sin stock en los centrales, y sugerir un precio promocional para liquidar los talles restantes. & Sección~\ref{sec:comportamiento-consumidor}; E01 y E02 (Anexos~\ref{anx:entrevista-e01} y~\ref{anx:entrevista-e02}) \\
+\hline
+
+% PENDIENTE-IMPL: B4 (día de baja demanda)
+RF-34 & El sistema debe detectar, en las tiendas de gastronomía, un día de la semana con ventas iguales o menores al 60\% del promedio de los otros días en las últimas 4 semanas, y sugerir una promoción para ese día o un ajuste de la producción, sin una acción que se aplique desde el sistema. & Sección~\ref{sec:comportamiento-consumidor}; E03 (Anexo~\ref{anx:entrevista-e03}) \\
+\hline
+
+% PENDIENTE-IMPL: B4 (venta cruzada de accesorios)
+RF-35 & El sistema debe identificar, en las tiendas de electrónica, a los clientes que compraron un equipo y no compraron accesorios en los 15 días siguientes, y sugerir un cupón para un accesorio, enviado por correo. & Sección~\ref{sec:klaviyo}; RF-10 \\
 
 \hline
 \end{longtable}
@@ -186,6 +234,17 @@ RNF-19 & El sistema debe anonimizar la información antes de enviarla a la API d
 
 RNF-20 & El sistema debe alcanzar una cobertura de líneas de pruebas automatizadas mínima del 85\% en el backend y en el frontend.
 & Calidad de software & Plan 01 \\
+\hline
+
+RNF-21 & El sistema debe usar la dirección de correo electrónico de los clientes solo para enviar los cupones que el usuario confirma (RF-26), a través del servicio de correo, que recibe solo lo necesario para el envío (la dirección, el asunto y el cuerpo con el nombre del cliente), y nunca enviarla al proveedor de inteligencia artificial (RNF-19): el texto del correo se redacta con un marcador en lugar del nombre del cliente, que se completa al enviarlo. Cada correo incluye un pie para darse de baja. Fuera de producción, el envío se limita a una lista de direcciones autorizadas, de modo que las pruebas no escriban a clientes reales. & Privacidad & Sección~\ref{sec:privacidad-ley} \\
+\hline
+
+% PENDIENTE-IMPL: B3 (permisos de edición de cupones y de productos)
+RNF-22 & El sistema debe solicitar a la plataforma solo los permisos que usa, conforme al principio de mínimo privilegio: lectura de productos, órdenes, clientes y cupones, edición de cupones y de productos para aplicar y deshacer las acciones sugeridas, y registro de \emph{webhooks}; no solicita permisos de edición de órdenes ni de clientes. & Seguridad & Sección~\ref{sec:permisos-app} \\
+\hline
+
+% PENDIENTE-IMPL: B1 (confirmación explícita antes de escribir en la plataforma)
+RNF-23 & El sistema no debe escribir en la tienda sin una confirmación explícita del usuario para cada acción: toda escritura en la plataforma responde a un clic del usuario sobre un botón que describe lo que va a ocurrir, y puede deshacerse (RF-29). & Control del usuario & Sección~\ref{sec:dss}; Sección~\ref{sec:brainstorming-resultados} \\
 \hline
 
 \end{longtable}
@@ -310,11 +369,14 @@ Como usuario del sistema, quiero poder marcar que ejecuté una recomendación re
     \item Al marcar una recomendación como ejecutada, el sistema registra la fecha y el identificador de la recomendación.
     \item El sistema puede inferir automáticamente la ejecución de una recomendación cuando detecta, en la sincronización incremental, un cambio de stock o de precio coherente con la acción sugerida (tipos inferibles: reposición de stock, revisión de precio, baja rotación y preparación anticipada). El usuario puede rechazar la inferencia si no fue él quien realizó la acción.
     \item El usuario puede deshacer el registro de una ejecución marcada manualmente, siempre que no se haya completado aún la evaluación de impacto (RF-21).
-    \item El usuario puede descartar una recomendación que no le interesa; el descarte se registra y cuenta como fracaso en el \emph{bandit} (RF-14).
+    \item El usuario puede descartar una recomendación eligiendo un motivo (\enquote{No aplica a mi tienda}, \enquote{Ya lo hice por mi cuenta}, \enquote{No me interesa ahora} u \enquote{Otro}, con un texto opcional) y puede deshacer el descarte (RF-14).
+    % PENDIENTE-IMPL: A4-bandit
+    \item El motivo define el efecto del descarte en el \emph{bandit}: \enquote{No aplica a mi tienda} y \enquote{Otro} cuentan como fracaso, \enquote{Ya lo hice por mi cuenta} cuenta como una ejecución manual exitosa, sin medición de impacto, y \enquote{No me interesa ahora} no actualiza el \emph{bandit}.
+    \item El usuario elige, para cada nivel de prioridad, si quiere ver el resultado de las recomendaciones ejecutadas a los 7, 14 o 30 días (RF-27).
     \item El sistema no obliga al usuario a ejecutar ni a registrar ninguna acción; el feedback es voluntario.
 \end{itemize}
 
-\noindent\textbf{Requerimientos cubiertos:} RF-14, RF-21.
+\noindent\textbf{Requerimientos cubiertos:} RF-14, RF-21, RF-27.
 
 \subsection{HU-08 --- Visualización del impacto de una recomendación ejecutada}
 \label{sec:hu-08}
@@ -380,6 +442,141 @@ Como dueño/a de una tienda que factura en pesos argentinos, quiero recibir una 
 
 \noindent\textbf{Requerimientos cubiertos:} RF-20, RF-06.
 
+\subsection{HU-12 --- Liquidación por cambio de estación}
+\label{sec:hu-12}
+
+Como dueño/a de una tienda de indumentaria, quiero que el sistema me avise cuando termina una estación y todavía tengo stock de sus prendas, para liquidarlas antes de que queden fuera de temporada hasta el año siguiente.
+
+\noindent\textbf{Evidencia empírica:} E02 relató que, al pasar la temporada de calor, se quedó con bermudas y remeras que tuvo que liquidar: \enquote{Ahora que hace frío las vendo a mitad de precio para que se las lleven, o hago un combo de remera y bermuda} (Anexo~\ref{anx:entrevista-e02}). La decisión llegó cuando la estación ya había cambiado.
+
+\noindent\textbf{Criterios de aceptación:}
+\begin{itemize}
+    \item La regla se evalúa solo en las tiendas de indumentaria, entre 21 días antes y 42 días después del inicio de cada estación del hemisferio sur.
+    \item El sistema reconoce los productos de la estación que termina por palabras clave en su nombre y considera solo los que tienen al menos 3 unidades en stock.
+    \item La recomendación muestra el stock actual, la estación que terminó y el capital inmovilizado, calculado como el stock por el precio de cada variante, y sugiere un descuento de liquidación.
+    \item El impacto se mide como la proporción del stock disponible que se vendió en la ventana de evaluación.
+\end{itemize}
+
+\noindent\textbf{Requerimientos cubiertos:} RF-24, RF-06.
+
+\subsection{HU-13 --- Premio a los mejores clientes}
+\label{sec:hu-13}
+
+Como comerciante, quiero saber quiénes son mis mejores clientes del último trimestre, para premiarlos con un cupón y mantener su preferencia.
+
+\noindent\textbf{Evidencia empírica:} ningún entrevistado lo mencionó de forma explícita; la historia se deriva del marco teórico: el valor de vida del cliente permite distinguir a los clientes cuya relación representa más valor para el comercio (Sección~\ref{sec:segmentacion}), y retenerlos complementa las acciones de reactivación de HU-10.
+
+\noindent\textbf{Criterios de aceptación:}
+\begin{itemize}
+    \item El sistema identifica a los 3 clientes con mayor facturación en órdenes pagadas de los últimos 90 días y con correo electrónico.
+    \item La recomendación muestra cuántos son y cuánto facturaron en conjunto, y propone un cupón como recompensa.
+    \item Desde la recomendación, el usuario puede enviarles el cupón por correo (CU-10).
+\end{itemize}
+
+\noindent\textbf{Requerimientos cubiertos:} RF-25, RF-12, RF-26.
+
+% PENDIENTE-IMPL: B1 (HU completa)
+\subsection{HU-14 --- Aplicar la acción sugerida con un clic}
+\label{sec:hu-14}
+
+Como emprendedor, quiero que una recomendación de descuento llegue con el cupón o el precio promocional ya armado, para aplicarlo en mi tienda con un clic sin tener que cargarlo a mano, pero decidiendo yo si se aplica.
+
+\noindent\textbf{Evidencia empírica:} en la sesión de brainstorming, el grupo propuso integrar la acción en la propia tarjeta, como cargar el stock repuesto en la plataforma, porque permitiría ejecutar la acción y registrarla al mismo tiempo; B01 planteó, a la vez, que el sistema nunca debería ejecutar una acción de forma autónoma, y B04, que la decisión final debe quedar en manos de quien opera la tienda (Sección~\ref{sec:brainstorming-resultados}).
+
+\noindent\textbf{Criterios de aceptación:}
+\begin{itemize}
+    \item La recomendación muestra la acción armada: código, porcentaje y vigencia del cupón, o el precio promocional de cada variante, con valores editables.
+    \item El botón de confirmación describe lo que va a ocurrir (\enquote{Crear cupón en mi tienda} o \enquote{Aplicar precio promocional}); sin ese clic, el sistema no escribe en la tienda.
+    \item Al confirmar, el sistema aplica la acción en Tiendanube, marca la recomendación como ejecutada con origen \enquote{aplicada desde Decidata} y ofrece \enquote{Deshacer}.
+    \item La opción \enquote{Prefiero hacerlo yo} copia los datos para cargarlos a mano.
+    \item En los cupones, el código creado queda precargado en el correo a los clientes.
+\end{itemize}
+
+\noindent\textbf{Requerimientos cubiertos:} RF-28, RF-29, RF-30, RF-26.
+
+% PENDIENTE-IMPL: B4 (HU completa)
+\subsection{HU-15 --- Recupero de carritos abandonados}
+\label{sec:hu-15}
+
+Como comerciante, quiero que el sistema me proponga una acción sobre los carritos que mis clientes abandonaron, para recuperar esas ventas en lugar de solo ver cuántos carritos se perdieron.
+
+\noindent\textbf{Evidencia empírica:} en la entrevista con E03, el carrito abandonado apareció entre los pocos indicadores que ofrece el plan gratuito de Tiendanube, junto con las compras y el semáforo de stock (Anexo~\ref{anx:entrevista-e03}): la plataforma lo presenta como un dato descriptivo, sin una acción asociada; Klaviyo, en cambio, automatiza los mensajes de recupero hacia el consumidor (Sección~\ref{sec:klaviyo}).
+
+\noindent\textbf{Criterios de aceptación:}
+\begin{itemize}
+    \item El sistema detecta los carritos abandonados en los últimos 7 días que tienen al menos un producto con stock.
+    \item La recomendación propone un cupón de recupero y su envío por correo a esos clientes.
+\end{itemize}
+
+\noindent\textbf{Requerimientos cubiertos:} RF-31, RF-28, RF-26.
+
+% PENDIENTE-IMPL: B4 (HU completa)
+\subsection{HU-16 --- Incentivo a la segunda compra}
+\label{sec:hu-16}
+
+Como comerciante, quiero identificar a los clientes que compraron una sola vez hace uno o dos meses, para invitarlos a volver antes de que se conviertan en clientes perdidos.
+
+\noindent\textbf{Evidencia empírica:} la historia se deriva del marco teórico: la frecuencia de compra es una de las tres variables de la segmentación RFM (Sección~\ref{sec:segmentacion}), y un cliente con una sola compra todavía no tiene un ciclo de recompra propio, por lo que la regla de riesgo de abandono (HU-10) no lo alcanza a tiempo.
+
+\noindent\textbf{Criterios de aceptación:}
+\begin{itemize}
+    \item El sistema identifica a los clientes con una sola compra, realizada hace entre 30 y 60 días.
+    \item La recomendación propone un cupón para la segunda compra y su envío por correo.
+\end{itemize}
+
+\noindent\textbf{Requerimientos cubiertos:} RF-32, RF-12, RF-28, RF-26.
+
+% PENDIENTE-IMPL: B4 (HU completa)
+\subsection{HU-17 --- Curva de talles rota}
+\label{sec:hu-17}
+
+Como dueño/a de una tienda de indumentaria, quiero saber cuándo un producto se quedó sin los talles más pedidos y solo le quedan los extremos, para liquidar esos talles antes de que queden sin vender.
+
+\noindent\textbf{Evidencia empírica:} E01 señaló que el talle M es \enquote{el que más me piden} y que, si alguien busca un S, le ofrece el M (Anexo~\ref{anx:entrevista-e01}); E02 contó que lleva el registro de talles porque, si se queda sin alguno, \enquote{no es que Tienda Nube me avisa} (Anexo~\ref{anx:entrevista-e02}). Cuando se agotan los talles centrales, los extremos rotan menos.
+
+\noindent\textbf{Criterios de aceptación:}
+\begin{itemize}
+    \item La regla se evalúa en las tiendas de indumentaria, sobre los productos con al menos cuatro talles.
+    \item Recomienda cuando el producto tiene stock solo en los talles extremos y ninguno en los centrales.
+    \item La recomendación propone un precio promocional para los talles que quedan.
+\end{itemize}
+
+\noindent\textbf{Requerimientos cubiertos:} RF-33, RF-06, RF-28.
+
+% PENDIENTE-IMPL: B4 (HU completa)
+\subsection{HU-18 --- Día de baja demanda}
+\label{sec:hu-18}
+
+Como dueño/a de un negocio gastronómico, quiero saber qué día de la semana vendo bastante menos que el resto, para armar una promoción para ese día o ajustar la producción.
+
+\noindent\textbf{Evidencia empírica:} E03 sigue sus ventas por semana y explicó que, si la semana viene complicada en su proyección, activa una campaña de marketing antes del cierre del mes (Anexo~\ref{anx:entrevista-e03}); la regla baja ese seguimiento al nivel del día de la semana.
+
+\noindent\textbf{Criterios de aceptación:}
+\begin{itemize}
+    \item La regla se evalúa en las tiendas de gastronomía, sobre las últimas 4 semanas de ventas.
+    \item Recomienda cuando un día de la semana vende el 60\% o menos del promedio de los otros días.
+    \item La recomendación propone una promoción para ese día o un ajuste de la producción, sin una acción que se aplique desde el sistema.
+\end{itemize}
+
+\noindent\textbf{Requerimientos cubiertos:} RF-34, RF-06, RF-09.
+
+% PENDIENTE-IMPL: B4 (HU completa)
+\subsection{HU-19 --- Venta cruzada de accesorios}
+\label{sec:hu-19}
+
+Como dueño/a de una tienda de electrónica, quiero saber qué clientes compraron un equipo y no compraron sus accesorios, para ofrecerles un cupón por el accesorio que les falta.
+
+\noindent\textbf{Evidencia empírica:} ninguna de las entrevistas corresponde al rubro electrónica (Sección~\ref{sec:metodologia-entrevistas}); la historia se deriva de la acción que el sistema ya sugiere en electrónica ante la baja rotación, un combo con productos complementarios (RF-10), y del uso de recomendaciones basadas en los hábitos de consumo que hacen herramientas como Klaviyo (Sección~\ref{sec:klaviyo}).
+
+\noindent\textbf{Criterios de aceptación:}
+\begin{itemize}
+    \item La regla se evalúa en las tiendas de electrónica.
+    \item El sistema identifica a los clientes que compraron un equipo y no compraron accesorios en los 15 días siguientes.
+    \item La recomendación propone un cupón para el accesorio y su envío por correo.
+\end{itemize}
+
+\noindent\textbf{Requerimientos cubiertos:} RF-35, RF-06, RF-28, RF-26.
+
 \section{Casos de Uso}
 \label{sec:casos-uso}
 
@@ -391,9 +588,10 @@ Los casos de uso formalizan las interacciones entre los actores y el sistema. Se
     \item \textbf{Sistema (motor de análisis):} Actor automatizado que consume datos, ejecuta el análisis prescriptivo y genera recomendaciones sin intervención del usuario.
     \item \textbf{API de Tiendanube:} Sistema externo que provee los datos transaccionales, de productos y de clientes.
     \item \textbf{API de proveedor de IA:} Sistema externo que traduce las recomendaciones estructuradas a mensajes en lenguaje natural.
+    \item \textbf{Servicio de correo electrónico:} Sistema externo que envía a los clientes de la tienda los correos con cupones que el comerciante confirma.
 \end{itemize}
 
-La Figura~\ref{fig:flujo-diagram} sintetiza el flujo completo del proceso, desde la ingesta de datos crudos de Tiendanube hasta la evaluación de impacto de una recomendación ejecutada, que los nueve casos de uso presentados a continuación detallan de forma individual.
+La Figura~\ref{fig:flujo-diagram} sintetiza el flujo completo del proceso, desde la ingesta de datos crudos de Tiendanube hasta la evaluación de impacto de una recomendación ejecutada, que los once casos de uso presentados a continuación detallan de forma individual.
 
 \begin{figure}[ht]
     \centering
@@ -404,7 +602,8 @@ La Figura~\ref{fig:flujo-diagram} sintetiza el flujo completo del proceso, desde
 \noindent\textit{Fuente: elaboración propia.}
 \end{figure}
 
-El flujo se inicia con la ingesta y el proceso ETL de los datos crudos de Tiendanube (CU-02, Sección~\ref{sec:cu-02}), que quedan persistidos en la base de datos relacional. A partir del rubro identificado (RF-06), el motor aplica las seis reglas del prototipo (Tabla~\ref{tab:motor-reglas}) —quiebre de stock, preparación anticipada, fecha clave, baja rotación, revisión de precio y riesgo de abandono—, que alimentan el módulo de scoring dinámico y la posterior generación de la recomendación en lenguaje natural (CU-03, Sección~\ref{sec:cu-03}). Una vez presentada al comerciante y, opcionalmente, ejecutada y registrada (CU-05, Sección~\ref{sec:cu-05}), el sistema evalúa su impacto comparando el valor observado en la ventana de evaluación contra el esperado, calculado con el pronóstico vigente al generar la recomendación, y retroalimenta el score de recomendaciones futuras (CU-06, Sección~\ref{sec:cu-06}), cerrando el mecanismo de retroalimentación descripto en la Sección~\ref{sec:feedback-loop} del Marco Teórico.
+El flujo se inicia con la ingesta y el proceso ETL de los datos crudos de Tiendanube (CU-02, Sección~\ref{sec:cu-02}), que quedan persistidos en la base de datos relacional. % PENDIENTE-IMPL: B4 (trece reglas), B1 (CU-11)
+A partir del rubro identificado (RF-06), el motor aplica las trece reglas del prototipo (Tabla~\ref{tab:motor-reglas}) —nueve generales, como el quiebre de stock, la baja rotación o el riesgo de abandono, y cuatro propias de un rubro, como el cambio de estación en indumentaria—, que alimentan el módulo de scoring dinámico y la posterior generación de la recomendación en lenguaje natural (CU-03, Sección~\ref{sec:cu-03}). Una vez presentada al comerciante y, opcionalmente, aplicada desde el sistema (CU-11, Sección~\ref{sec:cu-11}), enviada por correo a los clientes (CU-10, Sección~\ref{sec:cu-10}) o ejecutada y registrada (CU-05, Sección~\ref{sec:cu-05}), el sistema evalúa su impacto comparando el valor observado en la ventana de evaluación contra el esperado, calculado con el pronóstico vigente al generar la recomendación, y retroalimenta el score de recomendaciones futuras (CU-06, Sección~\ref{sec:cu-06}), cerrando el mecanismo de retroalimentación descripto en la Sección~\ref{sec:feedback-loop} del Marco Teórico.
 
 \subsection{CU-01: Autenticar tienda}
 \label{sec:cu-01}
@@ -509,8 +708,9 @@ Postcondiciones & Se generan una o más recomendaciones priorizadas, con su mens
 \begin{enumerate}
     \item El sistema identifica el rubro comercial de la tienda según RF-06.
     \item El motor de análisis aplica las reglas de negocio predefinidas correspondientes al rubro.
-    \item El sistema evalúa cada señal detectada (días hasta el quiebre, pico de demanda próximo, fecha clave próxima, caída de rotación, precio sin actualizar o variación del tipo de cambio, cliente inactivo) y genera las recomendaciones correspondientes.
-    \item Cada recomendación se clasifica en uno de los seis tipos de la Tabla~\ref{tab:motor-reglas} (quiebre de stock, preparación anticipada, fecha clave, baja rotación, revisión de precio y riesgo de abandono) y se le asigna un score de prioridad.
+    % PENDIENTE-IMPL: B4 (señales y tipos nuevos), B1-B2 (acción sugerida)
+    \item El sistema evalúa cada señal detectada (días hasta el quiebre, pico de demanda próximo, fecha clave próxima, caída de rotación, precio sin actualizar o variación del tipo de cambio, cliente inactivo, mejores clientes del trimestre, cambio de estación, carritos abandonados, clientes con una sola compra, curva de talles rota, día de baja demanda y equipo sin accesorios) y genera las recomendaciones correspondientes.
+    \item Cada recomendación se clasifica en uno de los trece tipos de la Tabla~\ref{tab:motor-reglas} y se le asigna un score de prioridad. En las recomendaciones de descuento o de cupón, el sistema arma además la acción sugerida: calcula el porcentaje y la vigencia, o el precio promocional, con el piso de margen, y consulta los cupones vigentes de la tienda (RF-30).
     \item El score incorpora el historial de outcomes de recomendaciones anteriores del mismo tipo para la misma tienda (mecanismo de scoring dinámico).
     \item El backend envía el dato estructurado de cada recomendación a la API del proveedor de IA, que devuelve el mensaje en lenguaje natural correspondiente (RF-19).
     \item Las recomendaciones, junto con su mensaje en lenguaje natural, se almacenan y quedan disponibles para ser presentadas en la interfaz.
@@ -588,7 +788,8 @@ Postcondiciones & La recomendación queda registrada como ejecutada con su fecha
 
 \noindent 3a. El comerciante decide no ejecutar la recomendación: no se requiere ninguna acción. El feedback es voluntario.
 
-\noindent 3b. El comerciante descarta la recomendación: el sistema registra el descarte con su fecha, retira la recomendación de las activas, libera su lugar en el cupo (RF-23) y la cuenta como fracaso en el \emph{bandit} de su tipo (RF-14, RF-16).
+\noindent 3b. El comerciante descarta la recomendación: elige un motivo (\enquote{No aplica a mi tienda}, \enquote{Ya lo hice por mi cuenta}, \enquote{No me interesa ahora} u \enquote{Otro}, con un texto opcional) y el sistema registra el descarte con su motivo y su fecha, retira la recomendación de las activas y libera su lugar en el cupo (RF-23). % PENDIENTE-IMPL: A4-bandit
+Según el motivo, el descarte cuenta como fracaso en el \emph{bandit} de su tipo (\enquote{No aplica a mi tienda} y \enquote{Otro}), se registra como ejecución manual exitosa sin medición de impacto (\enquote{Ya lo hice por mi cuenta}) o no actualiza el \emph{bandit} (\enquote{No me interesa ahora}) (RF-14, RF-16). El comerciante puede deshacer el descarte, y la recomendación vuelve a las activas.
 
 \noindent 3c. \textit{Ejecución inferida:} en la siguiente sincronización incremental, el sistema detecta un cambio de stock o precio coherente con la acción sugerida (reposición, revisión de precio, baja rotación, preparación anticipada). El sistema marca la recomendación como ejecutada con fuente \texttt{inferred} y notifica al usuario, quien puede rechazar la inferencia si no fue él quien realizó la acción.
 
@@ -606,7 +807,7 @@ Postcondiciones & La recomendación queda registrada como ejecutada con su fecha
 \hline
 Actor principal & Sistema (motor de análisis) \\
 \hline
-Precondiciones & Terminó la ventana de evaluación de una recomendación, o el comerciante la descartó. \\
+Precondiciones & Terminó la ventana de evaluación de una recomendación, o el comerciante la descartó con un motivo que actualiza el \emph{bandit}. \\
 \hline
 Postcondiciones & El brazo del bandit del tipo de recomendación se actualiza con el resultado. El usuario puede consultar el impacto. \\
 \hline
@@ -617,9 +818,10 @@ Postcondiciones & El brazo del bandit del tipo de recomendación se actualiza co
 \begin{enumerate}
     \item El sistema identifica, una vez por día, las recomendaciones cuya ventana de evaluación terminó (duración configurable por rubro: gastronomía 7 días, indumentaria 14 días, electrónica 21 días) y las que el comerciante descartó.
     \item Para cada recomendación ejecutada, el sistema compara el valor observado en la ventana de evaluación contra el esperado, calculado con el pronóstico vigente al generar la recomendación.
-    \item El sistema clasifica el resultado como éxito, si la recomendación se ejecutó y el valor observado superó al esperado, o como fracaso, si se ejecutó sin impacto positivo o sin dato para medirlo, si venció sin ejecutarse o si fue descartada.
+    % PENDIENTE-IMPL: A4-bandit (resultado de los descartes según el motivo)
+    \item El sistema clasifica el resultado como éxito, si la recomendación se ejecutó y el valor observado superó al esperado, o como fracaso, si se ejecutó sin impacto positivo o sin dato para medirlo o si venció sin ejecutarse. Los descartes se clasifican según su motivo (CU-05, flujo alternativo 3b).
     \item El sistema actualiza el brazo del bandit correspondiente al tipo de recomendación para la tienda (RF-16): un éxito suma uno a $\alpha$ y un fracaso suma uno a $\beta$. Cada recomendación se cuenta una sola vez.
-    \item El resultado queda disponible para ser consultado por el usuario como correlación indicativa (RNF-10).
+    \item El resultado queda disponible para ser consultado por el usuario como correlación indicativa (RNF-10), a los 7, 14 o 30 días de la ejecución, según la preferencia que eligió para el nivel de prioridad de la recomendación (RF-27).
 \end{enumerate}
 
 \noindent\textbf{Flujos alternativos:}
@@ -736,6 +938,94 @@ Postcondiciones & La tienda WooCommerce queda registrada en el sistema con crede
 
 \noindent 5a. El \texttt{state} expiró (TTL de 15 minutos) o ya fue reclamado: el backend responde 401 y el plugin solicita al emprendedor que reinicie el proceso.
 
+\subsection{CU-10: Enviar cupón a clientes}
+\label{sec:cu-10}
+
+\begin{table}[h]
+\centering
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{|m{3cm}|m{11.3cm}|}
+\hline
+\textbf{Campo} & \textbf{Descripción} \\
+\hline
+Actor principal & Emprendedor \\
+\hline
+Actores secundarios & Servicio de correo electrónico \\
+\hline
+Precondiciones & Existe una recomendación activa de riesgo de abandono o de fidelización con al menos un cliente con correo electrónico. El servicio de correo está configurado. \\
+\hline
+Postcondiciones & Los clientes elegidos reciben el correo con el cupón; cada envío queda registrado con su estado y la recomendación queda ejecutada. \\
+\hline
+\end{tabular}
+\end{table}
+
+\noindent\textbf{Flujo principal:}
+\begin{enumerate}
+    \item El comerciante abre la recomendación y elige la opción de enviar el cupón.
+    \item El sistema muestra la lista de clientes de la recomendación y un correo propuesto, con el asunto, el cuerpo redactado por el modelo de lenguaje (RF-19) y la dirección de la tienda como respuesta.
+    \item El comerciante elige hasta 10 clientes, edita el asunto y el cuerpo si lo desea, ingresa el código del cupón y confirma el envío.
+    \item El sistema marca la recomendación como ejecutada antes de enviar, de modo que un segundo clic o una segunda pestaña no repitan el envío.
+    \item El sistema envía un correo a cada cliente elegido, con su nombre en el saludo, el código del cupón destacado, el nombre de la tienda como remitente y un pie para darse de baja.
+    \item El sistema registra cada envío con su estado (enviado, fallido o filtrado) y muestra al comerciante el resumen.
+    % PENDIENTE-IMPL: A3-conversion
+    \item Durante la ventana de evaluación, el sistema mide qué clientes volvieron a comprar y cuántas órdenes aplicaron el código del cupón (RF-26, CU-06).
+\end{enumerate}
+
+\noindent\textbf{Flujos alternativos:}
+
+\noindent 3a. Ninguno de los clientes elegidos tiene correo electrónico válido: el sistema no envía y lo informa al comerciante.
+
+\noindent 4a. La recomendación ya fue ejecutada o enviada: el sistema rechaza el envío sin repetirlo.
+
+\noindent 5a. No sale ningún correo, por errores del servicio o porque todos los destinatarios quedaron fuera de la lista autorizada en el entorno de pruebas (RNF-21): la recomendación vuelve a estar activa para poder reintentar.
+
+\noindent 5b. La tienda no tenía dirección de contacto registrada y el comerciante la ingresó en el formulario: el sistema la guarda para los envíos siguientes.
+
+% PENDIENTE-IMPL: B1 (CU completo)
+\subsection{CU-11: Aplicar la acción sugerida}
+\label{sec:cu-11}
+
+\begin{table}[h]
+\centering
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{|m{3cm}|m{11.3cm}|}
+\hline
+\textbf{Campo} & \textbf{Descripción} \\
+\hline
+Actor principal & Emprendedor \\
+\hline
+Actores secundarios & API de Tiendanube \\
+\hline
+Precondiciones & Existe una recomendación activa con una acción sugerida de cupón o de precio promocional. La tienda es de Tiendanube y concedió los permisos de edición de cupones y de productos (RNF-22). \\
+\hline
+Postcondiciones & El cupón o el precio promocional queda aplicado en la tienda, registrado con los parámetros confirmados, y la recomendación queda ejecutada con origen \enquote{aplicada desde Decidata}. \\
+\hline
+\end{tabular}
+\end{table}
+
+\noindent\textbf{Flujo principal:}
+\begin{enumerate}
+    \item El comerciante abre la recomendación, que muestra la acción armada: por ejemplo, \enquote{Creá el cupón VUELVE15 · 15\% · válido 14 días}, o el precio promocional de cada variante.
+    \item El comerciante revisa los valores y, si lo desea, edita el código, el porcentaje, la vigencia o el precio.
+    \item El sistema verifica que los valores editados respeten el piso de margen cuando la variante tiene costo cargado (RF-30) y lo advierte si no lo respetan.
+    \item El comerciante confirma con el botón \enquote{Crear cupón en mi tienda} o \enquote{Aplicar precio promocional}.
+    \item El backend crea el cupón o carga el precio promocional de las variantes mediante la API de Tiendanube.
+    \item El sistema registra la acción aplicada con los parámetros confirmados, el identificador del cupón o de las variantes en la plataforma y la fecha, y marca la recomendación como ejecutada con origen \enquote{aplicada desde Decidata}.
+    \item El sistema confirma la aplicación y ofrece \enquote{Deshacer}; si la acción es un cupón, ofrece además enviarlo por correo con el código precargado (CU-10).
+\end{enumerate}
+
+\noindent\textbf{Flujos alternativos:}
+
+\noindent 1a. Ya existe un cupón vigente equivalente en la tienda: la recomendación propone difundirlo en lugar de crear otro (RF-30).
+
+\noindent 2a. El comerciante elige \enquote{Prefiero hacerlo yo}: el sistema copia los datos para cargarlos a mano y la recomendación sigue el registro manual o inferido de la ejecución (CU-05).
+
+\noindent 5a. La API de la plataforma rechaza la escritura, por ejemplo porque el código del cupón ya existe o porque falta un permiso: el sistema no marca la recomendación como ejecutada, informa el motivo y ofrece reintentar o \enquote{Prefiero hacerlo yo}.
+
+\noindent 5b. La tienda es de WooCommerce: la aplicación con un clic no está disponible y el sistema ofrece directamente \enquote{Prefiero hacerlo yo}.
+
+\noindent 7a. El comerciante elige \enquote{Deshacer} antes de que se complete la evaluación de impacto y antes de enviar el cupón por correo (RF-29): el sistema borra el cupón o vacía el precio promocional, registra la fecha del deshacer y devuelve la recomendación al estado activo.
+
 \section{Trazabilidad entre artefactos}
 \label{sec:trazabilidad-artefactos}
 
@@ -773,7 +1063,7 @@ HU-05 (Precios desactualizados) & RF-07, RF-20, RF-11, RF-06 & CU-03, CU-04 \\
 \hline
 HU-06 (Promoción fecha clave) & RF-09, RF-07, RF-06 & CU-03, CU-04 \\
 \hline
-HU-07 (Feedback y descarte) & RF-14, RF-21 & CU-05, CU-06 \\
+HU-07 (Feedback y descarte con motivo) & RF-14, RF-21, RF-27 & CU-05, CU-06 \\
 \hline
 HU-08 (Impacto) & RF-15, RF-16 & CU-06 \\
 \hline
@@ -782,6 +1072,23 @@ HU-09 (Diferenciación rubro) & RF-06, RF-10 & CU-03 \\
 HU-10 (Clientes en riesgo de abandono) & RF-12, RF-13 & CU-02, CU-03, CU-04 \\
 \hline
 HU-11 (Tipo de cambio) & RF-20, RF-06 & CU-08, CU-03, CU-04 \\
+\hline
+HU-12 (Cambio de estación) & RF-24, RF-06 & CU-03, CU-04 \\
+\hline
+HU-13 (Premio a los mejores clientes) & RF-25, RF-12, RF-26 & CU-03, CU-04, CU-10 \\
+\hline
+% PENDIENTE-IMPL: B1, B4 (filas HU-14 a HU-19)
+HU-14 (Aplicar la acción con un clic) & RF-28, RF-29, RF-30, RF-26 & CU-11, CU-10 \\
+\hline
+HU-15 (Carrito abandonado) & RF-31, RF-28, RF-26 & CU-03, CU-11, CU-10 \\
+\hline
+HU-16 (Segunda compra) & RF-32, RF-12, RF-28, RF-26 & CU-03, CU-11, CU-10 \\
+\hline
+HU-17 (Curva de talles rota) & RF-33, RF-06, RF-28 & CU-03, CU-11 \\
+\hline
+HU-18 (Día de baja demanda) & RF-34, RF-06, RF-09 & CU-03, CU-04 \\
+\hline
+HU-19 (Venta cruzada de accesorios) & RF-35, RF-06, RF-28, RF-26 & CU-03, CU-11, CU-10 \\
 \hline
 --- (Autenticación Tiendanube) & RF-01 & CU-01 \\
 \hline
@@ -798,6 +1105,13 @@ HU-11 (Tipo de cambio) & RF-20, RF-06 & CU-08, CU-03, CU-04 \\
 --- (Notificaciones) & RF-22, RF-08 & CU-02 \\
 \hline
 --- (Cupo de recomendaciones activas) & RF-23 & CU-03 \\
+\hline
+--- (Envío de cupones por correo y privacidad) & RF-26, RNF-21 & CU-10 \\
+\hline
+--- (Frecuencia del resultado de impacto) & RF-27, RF-15 & CU-06 \\
+\hline
+% PENDIENTE-IMPL: B1, B3
+--- (Permisos y confirmación de las escrituras) & RNF-22, RNF-23 & CU-11 \\
 \hline
 
 \end{longtable}
@@ -906,6 +1220,68 @@ Transcurrida la ventana de evaluación de la recomendación ejecutada, el comerc
 \label{sec:capturas-implementacion}
 
 Las siguientes subsecciones documentan las pantallas implementadas que no estaban representadas en los mockups originales o cuya interfaz evolucionó de forma significativa respecto al diseño inicial.
+
+\subsubsection{Rediseño con la identidad de Decidata}
+\label{sec:captura-rediseno}
+
+La interfaz final incorpora la identidad de marca de Decidata (Sección~\ref{sec:marca-decidata}) sobre los componentes de Nimbus. % VERIFICAR-COD: el banner de ImpactSummary dice «Gracias a que ejecutaste las recomendaciones, vendiste ~$X», redacción causal que contradice RNF-10
+La pestaña de impacto se abre con un banner que muestra el isotipo de Decidata y destaca, en pesos, la suma de las ventas asociadas a las recomendaciones ejecutadas con impacto medido, junto con la cantidad de esas acciones. Cada tarjeta lleva un chip de prioridad con ícono (urgente, atención u oportunidad) y la insignia \enquote{Recomendación de Decidata}, que reemplaza a la etiqueta \enquote{Generado por IA} del mockup. Cuando una variante de la recomendación se quedó sin stock, el aviso aparece como un chip junto a la fecha de la tarjeta, en lugar de un banner a lo ancho del panel. La pantalla de detalle se organiza en dos bloques: \enquote{Por qué te lo recomendamos}, con la explicación redactada por el modelo de lenguaje, y \enquote{Lo que vemos en tu tienda}, con las métricas que sostienen la recomendación. Las notificaciones se separan en nuevas y anteriores, y las anteriores quedan marcadas como leídas (Figura~\ref{fig:captura-rediseno}).
+
+% PENDIENTE-CAPTURA: A6 (pantallas del rediseño que pasa Romi: panel con banner de impacto y detalle)
+\begin{figure}[ht]
+    \centering
+    \fbox{\parbox{0.8\textwidth}{\centering\vspace{2cm}Captura pendiente: panel con el banner de impacto, tarjetas con chip de prioridad e insignia \enquote{Recomendación de Decidata}, y pantalla de detalle con \enquote{Por qué te lo recomendamos} y \enquote{Lo que vemos en tu tienda}.\vspace{2cm}}}
+    \caption{Panel y detalle de una recomendación con la identidad de Decidata.}
+    \label{fig:captura-rediseno}
+\smallskip
+\noindent\textit{Fuente: elaboración propia.}
+\end{figure}
+
+\subsubsection{Envío del cupón por correo}
+\label{sec:captura-cupon}
+
+En las recomendaciones de riesgo de abandono y de fidelización, el botón \enquote{Enviar cupón} abre un formulario con la lista de clientes, todos elegidos de forma predeterminada, el asunto, el cuerpo del correo con el marcador \texttt{\{nombre\}}, el código del cupón y la dirección de respuesta de la tienda (CU-10, Figura~\ref{fig:captura-cupon}).
+
+% PENDIENTE-CAPTURA: A3 (formulario de envío del cupón)
+\begin{figure}[ht]
+    \centering
+    \fbox{\parbox{0.8\textwidth}{\centering\vspace{2cm}Captura pendiente: formulario de envío del cupón por correo, con la lista de clientes, el asunto, el cuerpo, el código y la dirección de respuesta.\vspace{2cm}}}
+    \caption{Formulario de envío del cupón por correo.}
+    \label{fig:captura-cupon}
+\smallskip
+\noindent\textit{Fuente: elaboración propia.}
+\end{figure}
+
+\subsubsection{Descarte con motivo y frecuencia del resultado}
+\label{sec:captura-descarte}
+
+Al descartar una recomendación, un cuadro de diálogo pide el motivo, con un campo de texto para \enquote{Otro}, y el panel ofrece deshacer el descarte (CU-05, flujo alternativo 3b). Desde el panel, el comerciante abre además la configuración del resultado de impacto, donde elige para cada nivel de prioridad si quiere verlo a los 7, 14 o 30 días; la opción de 14 días aparece marcada como recomendada, con la aclaración de que es el tiempo necesario para juntar ventas suficientes y medir el impacto con más precisión (RF-27, Figura~\ref{fig:captura-descarte}).
+
+% PENDIENTE-CAPTURA: A4-A5 (cuadro de descarte con motivo y modal de frecuencia del resultado)
+\begin{figure}[ht]
+    \centering
+    \fbox{\parbox{0.8\textwidth}{\centering\vspace{2cm}Captura pendiente: cuadro de descarte con los cuatro motivos y configuración de la frecuencia del resultado por nivel de prioridad (7, 14 o 30 días).\vspace{2cm}}}
+    \caption{Descarte con motivo y configuración de la frecuencia del resultado de impacto.}
+    \label{fig:captura-descarte}
+\smallskip
+\noindent\textit{Fuente: elaboración propia.}
+\end{figure}
+
+% PENDIENTE-IMPL: B1 (pantalla de la acción armada)
+\subsubsection{Acción sugerida lista para aplicar}
+\label{sec:captura-accion}
+
+En las recomendaciones de descuento o de cupón, el detalle muestra la acción armada, por ejemplo \enquote{Creá el cupón VUELVE15 · 15\% · válido 14 días}, con los campos editables, el botón de confirmación que describe lo que va a ocurrir y la opción \enquote{Prefiero hacerlo yo}. Una vez aplicada, la tarjeta indica que la acción se aplicó desde Decidata y ofrece \enquote{Deshacer} (CU-11, Figura~\ref{fig:captura-accion}).
+
+% PENDIENTE-CAPTURA: B1 (detalle con la acción armada y el botón de confirmación)
+\begin{figure}[ht]
+    \centering
+    \fbox{\parbox{0.8\textwidth}{\centering\vspace{2cm}Captura pendiente: detalle de una recomendación con la acción armada, los valores editables, el botón \enquote{Crear cupón en mi tienda} y la opción \enquote{Prefiero hacerlo yo}.\vspace{2cm}}}
+    \caption{Acción sugerida lista para aplicar con un clic.}
+    \label{fig:captura-accion}
+\smallskip
+\noindent\textit{Fuente: elaboración propia.}
+\end{figure}
 
 \subsubsection{Ejecución inferida}
 \label{sec:captura-inferencia}
