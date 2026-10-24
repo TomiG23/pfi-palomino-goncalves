@@ -13,4 +13,9 @@
     \nodepart{two} id: uuid [PK]\\ store\_id: uuid [FK $\rightarrow$ STORES]\\ recommendation\_type: string\\ recommendation\_id: uuid? [UQ]\\ outcome: string\\ alpha: decimal\\ beta: decimal\\ is\_simulated: boolean\\ created\_at: timestamp};
   \node[entidad, anchor=north west] (priors) at (11.78,-6.9) {\entcab{RUBRO\_PRIORS}
     \nodepart{two} id: uuid [PK]\\ rubro: string\\ recommendation\_type: string\\ alpha: decimal\\ beta: decimal\\ updated\_at: timestamp};
+  \node[entidad, anchor=north west] (coupons) at (0,-11.0) {\entcab{COUPON\_SENDS}
+    \nodepart{two} id: uuid [PK]\\ recommendation\_id: uuid [FK]\\ customer\_id: uuid [FK $\rightarrow$ CUSTOMERS]\\ email\_address: string\\ coupon\_code: string?\\ sent\_at: timestamp\\ status: string};
+
+  % RECOMMENDATIONS 1:N COUPON_SENDS
+  \draw[relacion] (recs.south) -- node[card, pos=0.2, right]{1} node[card, pos=0.8, right]{N} (coupons.north);
 \end{tikzpicture}

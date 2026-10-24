@@ -4,7 +4,7 @@
   \node[entidad, anchor=north west] (segments) at (5.92,0) {\entcab{CUSTOMER\_SEGMENTS}
     \nodepart{two} customer\_id: uuid [PK, FK]\\ store\_id: uuid [FK $\rightarrow$ STORES]\\ segment: string\\ recency: int\\ frequency: int\\ monetary: decimal\\ clv: decimal\\ computed\_at: timestamp};
   \node[entidad, anchor=north west] (orders) at (5.92,-4.0) {\entcab{ORDERS}
-    \nodepart{two} id: uuid [PK]\\ store\_id: uuid [FK $\rightarrow$ STORES]\\ customer\_id: uuid [FK]\\ tiendanube\_order\_id: string\\ created\_at: timestamp\\ status: string\\ payment\_status: string\\ total: decimal};
+    \nodepart{two} id: uuid [PK]\\ store\_id: uuid [FK $\rightarrow$ STORES]\\ customer\_id: uuid [FK]\\ tiendanube\_order\_id: string\\ created\_at: timestamp\\ status: string\\ payment\_status: string\\ total: decimal\\ coupon\_code: string?};
   \node[entidad, anchor=north west] (segruns) at (11.78,0) {\entcab{SEGMENTATION\_RUNS}
     \nodepart{two} id: uuid [PK]\\ store\_id: uuid [FK $\rightarrow$ STORES]\\ k: int\\ silhouette: decimal?\\ customers\_count: int\\ median\_repurchase\_days: decimal?\\ inactivity\_threshold\_days: int\\ churn\_rate: decimal\\ segments: json\\ computed\_at: timestamp};
   \node[entidad, anchor=north west] (items) at (11.78,-4.6) {\entcab{ORDER\_ITEMS}

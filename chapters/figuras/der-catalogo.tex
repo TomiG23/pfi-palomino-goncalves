@@ -1,6 +1,6 @@
 \begin{tikzpicture}
   \node[entidad, anchor=north west] (stores) at (0,0) {\entcab{STORES}
-    \nodepart{two} id: uuid [PK]\\ tiendanube\_store\_id: string [UQ]\\ name: string\\ type: string\\ main\_currency: string\\ access\_token: string?\\ platform: string\\ data\_origin: string\\ store\_url: string?\\ consumer\_key: string?\\ consumer\_secret: string?\\ plugin\_secret: string?\\ last\_sync\_at: timestamp?};
+    \nodepart{two} id: uuid [PK]\\ tiendanube\_store\_id: string [UQ]\\ name: string\\ type: string\\ main\_currency: string\\ access\_token: string?\\ platform: string\\ data\_origin: string\\ store\_url: string?\\ consumer\_key: string?\\ consumer\_secret: string?\\ plugin\_secret: string?\\ email: string?\\ last\_sync\_at: timestamp?};
   \node[entidad, anchor=north west] (categories) at (5.92,0) {\entcab{CATEGORIES}
     \nodepart{two} id: uuid [PK]\\ store\_id: uuid [FK]\\ tiendanube\_category\_id: string\\ name: string\\ parent\_id: uuid? [FK]};
   \node[entidad, anchor=north west] (prodcat) at (5.92,-3.0) {\entcab{PRODUCT\_CATEGORIES}
