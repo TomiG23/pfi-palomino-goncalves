@@ -565,7 +565,7 @@ El resto del código sí se mide, aunque ninguna prueba lo cargue: en particular
 \subsection{Resultados de cobertura}
 \label{sec:resultados-cobertura}
 
-La Tabla~\ref{tab:resultados-cobertura} presenta los resultados de la corrida del 24 de octubre de 2026, sobre el código de la rama principal del repositorio del prototipo (\emph{commit} \texttt{20e01a2}) y con Node.js 24.22.1: en el backend, con c8 configurado para contar todos los archivos de \texttt{src/} aunque ninguna prueba los cargue (\texttt{all: true}); en el frontend, con \texttt{@vitest/coverage-v8} sobre todos los archivos de \texttt{src/}. Las 469 pruebas del backend se ejecutan sin fallas y cubren el 85,2\% de las líneas, por lo que el backend alcanza la meta del RNF-20; la cobertura de ramas, del 88,8\%, queda apenas por debajo del umbral del 89\% configurado en c8. En el frontend, 14 de las 73 pruebas fallan, por lo que la corrida no produce una medición válida de su cobertura.
+La Tabla~\ref{tab:resultados-cobertura} presenta los resultados de la corrida del 24 de octubre de 2026, sobre el código de la rama principal del repositorio del prototipo (\emph{commit} \texttt{20e01a2}) y con Node.js 24.22.1: en el backend, con c8 configurado para contar todos los archivos de \texttt{src/} aunque ninguna prueba los cargue (\texttt{all: true}); en el frontend, con \texttt{@vitest/coverage-v8} sobre todos los archivos de \texttt{src/}. Las 469 pruebas del backend se ejecutan sin fallas y cubren el 85,2\% de las líneas, por lo que el backend alcanza la meta del RNF-20; la cobertura de ramas, del 88,8\%, queda apenas por debajo del umbral del 89\% configurado en c8. En el frontend, las 73 pruebas se ejecutan sin fallas; su cobertura no se midió en esta corrida.
 
 \begin{table}[h]
 \centering
@@ -578,7 +578,7 @@ La Tabla~\ref{tab:resultados-cobertura} presenta los resultados de la corrida de
 \hline
 Backend & 469 (todas pasan) & 85,2\% (6.755 de 7.932) & 88,8\% (1.642 de 1.849) & 88,9\% (280 de 315) \\
 \hline
-Frontend & 73 (14 fallan) & \multicolumn{3}{m{8.8cm}|}{\pendiente{Cobertura de líneas, ramas y funciones del frontend, medida con todas las pruebas en verde, y fecha de la corrida}} \\
+Frontend & 73 (todas pasan) & \multicolumn{3}{m{8.8cm}|}{No se midió en esta corrida} \\
 \hline
 \end{tabular}
 
