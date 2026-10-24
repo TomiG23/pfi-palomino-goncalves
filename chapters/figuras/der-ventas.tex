@@ -1,0 +1,21 @@
+\begin{tikzpicture}
+  \node[entidad, anchor=north west] (customers) at (0,0) {\entcab{CUSTOMERS}
+    \nodepart{two} id: uuid [PK]\\ store\_id: uuid [FK $\rightarrow$ STORES]\\ tiendanube\_customer\_id: string\\ full\_name: string\\ dni: string?\\ email: string\\ phone: string?\\ street: string?\\ street\_number: string?\\ floor: string?\\ city: string?\\ locality: string?\\ province: string?\\ postal\_code: string?\\ country: string?\\ note: string?\\ total\_spent: decimal};
+  \node[entidad, anchor=north west] (segments) at (5.92,0) {\entcab{CUSTOMER\_SEGMENTS}
+    \nodepart{two} customer\_id: uuid [PK, FK]\\ store\_id: uuid [FK $\rightarrow$ STORES]\\ segment: string\\ recency: int\\ frequency: int\\ monetary: decimal\\ clv: decimal\\ computed\_at: timestamp};
+  \node[entidad, anchor=north west] (orders) at (5.92,-4.0) {\entcab{ORDERS}
+    \nodepart{two} id: uuid [PK]\\ store\_id: uuid [FK $\rightarrow$ STORES]\\ customer\_id: uuid [FK]\\ tiendanube\_order\_id: string\\ created\_at: timestamp\\ status: string\\ payment\_status: string\\ total: decimal\\ coupon\_code: string?};
+  \node[entidad, anchor=north west] (segruns) at (11.78,0) {\entcab{SEGMENTATION\_RUNS}
+    \nodepart{two} id: uuid [PK]\\ store\_id: uuid [FK $\rightarrow$ STORES]\\ k: int\\ silhouette: decimal?\\ customers\_count: int\\ median\_repurchase\_days: decimal?\\ inactivity\_threshold\_days: int\\ churn\_rate: decimal\\ segments: json\\ computed\_at: timestamp};
+  \node[entidad, anchor=north west] (items) at (11.78,-4.6) {\entcab{ORDER\_ITEMS}
+    \nodepart{two} id: uuid [PK]\\ order\_id: uuid [FK]\\ variant\_id: uuid [FK $\rightarrow$ VARIANTS]\\ quantity: int\\ price: decimal};
+  \node[entidad, anchor=north west] (privacy) at (0,-7.0) {\entcab{PRIVACY\_REQUESTS}
+    \nodepart{two} id: uuid [PK]\\ type: string\\ tiendanube\_store\_id: string\\ tiendanube\_customer\_id: string?\\ received\_at: timestamp\\ processed\_at: timestamp?\\ result: string?};
+
+  % CUSTOMERS 1:0..1 CUSTOMER_SEGMENTS
+  \draw[relacion] (segments.west -| customers.east) -- node[card, pos=0.08, above]{1} node[card, pos=0.88, above]{0..1} (segments.west);
+  % CUSTOMERS 1:N ORDERS
+  \draw[relacion] (orders.west -| customers.east) -- node[card, pos=0.08, above]{1} node[card, pos=0.92, above]{N} (orders.west);
+  % ORDERS 1:N ORDER_ITEMS
+  \draw[relacion] (orders.east) -- node[card, pos=0.08, above]{1} node[card, pos=0.92, above]{N} (orders.east -| items.west);
+\end{tikzpicture}

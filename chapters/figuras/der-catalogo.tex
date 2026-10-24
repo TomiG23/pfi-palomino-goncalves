@@ -1,0 +1,30 @@
+\begin{tikzpicture}
+  \node[entidad, anchor=north west] (stores) at (0,0) {\entcab{STORES}
+    \nodepart{two} id: uuid [PK]\\ tiendanube\_store\_id: string [UQ]\\ name: string\\ type: string\\ main\_currency: string\\ access\_token: string?\\ platform: string\\ data\_origin: string\\ store\_url: string?\\ consumer\_key: string?\\ consumer\_secret: string?\\ plugin\_secret: string?\\ email: string?\\ last\_sync\_at: timestamp?};
+  \node[entidad, anchor=north west] (categories) at (5.92,0) {\entcab{CATEGORIES}
+    \nodepart{two} id: uuid [PK]\\ store\_id: uuid [FK]\\ tiendanube\_category\_id: string\\ name: string\\ parent\_id: uuid? [FK]};
+  \node[entidad, anchor=north west] (prodcat) at (5.92,-3.0) {\entcab{PRODUCT\_CATEGORIES}
+    \nodepart{two} product\_id: uuid [PK, FK]\\ category\_id: uuid [PK, FK]};
+  \node[entidad, anchor=north west] (products) at (5.92,-4.9) {\entcab{PRODUCTS}
+    \nodepart{two} id: uuid [PK]\\ store\_id: uuid [FK]\\ tiendanube\_product\_id: string\\ name: string\\ attributes: json?\\ status: string\\ created\_at: timestamp\\ updated\_at: timestamp};
+  \node[entidad, anchor=north west] (snapshots) at (11.78,0) {\entcab{VARIANT\_SNAPSHOTS}
+    \nodepart{two} id: uuid [PK]\\ variant\_id: uuid [FK]\\ stock: int\\ price: decimal\\ captured\_at: timestamp\\ source: string};
+  \node[entidad, anchor=north west] (variants) at (11.78,-3.9) {\entcab{VARIANTS}
+    \nodepart{two} id: uuid [PK]\\ product\_id: uuid [FK]\\ sku: string\\ tiendanube\_variant\_id: string?\\ stock: int\\ stock\_management: boolean\\ price: decimal\\ cost: decimal?\\ values: json?\\ updated\_at: timestamp};
+  \node[entidad, anchor=north west] (rates) at (0,-7.4) {\entcab{EXCHANGE\_RATES}
+    \nodepart{two} id: uuid [PK]\\ rate\_date: date [UQ]\\ usd\_ars\_value: decimal\\ source: string};
+
+  % STORES 1:N CATEGORIES y PRODUCTS
+  \draw[relacion] (categories.west -| stores.east) -- node[card, pos=0.08, above]{1} node[card, pos=0.92, above]{N} (categories.west);
+  \draw[relacion] (stores.south) |- node[card, pos=0.1, right]{1} node[card, pos=0.95, above]{N} (products.west);
+  % Jerarquía de categorías (parent_id)
+  \draw[relacion] ([yshift=6pt]categories.east) -- ++(0.4,0) node[card, pos=0.5, above]{1} |- node[card, pos=0.75, below]{N} ([yshift=-6pt]categories.east);
+  \node[card, anchor=west] at ([xshift=0.55cm]categories.east) {parent\_id};
+  % CATEGORIES y PRODUCTS 1:N PRODUCT_CATEGORIES
+  \draw[relacion] (categories.south) -- node[card, pos=0.2, right]{1} node[card, pos=0.8, right]{N} (prodcat.north);
+  \draw[relacion] (products.north) -- node[card, pos=0.2, right]{1} node[card, pos=0.8, right]{N} (prodcat.south);
+  % PRODUCTS 1:N VARIANTS
+  \draw[relacion] (products.east) -- node[card, pos=0.08, above]{1} node[card, pos=0.92, above]{N} (products.east -| variants.west);
+  % VARIANTS 1:N VARIANT_SNAPSHOTS
+  \draw[relacion] (variants.north) -- node[card, pos=0.2, right]{1} node[card, pos=0.8, right]{N} (snapshots.south);
+\end{tikzpicture}

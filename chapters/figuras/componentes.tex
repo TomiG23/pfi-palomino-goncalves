@@ -1,0 +1,64 @@
+\begin{tikzpicture}[
+    comp/.style={draw, fill=white, rounded corners=1pt, align=center, font=\footnotesize,
+        text width=4.0cm, minimum height=1cm, execute at begin node={\hyphenpenalty=10000}},
+    ext/.style={draw, fill=gray!18, rounded corners=1pt, align=center, font=\footnotesize,
+        text width=3.0cm, minimum height=1cm, execute at begin node={\hyphenpenalty=10000}},
+    capa/.style={draw, fill=gray!6, rounded corners=2pt},
+    tit/.style={font=\scriptsize\bfseries, anchor=north west, inner sep=3pt},
+    titd/.style={tit, anchor=north east},
+    flecha/.style={-{Stealth[length=5pt]}, thin},
+    doble/.style={{Stealth[length=5pt]}-{Stealth[length=5pt]}, thin},
+    etiq/.style={font=\scriptsize, fill=gray!6, inner sep=1pt, align=center}]
+
+  % Capas
+  \draw[capa] (0.3,0) rectangle (11.25,-2.1);
+  \node[tit] at (0.3,0) {Frontend (React y Nimbus)};
+  \draw[capa] (0.3,-2.8) rectangle (11.25,-7.0);
+  \node[titd] at (11.25,-2.8) {Backend: API (Node.js y Express)};
+  \draw[capa] (0.3,-7.7) rectangle (11.25,-13.9);
+  \node[titd] at (11.25,-7.7) {Backend: worker (Node.js y cola de trabajos pg-boss)};
+  \draw[capa] (12.35,-2.8) rectangle (15.9,-13.9);
+  \node[tit] at (12.35,-2.8) {Servicios externos};
+
+  % Frontend
+  \node[comp] (panel) at (2.75,-1.2) {Panel de recomendaciones};
+  \node[comp] (sesion) at (8.8,-1.2) {Cliente Nexo (Tiendanube) o complemento de WordPress (WooCommerce)};
+
+  % API
+  \node[comp] (apiapp) at (2.75,-3.9) {API de la aplicación (recomendaciones y \emph{feedback})};
+  \node[comp] (webhooks) at (8.8,-3.9) {Manejador de \emph{webhooks} (privacidad y eventos de la tienda)};
+  \node[comp] (conexion) at (8.8,-5.9) {Conexión de tiendas (OAuth de Tiendanube y claves de WooCommerce)};
+
+  % Worker
+  \node[comp] (cola) at (2.75,-8.8) {Cola de trabajos y trabajos programados};
+  \node[comp] (ingesta) at (8.8,-8.8) {Módulo de ingesta (ETL) con adaptadores de plataforma};
+  \node[comp] (motor) at (2.75,-10.6) {Motor de reglas por rubro, con la capa predictiva};
+  \node[comp] (mensajes) at (8.8,-10.6) {Generador de mensajes};
+  \node[comp] (scoring) at (2.75,-12.4) {Módulo de \emph{scoring} dinámico (bandit e impacto)};
+  \node[comp] (cambio) at (8.8,-12.4) {Consultor de tipo de cambio};
+
+  % Base de datos
+  \node[draw, cylinder, shape border rotate=90, aspect=0.18, fill=white, minimum height=1.2cm,
+        minimum width=3.6cm, font=\footnotesize, align=center] (bd) at (5.78,-15.2) {PostgreSQL (Prisma)};
+
+  % Servicios externos
+  \node[ext, minimum height=6.1cm] (plataformas) at (14.15,-6.35) {Plataformas de comercio electrónico:\\[4pt] API REST de Tiendanube\\[4pt] API REST de WooCommerce de cada tienda};
+  \node[ext] (ia) at (14.15,-10.6) {API del proveedor de IA (Gemini)};
+  \node[ext] (dolar) at (14.15,-12.4) {API pública de tipo de cambio (DolarApi)};
+
+  % Relaciones
+  \draw[flecha, dashed] (sesion) -- node[etiq, above=3pt]{sesión} (panel);
+  \draw[flecha] (panel) -- node[etiq, right=2pt]{HTTP/JSON} (apiapp);
+  \draw[flecha] (plataformas.west |- webhooks) -- node[etiq, above=2pt]{\emph{webhooks}} (webhooks);
+  \draw[doble] (conexion) -- node[etiq, above=2pt]{OAuth 2.0} (plataformas.west |- conexion);
+  \draw[flecha] (apiapp |- 0,-7.0) -- node[etiq, right=2pt]{encolan trabajos} (cola);
+  \draw[flecha] (cola) -- node[etiq, above=2pt]{ejecuta} (ingesta);
+  \draw[flecha] (cola) -- node[etiq, right=2pt]{ejecuta} (motor);
+  \draw[flecha] (ingesta) -- node[etiq, above=2pt]{HTTP GET} (plataformas.west |- ingesta);
+  \draw[flecha] (motor) -- node[etiq, above=2pt]{delega la\\ redacción} (mensajes);
+  \draw[flecha] (mensajes) -- node[etiq, above=2pt]{HTTP POST} (ia);
+  \draw[flecha] (cambio) -- node[etiq, above=2pt]{HTTP GET} (dolar);
+  \draw[doble] (motor) -- node[etiq, right=2pt]{prioriza} (scoring);
+  \draw[flecha, dashed] (5.78,-13.9) -- node[font=\scriptsize, right=2pt]{lee y escribe} (bd.north);
+  \draw[flecha, dashed] (0.3,-4.9) -- (0.05,-4.9) |- node[font=\scriptsize, pos=0.75, above=1pt]{lee y escribe} (bd.west);
+\end{tikzpicture}

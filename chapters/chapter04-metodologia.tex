@@ -106,7 +106,7 @@ Una consecuencia de construir la interfaz sobre Nimbus es la unificación visual
 \subsubsection{Backend: Node.js y Express}
 \label{sec:backend-node-express}
 
-El backend está desarrollado en Node.js, en su versión 18 o superior, único requisito de versión documentado para el proyecto, utilizando Express como framework para la construcción de la API REST. Como se explicó en la Sección~\ref{sec:criterios-seleccion}, la elección de Node.js responde directamente a la necesidad de mantener un único lenguaje de programación en todo el proyecto, una vez que el frontend quedó determinado por el requisito de React de Tiendanube. Express fue seleccionado por tratarse de un framework minimalista y no dogmático, ampliamente adoptado para la construcción de API REST, que permite definir rutas y middlewares con una curva de aprendizaje reducida, adecuada al alcance de un prototipo desarrollado por un equipo de dos personas.
+El backend está desarrollado en Node.js 24, versión con soporte de largo plazo (LTS) hasta abril de 2028 \parencite{NodeRelease2026}, utilizando Express como framework para la construcción de la API REST. Como se explicó en la Sección~\ref{sec:criterios-seleccion}, la elección de Node.js responde directamente a la necesidad de mantener un único lenguaje de programación en todo el proyecto, una vez que el frontend quedó determinado por el requisito de React de Tiendanube. Express fue seleccionado por tratarse de un framework minimalista y no dogmático, ampliamente adoptado para la construcción de API REST, que permite definir rutas y middlewares con una curva de aprendizaje reducida, adecuada al alcance de un prototipo desarrollado por un equipo de dos personas.
 
 Esta elección tampoco fue arbitraria: se evaluaron las principales alternativas del ecosistema Node.js antes de decidir. La Tabla~\ref{tab:comparativo_backend} resume la comparación.
 
@@ -137,29 +137,71 @@ Koa & Diseño moderno; manejo de middleware más limpio & Ecosistema y comunidad
 \subsubsection{Persistencia: PostgreSQL}
 \label{sec:persistencia}
 
-Para la capa de persistencia se seleccionó PostgreSQL como motor de base de datos relacional. El prototipo persiste en PostgreSQL tanto los datos obtenidos de la tienda de desarrollo a través de la API de Tiendanube como el conjunto de datos generado mediante el script de generación aleatoria controlada descripto en la Sección~\ref{sec:eval-generacion}, siguiendo el modelo de datos presentado en la Figura~\ref{fig:erd-diagram}. El esquema implementado replica las entidades documentadas en el Marco Teórico (tiendas, productos, variantes, clientes y pedidos), preservando las relaciones e integridad referencial entre ellas.
+Para la capa de persistencia se seleccionó PostgreSQL como motor de base de datos relacional. El prototipo persiste en PostgreSQL tanto los datos obtenidos de la tienda de desarrollo a través de la API de Tiendanube como el conjunto de datos generado mediante el script de generación aleatoria controlada descripto en la Sección~\ref{sec:eval-generacion}, siguiendo el modelo de datos presentado en las Figuras~\ref{fig:der-catalogo} a~\ref{fig:der-motor}. El esquema implementado replica las entidades documentadas en el Marco Teórico (tiendas, productos, variantes, clientes y pedidos), preservando las relaciones e integridad referencial entre ellas.
 
-Antes de definir el motor específico, se evaluó el enfoque relacional frente al no relacional. Se optó por un modelo relacional porque los datos del dominio son inherentemente relacionales: los pedidos se componen de ítems que referencian variantes, las cuales pertenecen a su vez a productos, y los clientes se vinculan a sus pedidos, tal como se describió al detallar los recursos consumidos de la API de Tiendanube en el Marco Teórico. Estas relaciones, que requieren integridad referencial, se modelan de forma natural en un motor relacional, tal como refleja el diagrama entidad-relación de la Figura~\ref{fig:erd-diagram}. La Tabla~\ref{tab:comparativo_db_enfoque} resume esta primera comparación.
+Antes de definir el motor específico, se evaluó el enfoque relacional frente al no relacional. Se optó por un modelo relacional porque los datos del dominio son inherentemente relacionales: los pedidos se componen de ítems que referencian variantes, las cuales pertenecen a su vez a productos, y los clientes se vinculan a sus pedidos, tal como se describió al detallar los recursos consumidos de la API de Tiendanube en el Marco Teórico. Estas relaciones, que requieren integridad referencial, se modelan de forma natural en un motor relacional, tal como reflejan los diagramas entidad-relación de las Figuras~\ref{fig:der-catalogo} y~\ref{fig:der-ventas}. La Tabla~\ref{tab:comparativo_db_enfoque} resume esta primera comparación.
 
 Una vez definido el enfoque relacional, se compararon los motores disponibles. La Tabla~\ref{tab:comparativo_db_motor} resume la comparación entre PostgreSQL, MySQL y SQLite.
 
 Conviene precisar que PostgreSQL y MySQL resultaban ambos válidos para el proyecto: la elección del primero no responde a una deficiencia del segundo, sino a su soporte de tipos JSONB y a ser el estándar más habitual en el stack de Node.js moderno.
 
-El acceso a la base de datos se implementa mediante Prisma como \emph{Object-Relational Mapping} (ORM). Esta elección responde a los mismos criterios que guiaron la selección del resto del stack (Sección~\ref{sec:criterios-seleccion}): al tratarse de un equipo reducido de dos personas, Prisma permite definir el esquema de datos de forma declarativa en un único archivo, generar automáticamente un cliente tipado en JavaScript y gestionar las migraciones de forma reproducible, evitando la escritura manual de SQL y la duplicación de herramientas entre las capas del proyecto. El esquema de Prisma refleja directamente el modelo de datos presentado en la Figura~\ref{fig:erd-diagram}.
+El acceso a la base de datos se implementa mediante Prisma como \emph{Object-Relational Mapping} (ORM). Esta elección responde a los mismos criterios que guiaron la selección del resto del stack (Sección~\ref{sec:criterios-seleccion}): al tratarse de un equipo reducido de dos personas, Prisma permite definir el esquema de datos de forma declarativa en un único archivo, generar automáticamente un cliente tipado en JavaScript y gestionar las migraciones de forma reproducible, evitando la escritura manual de SQL y la duplicación de herramientas entre las capas del proyecto. La Tabla~\ref{tab:comparativo_orm} compara Prisma con las alternativas habituales del ecosistema de Node.js.
 
-\begin{figure}[ht]
+\begin{table}[h]
+\centering
+\caption{Comparación de herramientas de acceso a la base de datos para Node.js}
+\label{tab:comparativo_orm}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{|m{2.3cm}|m{4.4cm}|m{4.4cm}|m{3.4cm}|}
+\hline
+\textbf{Opción} & \textbf{Ventajas} & \textbf{Consideraciones} & \textbf{Decisión} \\
+\hline
+Prisma & Esquema declarativo en un único archivo; cliente tipado generado a partir del esquema; migraciones reproducibles & Agrega un paso de generación del cliente (\texttt{prisma generate}) antes de ejecutar el código & \textbf{Elegido.} Concentra el esquema y las migraciones en un solo lugar \\
+\hline
+Sequelize & ORM maduro y difundido en el ecosistema de Node.js & Los modelos y las migraciones se definen por separado, y las migraciones se escriben a mano & Descartado: duplica la definición del esquema \\
+\hline
+TypeORM & Modelos definidos con decoradores; orientado a TypeScript & Su principal ventaja depende de TypeScript, que el proyecto no utiliza & Descartado: no se ajusta a un proyecto en JavaScript \\
+\hline
+SQL directo (\texttt{pg}) & Control total de las consultas, sin capas intermedias & Sin migraciones ni tipado; más código escrito a mano & Descartado: mayor costo de mantenimiento para un equipo de dos personas \\
+\hline
+\end{tabular}
+\end{table}
+
+El esquema de Prisma refleja directamente el modelo de datos, que las Figuras~\ref{fig:der-catalogo} a~\ref{fig:der-motor} presentan dividido en tres dominios para que pueda leerse impreso: tiendas y catálogo; ventas y clientes; y motor de recomendaciones y bandit.
+
+\begin{figure}[!htbp]
     \centering
-    \includegraphics[width=\textwidth]{./images/erd_diagram.png}
-    \caption{Diagrama entidad-relación (ERD) del modelo de datos del prototipo, generado a partir del esquema de Prisma (\texttt{schema.prisma}). PK: clave primaria; FK: clave foránea; UQ: valor único; ?: campo opcional.}
-    \label{fig:erd-diagram}
+    \input{chapters/figuras/der-catalogo}
+    \caption{Diagrama entidad-relación del prototipo (1 de 3): tiendas y catálogo, elaborado a partir del esquema de Prisma (\texttt{schema.prisma}). PK: clave primaria; FK: clave foránea; UQ: valor único; ?: campo opcional; 1 y N: cardinalidad de cada relación.}
+    \label{fig:der-catalogo}
 
     \smallskip
-    \noindent\textit{Fuente: elaboración propia.}
+    \noindent\textit{Fuente: elaboración propia sobre la base del esquema de Prisma del prototipo.}
+\end{figure}
+
+\begin{figure}[!htbp]
+    \centering
+    \input{chapters/figuras/der-ventas}
+    \caption{Diagrama entidad-relación del prototipo (2 de 3): ventas y clientes. FK $\rightarrow$ STORES y FK $\rightarrow$ VARIANTS: clave foránea hacia las entidades de la Figura~\ref{fig:der-catalogo}; 0..1: relación opcional.}
+    \label{fig:der-ventas}
+
+    \smallskip
+    \noindent\textit{Fuente: elaboración propia sobre la base del esquema de Prisma del prototipo.}
+\end{figure}
+
+\begin{figure}[!htbp]
+    \centering
+    \input{chapters/figuras/der-motor}
+    \caption{Diagrama entidad-relación del prototipo (3 de 3): motor de recomendaciones y bandit. Notación como en la Figura~\ref{fig:der-ventas}; FK $\rightarrow$ CUSTOMERS: clave foránea hacia la entidad de esa figura.}
+    \label{fig:der-motor}
+
+    \smallskip
+    \noindent\textit{Fuente: elaboración propia sobre la base del esquema de Prisma del prototipo.}
 \end{figure}
 
 El esquema se organiza en torno a \texttt{STORES} como entidad raíz de aislamiento multi-tienda: la clave foránea \texttt{store\_id} se repite en \texttt{CATEGORIES}, \texttt{PRODUCTS}, \texttt{CUSTOMERS}, \texttt{ORDERS} y \texttt{RECOMMENDATIONS}, garantizando que los datos de cada comercio conectado permanezcan separados entre sí. Sobre esa base, \texttt{PRODUCTS} se vincula con \texttt{VARIANTS} en una relación uno a muchos, reflejando la distinción entre un producto y sus combinaciones concretas de talle, color u otro atributo descripta en la Sección~\ref{sec:adquisicion-datos} del Marco Teórico, mientras que \texttt{CATEGORIES} se relaciona con \texttt{PRODUCTS} a través de la tabla intermedia \texttt{PRODUCT\_CATEGORIES} y admite una jerarquía propia mediante \texttt{parent\_id}, lo que permite segmentar las recomendaciones por rubro comercial tal como se planteó en la Sección~\ref{sec:comportamiento-consumidor}. Los pedidos, por su parte, se modelan mediante \texttt{ORDERS} y su detalle \texttt{ORDER\_ITEMS}, que referencia cada variante junto con la cantidad y el precio de la operación, y \texttt{CUSTOMERS} conserva el campo \texttt{total\_spent} provisto directamente por la API de Tiendanube y descripto en esa misma sección.
 
-Dos entidades del esquema no se limitan a replicar recursos de la API de Tiendanube, sino que materializan capacidades propias del prototipo. \texttt{RECOMMENDATIONS} implementa el mecanismo de retroalimentación presentado en la Sección~\ref{sec:feedback-loop} del Marco Teórico: el campo \texttt{executed} registra si el comerciante llevó a cabo la acción sugerida, \texttt{expected\_value} y \texttt{observed\_value} guardan el valor esperado, calculado con el pronóstico vigente al generar la recomendación, y el observado en la ventana de evaluación, \texttt{impact\_pct} registra la diferencia porcentual entre ambos, \texttt{metric\_before} y \texttt{metric\_after} replican esos dos valores por compatibilidad, y \texttt{score} persiste la priorización dinámica que ese mecanismo actualiza en función de los resultados obtenidos. \texttt{EXCHANGE\_RATES}, por su parte, almacena el valor diario del dólar oficial y del dólar blue consultado ante la API pública de tipo de cambio mencionada en el Alcance del proyecto, dato de contexto auxiliar que la regla de revisión de precio utiliza, en toda tienda cuya moneda es el peso, para comparar cuánto varió el dólar desde la última actualización de precio de cada variante, con un umbral por rubro (Tabla~\ref{tab:motor-umbrales}).
+Dos entidades del esquema no se limitan a replicar recursos de la API de Tiendanube, sino que materializan capacidades propias del prototipo. \texttt{RECOMMENDATIONS} implementa el mecanismo de retroalimentación presentado en la Sección~\ref{sec:feedback-loop} del Marco Teórico: el campo \texttt{executed} registra si el comerciante llevó a cabo la acción sugerida, \texttt{expected\_value} y \texttt{observed\_value} guardan el valor esperado, calculado con el pronóstico vigente al generar la recomendación, y el observado en la ventana de evaluación, \texttt{impact\_pct} registra la diferencia porcentual entre ambos, \texttt{metric\_before} y \texttt{metric\_after} replican esos dos valores por compatibilidad, y \texttt{score} persiste la priorización dinámica que ese mecanismo actualiza en función de los resultados obtenidos. El campo \texttt{kind} distingue las recomendaciones de las notificaciones (RF-22), \texttt{expires\_at} registra el vencimiento, \texttt{impact\_amount} guarda el impacto monetario estimado al evaluarla y \texttt{motivo\_descarte}, \texttt{motivo\_descarte\_texto} y \texttt{descartada\_at} registran el descarte por parte del comerciante. \texttt{COUPON\_SENDS} registra cada correo electrónico con un cupón enviado a un cliente a partir de una recomendación; el campo \texttt{coupon\_code} de \texttt{ORDERS} guarda el cupón aplicado en cada orden, lo que permite medir la conversión, y el campo \texttt{email} de \texttt{STORES}, la dirección de contacto de la tienda que se usa como respuesta de esos correos. \texttt{EXCHANGE\_RATES}, por su parte, almacena el valor diario del dólar oficial y del dólar blue consultado ante la API pública de tipo de cambio mencionada en el Alcance del proyecto, dato de contexto auxiliar que la regla de revisión de precio utiliza, en toda tienda cuya moneda es el peso, para comparar cuánto varió el dólar desde la última actualización de precio de cada variante, con un umbral por rubro (Tabla~\ref{tab:motor-umbrales}).
 
 El esquema incorpora además entidades de soporte para las capacidades analíticas del prototipo que no tienen correspondencia directa en la API de Tiendanube. \texttt{VARIANT\_SNAPSHOTS} registra fotos periódicas de stock y precio por variante; al comparar snapshots sucesivos el sistema infiere si una recomendación fue ejecutada sin que el comerciante haya presionado el botón de confirmación. \texttt{DEMAND\_FORECASTS} y \texttt{FORECAST\_RUNS} persisten los pronósticos de demanda diaria por variante y el historial de corridas de pronóstico por tienda, respectivamente, con el error ponderado WAPE de cada corrida. \texttt{CUSTOMER\_SEGMENTS} y \texttt{SEGMENTATION\_RUNS} almacenan la segmentación RFM y CLV de cada cliente junto con el historial de parámetros de la segmentación (número de clusters, coeficiente de silueta, umbral de inactividad). Para el mecanismo de Thompson Sampling (RF-16), \texttt{BANDIT\_ARMS} guarda el estado actual de cada brazo por tienda y tipo de recomendación ---distribución Beta con parámetros $\alpha$ y $\beta$---, \texttt{BANDIT\_ARM\_HISTORY} registra el historial de actualizaciones y \texttt{RUBRO\_PRIORS} almacena los valores iniciales de los brazos calculados por rubro. La tabla \texttt{PRIVACY\_REQUESTS} actúa como registro de auditoría de las solicitudes de privacidad recibidas a través de los \emph{webhooks} de Tiendanube, con tipo, identificadores y marcas temporales de recepción y procesamiento. Por último, la entidad raíz \texttt{STORES} incorpora los campos de credenciales de WooCommerce ---\texttt{store\_url}, \texttt{consumer\_key}, \texttt{consumer\_secret} y \texttt{plugin\_secret}--- almacenados cifrados, junto con el campo \texttt{platform} que distingue tiendas de Tiendanube de las de WooCommerce; el mecanismo de cifrado se describe en la Sección~\ref{sec:cifrado-credenciales}.
 
@@ -229,7 +271,7 @@ Vercel & Plataforma de despliegue: publica la aplicación en una URL pública y 
 
 El motor de reglas del CU-03 (Sección~\ref{sec:cu-03}) produce cada recomendación como un dato estructurado: un tipo de recomendación, el producto o variante involucrado y un conjunto de métricas asociadas. Ese formato es apto para persistir, priorizar y comparar recomendaciones internamente, pero no es el que un comerciante sin formación técnica ni analítica espera encontrar al abrir el panel de la aplicación (RNF-09). El sistema debe entonces traducir cada recomendación estructurada a un mensaje en lenguaje natural, claro y accionable, mediante una llamada desde el backend a la API externa de un proveedor de inteligencia artificial (RF-19). Esta sección desarrolla la selección de dicho proveedor y su integración en el prototipo.
 
-Para resolver esta necesidad se evaluaron tres modelos de lenguaje de bajo costo, orientados a tareas simples de generación de texto: Gemini 3.5 Flash-Lite de Google, GPT-4o-mini de OpenAI y Claude Haiku 4.5 de Anthropic. Los tres pertenecen a la categoría de modelos livianos dentro del catálogo de sus respectivos proveedores, apropiada para la tarea concreta que debe resolver el prototipo: redactar un párrafo breve a partir de datos ya estructurados, no razonar sobre información ambigua ni ejecutar tareas complejas de múltiples pasos. Los criterios de evaluación fueron el costo por llamada en el volumen propio de un prototipo, la disponibilidad de un SDK oficial para Node.js ---lenguaje del backend, según lo establecido en la Sección~\ref{sec:backend-node-express}--- y la calidad de la documentación disponible. La Tabla~\ref{tab:comparativo_llm} resume la comparación realizada.
+Para resolver esta necesidad se evaluaron tres modelos de lenguaje de bajo costo, orientados a tareas simples de generación de texto: Gemini 3.5 Flash-Lite de Google, \texttt{gpt-6-luna} de OpenAI y Claude Haiku 5.5 de Anthropic. La comparación se actualizó en octubre de 2026: GPT-4o-mini, el modelo de OpenAI evaluado en primer lugar, se retira de la API el 14 de enero de 2027, y OpenAI indica \texttt{gpt-6-luna} como su reemplazo \parencite{OpenAIDeprecations2026}; del mismo modo, Claude Haiku 5.5 es la versión vigente de la línea de modelos livianos de Anthropic \parencite{AnthropicPricing2026}. Los tres pertenecen a la categoría de modelos livianos dentro del catálogo de sus respectivos proveedores, apropiada para la tarea concreta que debe resolver el prototipo: redactar un párrafo breve a partir de datos ya estructurados, no razonar sobre información ambigua ni ejecutar tareas complejas de múltiples pasos. Los criterios de evaluación fueron el costo por llamada en el volumen propio de un prototipo, la disponibilidad de un SDK oficial para Node.js ---lenguaje del backend, según lo establecido en la Sección~\ref{sec:backend-node-express}--- y la calidad de la documentación disponible. La Tabla~\ref{tab:comparativo_llm} resume la comparación realizada.
 
 \begin{table}[h]
 \centering
@@ -240,22 +282,22 @@ Para resolver esta necesidad se evaluaron tres modelos de lenguaje de bajo costo
 \hline
 \textbf{Opción} & \textbf{Ventajas} & \textbf{Consideraciones} & \textbf{Decisión} \\
 \hline
-Gemini 3.5 Flash-Lite (Google) & Nivel gratuito; en el plan pago estándar, USD~0,30 por millón de tokens de entrada y USD~2,50 por millón de tokens de salida, y en procesamiento por lotes, USD~0,15 y USD~1,25 \parencite{GoogleGeminiPricing2026}; SDK oficial \texttt{@google/genai} para Node.js; soporte de respuestas en formato JSON ajustadas a un esquema definido; modelo configurable mediante la variable de entorno \texttt{GEMINI\_MODEL} & En el plan pago estándar, su costo por token supera al de GPT-4o-mini; el nivel gratuito tiene límites de cuota; como toda opción basada en un servicio externo, su disponibilidad no depende del equipo, lo que el prototipo mitiga con un mecanismo de respaldo por plantilla & \textbf{Elegido.} El nivel gratuito cubre el desarrollo y la validación del prototipo, y en el plan pago el costo por tienda resulta marginal, con una capacidad más que suficiente para la tarea \\
+Gemini 3.5 Flash-Lite (Google) & Nivel gratuito; en el plan pago estándar, USD~0,30 por millón de tokens de entrada y USD~2,50 por millón de tokens de salida, y en procesamiento por lotes, USD~0,15 y USD~1,25 \parencite{GoogleGeminiPricing2026}; SDK oficial \texttt{@google/genai} para Node.js; soporte de respuestas en formato JSON ajustadas a un esquema definido; modelo configurable mediante la variable de entorno \texttt{GEMINI\_MODEL} & En el plan pago estándar, su costo por token triplica en la entrada y quintuplica en la salida el de las otras dos opciones; el nivel gratuito tiene límites de cuota; como toda opción basada en un servicio externo, su disponibilidad no depende del equipo, lo que el prototipo mitiga con un mecanismo de respaldo por plantilla & \textbf{Elegido.} El nivel gratuito cubre el desarrollo y la validación del prototipo, y en el plan pago el costo por tienda resulta marginal, con una capacidad más que suficiente para la tarea \\
 \hline
-GPT-4o-mini (OpenAI) & Costo por token bajo (USD~0,15 por millón de tokens de entrada y USD~0,60 por millón de tokens de salida) \parencite{OpenAIPricing2026}; SDK oficial \texttt{openai} para Node.js, maduro y ampliamente documentado & Su menor costo por token en el plan pago representa una diferencia de centavos de dólar por tienda y por mes en el volumen del prototipo & Descartado: la diferencia de costo en el plan pago no compensa la ventaja del nivel gratuito de Gemini durante el desarrollo y la validación \\
+\texttt{gpt-6-luna} (OpenAI) & Costo por token bajo (USD~0,10 por millón de tokens de entrada y USD~0,50 por millón de tokens de salida, y en procesamiento por lotes, USD~0,05 y USD~0,25) \parencite{OpenAIPricing2026}; SDK oficial \texttt{openai} para Node.js, maduro y ampliamente documentado & Su menor costo por token en el plan pago representa una diferencia de centavos de dólar por tienda y por mes en el volumen del prototipo & Descartado: la diferencia de costo en el plan pago no compensa la ventaja del nivel gratuito de Gemini durante el desarrollo y la validación \\
 \hline
-Claude Haiku 4.5 (Anthropic) & SDK oficial \texttt{@anthropic-ai/sdk} para Node.js, bien documentado; calidad de redacción elevada & Costo por token sensiblemente mayor (USD~1,00 por millón de tokens de entrada y USD~5,00 por millón de tokens de salida) \parencite{AnthropicPricing2026}, entre 6 y 8 veces el de GPT-4o-mini, sin que la tarea aproveche esa capacidad adicional & Descartado: el costo adicional no se traduce en un beneficio concreto para redactar un párrafo simple a partir de datos ya estructurados \\
+Claude Haiku 5.5 (Anthropic) & Costo por token bajo (USD~0,10 por millón de tokens de entrada y USD~0,50 por millón de tokens de salida en solicitudes de hasta 100.000 tokens, y en procesamiento por lotes, USD~0,05 y USD~0,25) \parencite{AnthropicPricing2026}; SDK oficial \texttt{@anthropic-ai/sdk} para Node.js, bien documentado & Igual que en la opción anterior, su menor costo por token representa una diferencia de centavos de dólar por tienda y por mes & Descartado por el mismo motivo que \texttt{gpt-6-luna} \\
 \hline
 \end{tabular}
 \end{table}
 
-La elección se inclinó por Gemini 3.5 Flash-Lite, y el criterio decisivo fue el costo en el volumen propio de un prototipo: su nivel gratuito permite desarrollar, probar y medir el sistema sin costo, y aun en el plan pago estándar el costo resulta marginal, de menos de diez centavos de dólar por tienda y por mes con el máximo supuesto de llamadas (Sección~\ref{sec:viabilidad-costos}). En ese plan, GPT-4o-mini tiene un costo por token menor, pero la diferencia, de centavos por tienda y por mes, no compensa la ventaja del nivel gratuito durante el desarrollo y la validación; además, como el procesamiento es por lotes, el sistema puede acceder a la tarifa reducida de ese modo de procesamiento. La capa gratuita se usa solo en desarrollo. En producción, el sistema usa el plan pago de la API, cuyo contenido no se utiliza para entrenar ni mejorar los modelos del proveedor \parencite{GoogleGeminiTerms2026}. Gemini 3.5 Flash-Lite ofrece, por otra parte, una capacidad de generación de texto más que suficiente para la tarea concreta que debe resolver, redactar un mensaje breve a partir de datos ya estructurados, sin que se requiera el razonamiento complejo propio de un modelo \emph{frontier}. La latencia, por su parte, no tuvo un peso relevante en la decisión: el procesamiento es por lotes y no en tiempo real —característica que forma parte de las exclusiones de alcance del prototipo detalladas en la Introducción—, y las recomendaciones se generan de forma periódica en el flujo del CU-03 y no en respuesta directa a una acción del comerciante, por lo que la aplicación no resulta sensible a la latencia de la manera en que lo sería una interfaz conversacional interactiva.
+La elección se inclinó por Gemini 3.5 Flash-Lite, y el criterio decisivo fue el costo en el volumen propio de un prototipo: su nivel gratuito permite desarrollar, probar y medir el sistema sin costo, y aun en el plan pago estándar el costo resulta marginal, de menos de diez centavos de dólar por tienda y por mes con el máximo supuesto de llamadas (Sección~\ref{sec:viabilidad-costos}). En ese plan, \texttt{gpt-6-luna} y Claude Haiku 5.5 tienen un costo por token menor: con el mismo máximo de llamadas, alrededor de USD~0,02 por tienda y por mes. La diferencia, de centavos por tienda y por mes, no compensa la ventaja del nivel gratuito durante el desarrollo y la validación; además, como el procesamiento es por lotes, el sistema puede acceder a la tarifa reducida de ese modo de procesamiento. La capa gratuita se usa solo en desarrollo. En producción, el sistema usa el plan pago de la API, cuyo contenido no se utiliza para entrenar ni mejorar los modelos del proveedor \parencite{GoogleGeminiTerms2026}. Gemini 3.5 Flash-Lite ofrece, por otra parte, una capacidad de generación de texto más que suficiente para la tarea concreta que debe resolver, redactar un mensaje breve a partir de datos ya estructurados, sin que se requiera el razonamiento complejo propio de un modelo \emph{frontier}. La latencia, por su parte, no tuvo un peso relevante en la decisión: el procesamiento es por lotes y no en tiempo real —característica que forma parte de las exclusiones de alcance del prototipo detalladas en la Introducción—, y las recomendaciones se generan de forma periódica en el flujo del CU-03 y no en respuesta directa a una acción del comerciante, por lo que la aplicación no resulta sensible a la latencia de la manera en que lo sería una interfaz conversacional interactiva.
 
 La integración se implementa mediante el SDK oficial \texttt{@google/genai}, invocando el modelo \texttt{gemini-3.5-flash-lite}. El modelo utilizado es configurable sin modificar el código: la variable de entorno \texttt{GEMINI\_MODEL} sobreescribe el valor por defecto, lo que permite actualizar el modelo ante eventuales discontinuaciones o la disponibilidad de versiones mejoradas del mismo nivel de costo. La solicitud define un esquema de respuesta en formato JSON con dos campos: \texttt{message}, que contiene el mensaje en lenguaje natural que se presenta al comerciante, y \texttt{detail\_reason}, que expone el motivo de la recomendación. Al exigir una respuesta ajustada a ese esquema, el backend recibe una salida con estructura predecible, que puede validar y persistir sin necesidad de interpretar texto libre.
 
 Un aspecto central de esta integración es qué información viaja hacia el proveedor externo. El backend no envía datos personales de clientes: ni nombres, ni direcciones de correo electrónico, ni montos de compra individuales forman parte de la solicitud. Lo que se envía a la API de Gemini es exclusivamente el dato estructurado de la recomendación ya generada por el motor de reglas: el tipo de recomendación (uno de los seis de la Tabla~\ref{tab:motor-reglas}: quiebre de stock, preparación anticipada, fecha clave, baja rotación, revisión de precio o riesgo de abandono), el nombre del producto o variante involucrado, y las métricas agregadas correspondientes ---stock actual, velocidad de rotación, variación porcentual de precio o días transcurridos sin actualización, según el tipo de señal---. El prompt construido por el backend incorpora, además, el rubro comercial de la tienda (RF-06), utilizado únicamente para ajustar el tono y el vocabulario del mensaje generado a las particularidades de ese rubro. Ninguno de estos datos permite identificar a un cliente individual de la tienda.
 
-El flujo técnico completo, ya introducido como parte del flujo principal del CU-03 (Sección~\ref{sec:cu-03}), puede resumirse en cuatro pasos: el motor de reglas genera la recomendación estructurada; el backend construye, a partir de esos datos, un prompt en lenguaje natural; el backend envía ese prompt a la API de Gemini mediante el SDK \texttt{@google/genai}; y, una vez recibida la respuesta, el backend persiste el mensaje resultante en el campo \texttt{message} de la entidad \texttt{RECOMMENDATIONS} (Figura~\ref{fig:erd-diagram}), junto con el resto de los datos de la recomendación.
+El flujo técnico completo, ya introducido como parte del flujo principal del CU-03 (Sección~\ref{sec:cu-03}), puede resumirse en cuatro pasos: el motor de reglas genera la recomendación estructurada; el backend construye, a partir de esos datos, un prompt en lenguaje natural; el backend envía ese prompt a la API de Gemini mediante el SDK \texttt{@google/genai}; y, una vez recibida la respuesta, el backend persiste el mensaje resultante en el campo \texttt{message} de la entidad \texttt{RECOMMENDATIONS} (Figura~\ref{fig:der-motor}), junto con el resto de los datos de la recomendación.
 
 La integración incorpora, además, un mecanismo de respaldo que aporta robustez al sistema frente a la dependencia de un servicio externo. Si la llamada a la API falla, ya sea porque no hay una API key configurada, porque se alcanzó el límite de solicitudes del proveedor (\emph{rate limit}) o porque la respuesta excede el tiempo de espera (\emph{timeout}), el sistema genera el mensaje a partir de una plantilla de texto predefinida, tal como contempla el flujo alternativo 6a del CU-03. De este modo, la falla del proveedor de IA degrada únicamente la redacción del mensaje, pero no bloquea la generación de la recomendación ni el resto del procesamiento por lotes.
 
@@ -293,25 +335,25 @@ El flujo completo de comunicación, en el entorno de desarrollo, puede describir
     \item El frontend renderiza la respuesta dentro del \emph{iframe}, integrada visualmente al panel de administración mediante los componentes de Nimbus.
 \end{enumerate}
 
-Esta topología de red es propia del entorno de desarrollo y depende de un túnel de terceros (ngrok) en lugar de una infraestructura de \emph{hosting} propia. Tal como se detalla en la Sección~\ref{sec:tunel-ngrok}, esta elección fue evaluada frente a una plataforma de despliegue (Vercel) y resulta adecuada para el desarrollo. El prototipo desplegado reemplaza el túnel por el servicio de nginx en Railway, que sirve la aplicación desde una URL pública y estable (Sección~\ref{sec:infraestructura}); lo que queda fuera del alcance es el despliegue a escala industrial, no el del prototipo.
+Esta topología de red es propia del entorno de desarrollo y depende de un túnel de terceros (ngrok) en lugar de una infraestructura de \emph{hosting} propia. Tal como se detalla en la Sección~\ref{sec:tunel-ngrok}, esta elección fue evaluada frente a una plataforma de despliegue (Vercel) y resulta adecuada para el desarrollo. El prototipo desplegado reemplaza el túnel por el servicio de nginx en Railway, que sirve la aplicación desde una URL pública y estable (Sección~\ref{sec:infraestructura} y Figura~\ref{fig:despliegue}); lo que queda fuera del alcance es el despliegue a escala industrial, no el del prototipo.
 
-Esta arquitectura fue validada de manera funcional de extremo a extremo: la aplicación carga correctamente embebida dentro del \emph{iframe} del panel de administración de la tienda de desarrollo de Tiendanube, con el intercambio (\emph{handshake}) de Nexo funcionando de forma correcta entre el \emph{iframe} y la ventana padre.
+En la tienda de desarrollo de Tiendanube se verificó que la aplicación carga embebida dentro del \emph{iframe} del panel de administración, con el intercambio (\emph{handshake}) de Nexo funcionando de forma correcta entre el \emph{iframe} y la ventana padre. Esta verificación no constituye una prueba de punta a punta de la integración: la sincronización, la generación de recomendaciones y los \emph{webhooks} se probaron de punta a punta con una tienda WooCommerce (Sección~\ref{sec:conclusiones-especificos}).
 
 \subsection{Diagrama de componentes}
 \label{sec:diagrama-componentes}
 
-Mientras que la Figura~\ref{fig:arquitectura-red} describe la topología de red del prototipo, la Figura~\ref{fig:comp-diagram} desciende un nivel de detalle y presenta los componentes internos del frontend y del backend, junto con los servicios externos con los que interactúan.
+Mientras que la Figura~\ref{fig:arquitectura-red} describe la topología de red del prototipo, la Figura~\ref{fig:comp-diagram} desciende un nivel de detalle y presenta los componentes internos del frontend y de los dos procesos del backend, la API y el worker, junto con los servicios externos con los que interactúan.
 
-\begin{figure}[ht]
+\begin{figure}[!htbp]
     \centering
-    \includegraphics[width=\textwidth]{./images/diagramaComponentesDecidata.png}
+    \input{chapters/figuras/componentes}
     \caption{Diagrama de componentes del prototipo.}
     \label{fig:comp-diagram}
 \smallskip
 \noindent\textit{Fuente: elaboración propia.}
 \end{figure}
 
-El frontend, embebido en el \emph{iframe} del panel de administración, se compone del cliente Nexo que resuelve el \emph{handshake} descripto en la Sección~\ref{sec:arquitectura-red} y del panel de recomendaciones que consume la API propia de la aplicación mediante HTTP. El backend concentra la lógica de negocio en seis módulos: el módulo OAuth, responsable de la autenticación descripta en el CU-01 (Sección~\ref{sec:cu-01}); el módulo de ingesta (ETL), que implementa el CU-02 (Sección~\ref{sec:cu-02}); el manejador de \emph{webhooks} de privacidad, correspondiente al CU-07 (Sección~\ref{sec:cu-07}); el consultor de tipo de cambio, correspondiente al CU-08 (Sección~\ref{sec:cu-08}); y el motor de reglas por rubro junto con el módulo de scoring dinámico, que en conjunto implementan el CU-03 (Sección~\ref{sec:cu-03}). Este último módulo delega en un generador de mensajes que invoca la API externa del proveedor de IA para traducir cada recomendación a lenguaje natural (RF-19). Todos los módulos del backend persisten y consultan su información a través de la base de datos PostgreSQL presentada en la Figura~\ref{fig:erd-diagram}, y los módulos que dependen de datos externos acceden a ellos exclusivamente a través de la API REST de Tiendanube, la API del proveedor de IA y la API pública de tipo de cambio.
+El frontend, embebido en el \emph{iframe} del panel de administración de Tiendanube o de WordPress, se compone del panel de recomendaciones, que consume la API propia de la aplicación mediante HTTP, y del componente que establece la sesión: el cliente Nexo, que resuelve el \emph{handshake} descripto en la Sección~\ref{sec:arquitectura-red}, o el complemento de WordPress, que entrega un token firmado (Sección~\ref{sec:autenticacion}). El backend se divide en dos procesos. La API atiende al frontend y a las plataformas: la API de la aplicación expone las recomendaciones y registra el \emph{feedback} del comerciante; la conexión de tiendas implementa la autenticación OAuth de Tiendanube descripta en el CU-01 (Sección~\ref{sec:cu-01}) y la conexión de WooCommerce del CU-09 (Sección~\ref{sec:cu-09}); y el manejador de \emph{webhooks} recibe las solicitudes de privacidad del CU-07 (Sección~\ref{sec:cu-07}) y los eventos de la tienda. El worker ejecuta los trabajos que encola la API y los trabajos programados (Sección~\ref{sec:infraestructura}): el módulo de ingesta (ETL) implementa el CU-02 (Sección~\ref{sec:cu-02}) mediante los adaptadores de cada plataforma (Sección~\ref{sec:multiplataforma}); el consultor de tipo de cambio corresponde al CU-08 (Sección~\ref{sec:cu-08}); y el motor de reglas por rubro, junto con el módulo de scoring dinámico, implementa el CU-03 (Sección~\ref{sec:cu-03}). El motor delega en un generador de mensajes que invoca la API externa del proveedor de IA para traducir cada recomendación a lenguaje natural (RF-19). Los dos procesos persisten y consultan su información en la base de datos PostgreSQL presentada en las Figuras~\ref{fig:der-catalogo} a~\ref{fig:der-motor}, que aloja también la cola de trabajos, y acceden a los datos externos exclusivamente a través de las API de las plataformas, del proveedor de IA y de tipo de cambio.
 
 \subsection{Entorno de desarrollo}
 \label{sec:entorno-desarrollo}
@@ -327,11 +369,79 @@ El prototipo está diseñado para ejecutarse como tres servicios independientes:
 
 El repositorio incluye un \texttt{docker-compose.yml} que levanta el entorno de desarrollo completo ---backend, worker y frontend--- mediante un único comando, con recarga en caliente. Un perfil adicional (\texttt{local-db}) incorpora una instancia de PostgreSQL local como alternativa a Neon, de modo que cualquier persona pueda clonar el repositorio y ejecutar el sistema completo sin depender de servicios externos; esto es un requisito de reproducibilidad del prototipo.
 
-El prototipo se despliega en Railway como tres servicios construidos a partir del mismo repositorio, cada uno con su propio archivo de configuración \texttt{railway.json}. La API aplica al arrancar las migraciones pendientes de la base de datos (\texttt{prisma migrate deploy}) y expone un punto de verificación de estado (\texttt{/api/health}) que Railway consulta antes de considerar activo el servicio. El worker ejecuta la cola de trabajos y los trabajos programados sin exponer ningún puerto. El frontend es una imagen de nginx que sirve los archivos estáticos generados por Vite. Los tres servicios se reinician automáticamente ante una falla.
+El prototipo se despliega en Railway como tres servicios construidos a partir del mismo repositorio, cada uno con su propio archivo de configuración \texttt{railway.json}. La API aplica al arrancar las migraciones pendientes de la base de datos (\texttt{prisma migrate deploy}) y expone un punto de verificación de estado (\texttt{/api/health}) que Railway consulta antes de considerar activo el servicio. El worker ejecuta la cola de trabajos y los trabajos programados sin exponer ningún puerto. El frontend es una imagen de nginx que sirve los archivos estáticos generados por Vite. Los tres servicios se reinician automáticamente ante una falla. La Figura~\ref{fig:despliegue} resume el despliegue. A diferencia de la Figura~\ref{fig:arquitectura-red}, que corresponde al entorno de desarrollo, el navegador del comerciante carga la aplicación desde el servicio de nginx. La API cuenta, además, con un dominio público propio, al que Tiendanube redirige el flujo de OAuth y al que las plataformas envían sus \emph{webhooks}.
+
+\begin{figure}[!htbp]
+    \centering
+    \input{chapters/figuras/despliegue}
+    \caption{Diagrama de despliegue del prototipo en Railway y Neon.}
+    \label{fig:despliegue}
+
+    \smallskip
+    \noindent\textit{Fuente: elaboración propia sobre la base de la configuración de despliegue del prototipo.}
+\end{figure}
 
 nginx cumple, además, una función de seguridad y otra de enrutamiento, ambas configuradas mediante variables de entorno al iniciar el contenedor. \texttt{FRAME\_ANCESTORS} define, en el encabezado \texttt{Content-Security-Policy}, los únicos orígenes autorizados a embeber la aplicación en un \emph{iframe}: los paneles de administración de Tiendanube y los orígenes de WordPress configurados para WooCommerce. \texttt{API\_UPSTREAM} indica el servicio de la API al que nginx reenvía las solicitudes dirigidas a \texttt{/api/}, de modo que el navegador se comunica con un único origen.
 
-La base de datos se aloja en Neon, en una rama de producción separada de las ramas de desarrollo. La API se conecta a ella a través del \emph{pooler} de conexiones de Neon, mientras que el worker usa una conexión directa, que requiere la cola de pg-boss. Las credenciales y claves de cada servicio se cargan como variables de entorno en Railway, fuera del repositorio. La misma imagen de Docker puede trasladarse a AWS sin cambios, migración que queda como trabajo futuro.
+La base de datos se aloja en Neon, en su rama principal (\texttt{main}), que funciona como rama de producción, separada de las ramas de desarrollo. La API se conecta a ella a través del \emph{pooler} de conexiones de Neon, mientras que el worker usa una conexión directa, que requiere la cola de pg-boss. Las credenciales y claves de cada servicio se cargan como variables de entorno en Railway, fuera del repositorio. La misma imagen de Docker puede trasladarse a AWS sin cambios, migración que queda como trabajo futuro.
+
+Las Tablas~\ref{tab:comparativo_hosting}, \ref{tab:comparativo_bd_nube} y~\ref{tab:comparativo_cola} resumen la comparación con la que se eligieron el proveedor de despliegue, el servicio de base de datos y el mecanismo de cola de trabajos. Como en el resto del stack, la comparación se apoya en las características documentadas de cada opción y en su adecuación al alcance de un prototipo. Railway se eligió porque despliega los tres servicios desde el mismo repositorio y ejecuta el worker como un proceso de larga duración, sin adaptarlo a un modelo \emph{serverless}; AWS queda como camino de migración, ya que admite las mismas imágenes de Docker. Neon se eligió por las ramas de la base de datos, que permiten que cada integrante trabaje sobre una copia aislada (Sección~\ref{sec:eval-generacion}), por su \emph{pooler} de conexiones y por su plan gratuito; sus limitaciones son el arranque en frío después de un período sin uso, la cuota de cómputo del plan y la dependencia de un tercero. pg-boss se eligió porque aloja la cola en la misma base de datos PostgreSQL y evita sumar un servicio de mensajería.
+
+\begin{table}[h]
+\centering
+\caption{Comparación de proveedores para desplegar el prototipo}
+\label{tab:comparativo_hosting}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{|m{2.3cm}|m{4.4cm}|m{4.4cm}|m{3.4cm}|}
+\hline
+\textbf{Opción} & \textbf{Ventajas} & \textbf{Consideraciones} & \textbf{Decisión} \\
+\hline
+Railway & Despliega la API, el worker y el frontend como tres servicios del mismo repositorio, con imágenes de Docker y un archivo de configuración por servicio; ejecuta procesos de larga duración; verificación de estado y reinicio automático ante fallas & Dependencia de un proveedor externo; los recursos están limitados por el plan contratado & \textbf{Elegido} para el despliegue del prototipo \\
+\hline
+Render & Servicios web y procesos en segundo plano a partir de imágenes de Docker & Capacidades equivalentes a las de Railway para el alcance del prototipo & Alternativa válida, sin una ventaja decisiva frente a Railway \\
+\hline
+AWS (ECS Fargate o App Runner) & Mayor control y capacidad de escalar; admite las mismas imágenes de Docker sin cambios & Mayor complejidad de configuración: clúster, definiciones de tareas, balanceador de carga y gestión de secretos & Descartado para el prototipo; queda como camino de migración \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[h]
+\centering
+\caption{Comparación de servicios para alojar la base de datos PostgreSQL}
+\label{tab:comparativo_bd_nube}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{|m{2.3cm}|m{4.4cm}|m{4.4cm}|m{3.4cm}|}
+\hline
+\textbf{Opción} & \textbf{Ventajas} & \textbf{Consideraciones} & \textbf{Decisión} \\
+\hline
+Neon & PostgreSQL \emph{serverless}; \emph{pooler} de conexiones; ramas de la base por desarrollador, creadas por copia en escritura \parencite{NeonBranching2026}; plan gratuito & Arranque en frío después de un período sin uso; cuota de cómputo del plan; dependencia de un tercero & \textbf{Elegido} \\
+\hline
+PostgreSQL de Railway & Misma plataforma que los servicios desplegados & No ofrece el flujo de trabajo con una rama de la base por desarrollador que usa el equipo & Descartado: el flujo de ramas pesó más que unificar el proveedor \\
+\hline
+Amazon RDS & Mayor control sobre la instancia y la configuración & Mayor trabajo de configuración y administración para un prototipo & Descartado para el prototipo; opción de migración si el volumen de conexiones supera el plan de Neon \\
+\hline
+Instalación local (Docker) & Sin dependencia de servicios externos; reproducible & No es accesible desde los servicios desplegados ni se comparte entre los integrantes & Alternativa para ejecutar el sistema localmente (Sección~\ref{sec:infraestructura}) \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[h]
+\centering
+\caption{Comparación de mecanismos para la cola de trabajos}
+\label{tab:comparativo_cola}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{|m{2.3cm}|m{4.4cm}|m{4.4cm}|m{3.4cm}|}
+\hline
+\textbf{Opción} & \textbf{Ventajas} & \textbf{Consideraciones} & \textbf{Decisión} \\
+\hline
+pg-boss & Cola persistida en la misma base PostgreSQL, sin infraestructura de mensajería adicional; trabajos programados y reintentos & Requiere una conexión directa a la base, no a través del \emph{pooler}; la consulta periódica de la cola consume cómputo de la base & \textbf{Elegido} \\
+\hline
+BullMQ con Redis & Biblioteca de colas madura y de alto rendimiento & Requiere desplegar y mantener un servicio de Redis adicional & Descartado: suma infraestructura sin un beneficio para el volumen del prototipo \\
+\hline
+Tareas en el mismo proceso de la API & Sin dependencias ni procesos adicionales & Los procesos de alta latencia competirían con las consultas del panel; los trabajos en curso se pierden si el proceso se reinicia; impide mantener la API sin estado & Descartado \\
+\hline
+\end{tabular}
+\end{table}
 
 \subsection{Seguridad}
 \label{sec:seguridad}
@@ -420,7 +530,7 @@ El SDK Nexo y las llamadas al backend se simulan: en ejecución, Nexo depende de
 \subsection{Meta de cobertura}
 \label{sec:meta-cobertura}
 
-La meta, definida en el RNF-20, es una cobertura mínima del 85\% de las líneas, medida por separado para el backend y para el frontend y considerando de forma conjunta las pruebas unitarias y de integración. Los umbrales configurados en las herramientas hacen cumplir esa meta: c8 en el backend y Vitest en el frontend exigen el 85\% de las líneas sobre todo el código fuente (\texttt{src/}), de modo que la ejecución de las pruebas falla si la cobertura baja de ese nivel. La Tabla~\ref{tab:herramientas-prueba} resume las herramientas y el umbral configurado en cada capa.
+La meta, definida en el RNF-20, es una cobertura mínima del 85\% de las líneas, medida por separado para el backend y para el frontend y considerando de forma conjunta las pruebas unitarias y de integración. Los umbrales configurados en las herramientas no coinciden todavía con esa meta: en el backend, c8 exige sobre todo el código fuente (\texttt{src/}) el 83\% de las líneas, el 89\% de las ramas y el 86\% de las funciones; en el frontend, Vitest exige el 85\% de las líneas, de las ramas y de las funciones solo sobre los servicios (\texttt{src/services/}). En ambos casos, la ejecución de las pruebas falla si la cobertura baja del umbral configurado. La Tabla~\ref{tab:herramientas-prueba} resume las herramientas y el umbral configurado en cada capa.
 
 \begin{table}[h]
 \centering
@@ -431,9 +541,9 @@ La meta, definida en el RNF-20, es una cobertura mínima del 85\% de las líneas
 \hline
 \textbf{Capa} & \textbf{Herramientas de prueba} & \textbf{Proveedor de cobertura} & \textbf{Umbral configurado} \\
 \hline
-Backend & \texttt{node:test}, \texttt{node:assert}, aplicación Express de prueba con \texttt{fetch} & c8 (cobertura nativa de V8) & 85\% de líneas sobre todo \texttt{src/} \\
+Backend & \texttt{node:test}, \texttt{node:assert}, aplicación Express de prueba con \texttt{fetch} & c8 (cobertura nativa de V8) & 83\% de líneas, 89\% de ramas y 86\% de funciones sobre todo \texttt{src/} \\
 \hline
-Frontend & Vitest, React Testing Library, jsdom & \texttt{@vitest/} \texttt{coverage-v8} & 85\% de líneas sobre todo \texttt{src/} \\
+Frontend & Vitest, React Testing Library, jsdom & \texttt{@vitest/} \texttt{coverage-v8} & 85\% de líneas, ramas y funciones sobre \texttt{src/services/} \\
 \hline
 \end{tabular}
 \end{table}
@@ -444,7 +554,7 @@ Frontend & Vitest, React Testing Library, jsdom & \texttt{@vitest/} \texttt{cove
 Quedan excluidos de la medición de cobertura los siguientes archivos, por no contener lógica propia del sistema o por no formar parte del sistema en ejecución:
 
 \begin{itemize}
-    \item \textbf{Clientes de las API externas del backend} (\texttt{tiendanube/api.js}, \texttt{tiendanube/auth.js} y \texttt{woocommerce/api.js}): se limitan a realizar las llamadas HTTP a las plataformas y se validaron de punta a punta con las tiendas de desarrollo.
+    \item \textbf{Clientes de las API externas del backend} (\texttt{tiendanube/api.js}, \texttt{tiendanube/auth.js} y \texttt{woocommerce/api.js}): se limitan a realizar las llamadas HTTP a las plataformas. El cliente de WooCommerce se probó de punta a punta con la tienda WooCommerce de desarrollo; los de Tiendanube no cuentan todavía con una prueba de punta a punta documentada (Sección~\ref{sec:eval-origen}).
     \item \textbf{\texttt{main.jsx}:} se limita a montar el árbol de componentes de React, sin lógica propia.
     \item \textbf{Migraciones y seed de Prisma, y carpeta \texttt{scripts/}:} son código generado o herramientas de desarrollo que no forman parte del sistema en ejecución.
     \item \textbf{Archivos de prueba y \emph{mocks}:} no constituyen código de producción.
@@ -455,22 +565,25 @@ El resto del código sí se mide, aunque ninguna prueba lo cargue: en particular
 \subsection{Resultados de cobertura}
 \label{sec:resultados-cobertura}
 
-La Tabla~\ref{tab:resultados-cobertura} presenta los resultados de cobertura obtenidos para cada capa: en el backend, con c8 configurado para contar todos los archivos de \texttt{src/} aunque ninguna prueba los cargue (\texttt{all: true}); en el frontend, con \texttt{@vitest/coverage-v8} sobre todos los archivos de \texttt{src/}. Ambas capas superan la meta del 85\% de cobertura de líneas establecida en el RNF-20.
+La Tabla~\ref{tab:resultados-cobertura} presenta los resultados de cobertura de cada capa: en el backend, de la corrida del 24 de octubre de 2026 sobre el código de la rama principal del repositorio del prototipo (\emph{commit} \texttt{20e01a2}), con Node.js 24.22.1 y c8 configurado para contar todos los archivos de \texttt{src/} aunque ninguna prueba los cargue (\texttt{all: true}); en el frontend, con \texttt{@vitest/coverage-v8} sobre todos los archivos de \texttt{src/}. Las 469 pruebas del backend se ejecutan sin fallas y cubren el 85,2\% de las líneas, por lo que el backend alcanza la meta del RNF-20; la cobertura de ramas, del 88,8\%, queda apenas por debajo del umbral del 89\% configurado en c8. En el frontend, las 73 pruebas se ejecutan sin fallas y cubren al menos el 85\% de las líneas. Ambas capas superan la meta del 85\% de cobertura de líneas establecida en el RNF-20.
 
 \begin{table}[h]
 \centering
 \caption{Resultados de cobertura de código por capa}
 \label{tab:resultados-cobertura}
 \renewcommand{\arraystretch}{1.3}
-\begin{tabular}{|m{3cm}|m{4cm}|}
+\begin{tabular}{|m{2cm}|m{2.6cm}|m{2.9cm}|m{2.9cm}|m{2.6cm}|}
 \hline
-\textbf{Capa} & \textbf{Cobertura de líneas} \\
+\textbf{Capa} & \textbf{Pruebas} & \textbf{Líneas} & \textbf{Ramas} & \textbf{Funciones} \\
 \hline
-Backend & Al menos 85\% \\
+Backend & 469 (todas pasan) & 85,2\% (6.755 de 7.932) & 88,8\% (1.642 de 1.849) & 88,9\% (280 de 315) \\
 \hline
-Frontend & Al menos 85\% \\
+Frontend & 73 (todas pasan) & Al menos 85\% & No informada & No informada \\
 \hline
 \end{tabular}
+
+\smallskip
+\noindent\textit{Fuente: elaboración propia sobre la base de las corridas de las pruebas automatizadas.}
 \end{table}
 
 \input{chapters/evaluacion-modelos}
