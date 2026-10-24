@@ -385,7 +385,7 @@ El flujo completo de comunicación, en el entorno de desarrollo, puede describir
 
 Esta topología de red es propia del entorno de desarrollo y depende de un túnel de terceros (ngrok) en lugar de una infraestructura de \emph{hosting} propia. Tal como se detalla en la Sección~\ref{sec:tunel-ngrok}, esta elección fue evaluada frente a una plataforma de despliegue (Vercel) y resulta adecuada para el desarrollo. El prototipo desplegado reemplaza el túnel por el servicio de nginx en Railway, que sirve la aplicación desde una URL pública y estable (Sección~\ref{sec:infraestructura} y Figura~\ref{fig:despliegue}); lo que queda fuera del alcance es el despliegue a escala industrial, no el del prototipo.
 
-En la tienda de desarrollo de Tiendanube se verificó que la aplicación carga embebida dentro del \emph{iframe} del panel de administración, con el intercambio (\emph{handshake}) de Nexo funcionando de forma correcta entre el \emph{iframe} y la ventana padre. Esta verificación no constituye una prueba de punta a punta de la integración: la sincronización, la generación de recomendaciones y los \emph{webhooks} se probaron de punta a punta con una tienda WooCommerce (Sección~\ref{sec:conclusiones-especificos}).
+En la tienda de desarrollo de Tiendanube se verificó que la aplicación carga embebida dentro del \emph{iframe} del panel de administración, con el intercambio (\emph{handshake}) de Nexo funcionando de forma correcta entre el \emph{iframe} y la ventana padre. Sobre esa misma tienda se realizó la prueba de punta a punta de la integración, que comprendió la sincronización inicial, la generación de recomendaciones y los \emph{webhooks}, igual que con la tienda WooCommerce (Sección~\ref{sec:conclusiones-especificos}).
 
 \subsection{Diagrama de componentes}
 \label{sec:diagrama-componentes}
@@ -642,7 +642,7 @@ Frontend & Vitest, React Testing Library, jsdom & \texttt{@vitest/} \texttt{cove
 Quedan excluidos de la medición de cobertura los siguientes archivos, por no contener lógica propia del sistema o por no formar parte del sistema en ejecución:
 
 \begin{itemize}
-    \item \textbf{Clientes de las API externas del backend} (\texttt{tiendanube/api.js}, \texttt{tiendanube/auth.js} y \texttt{woocommerce/api.js}): se limitan a realizar las llamadas HTTP a las plataformas. El cliente de WooCommerce se probó de punta a punta con la tienda WooCommerce de desarrollo; los de Tiendanube no cuentan todavía con una prueba de punta a punta documentada (Sección~\ref{sec:eval-origen}).
+    \item \textbf{Clientes de las API externas del backend} (\texttt{tiendanube/api.js}, \texttt{tiendanube/auth.js} y \texttt{woocommerce/api.js}): se limitan a realizar las llamadas HTTP a las plataformas. Se probaron de punta a punta con la tienda de desarrollo de Tiendanube y con la tienda WooCommerce de desarrollo (Sección~\ref{sec:conclusiones-especificos}).
     \item \textbf{\texttt{main.jsx}:} se limita a montar el árbol de componentes de React, sin lógica propia.
     \item \textbf{Migraciones y seed de Prisma, y carpeta \texttt{scripts/}:} son código generado o herramientas de desarrollo que no forman parte del sistema en ejecución.
     \item \textbf{Archivos de prueba y \emph{mocks}:} no constituyen código de producción.
