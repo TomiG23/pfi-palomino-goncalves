@@ -1,0 +1,12 @@
+% Estilos de los diagramas entidad-relación (Figuras del modelo de datos).
+\tikzset{
+    entidad/.style={draw, rectangle split, rectangle split parts=2,
+        rectangle split part fill={gray!18,white},
+        font=\scriptsize, text width=3.9cm, align=left, inner sep=2.5pt,
+        execute at begin node={\hyphenpenalty=10000}},
+    relacion/.style={draw, thin},
+    card/.style={font=\scriptsize, inner sep=1pt}
+}
+
+% Encabezado centrado de cada entidad
+\newcommand{\entcab}[1]{\makebox[\linewidth]{\textbf{#1}}}

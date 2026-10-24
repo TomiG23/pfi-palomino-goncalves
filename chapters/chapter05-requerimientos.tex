@@ -139,7 +139,7 @@ RNF-04 & El sistema debe estar disponible bajo una URL pública con HTTPS, inclu
 RNF-05 & El sistema debe almacenar y utilizar el \texttt{Client Secret} de la aplicación exclusivamente en el backend, sin exponerlo al frontend ni al iframe del navegador del usuario. & Seguridad & Sección~\ref{sec:backend-node-express} \\
 \hline
 
-RNF-06 & El sistema debe ejecutar el backend sobre Node.js en su versión 18 o superior. & Tecnología & Sección~\ref{sec:backend-node-express} \\
+RNF-06 & El sistema debe ejecutar el backend sobre Node.js 24 (LTS) o una versión posterior con soporte vigente. & Tecnología & Sección~\ref{sec:backend-node-express} \\
 \hline
 
 RNF-07 & El sistema debe utilizar PostgreSQL como motor de base de datos relacional, con acceso mediante Prisma como ORM. & Tecnología & Sección~\ref{sec:persistencia} \\
@@ -767,7 +767,7 @@ HU-02 (Reposición anticipada) & RF-09, RF-07, RF-08 & CU-02, CU-03, CU-04 \\
 \hline
 HU-03 (Rotación decreciente) & RF-10, RF-06 & CU-03, CU-04 \\
 \hline
-HU-04 (Productos más vendidos) & RF-11, RF-07 & CU-02, CU-03, CU-04 \\
+HU-04 (Productos más vendidos; la vista independiente no se implementó) & RF-11, RF-07 & CU-02, CU-03, CU-04 \\
 \hline
 HU-05 (Precios desactualizados) & RF-07, RF-20, RF-11, RF-06 & CU-03, CU-04 \\
 \hline

@@ -1,0 +1,16 @@
+\begin{tikzpicture}
+  \node[entidad, anchor=north west] (recs) at (0,0) {\entcab{RECOMMENDATIONS}
+    \nodepart{two} id: uuid [PK]\\ store\_id: uuid [FK $\rightarrow$ STORES]\\ target\_type: string\\ target\_id: uuid\\ type: string\\ message: string?\\ generated\_at: timestamp\\ executed: boolean\\ executed\_at: timestamp?\\ feedback\_seen: boolean\\ metric\_before: decimal?\\ metric\_after: decimal?\\ score: decimal\\ status: string\\ execution\_source: string?\\ expected\_value: decimal?\\ observed\_value: decimal?\\ impact\_pct: decimal?\\ evaluated\_at: timestamp?\\ is\_simulated: boolean\\ kind: string\\ expires\_at: timestamp?\\ impact\_amount: decimal?\\ motivo\_descarte: string?\\ motivo\_descarte\_texto: string?\\ descartada\_at: timestamp?\\ metadata: json?};
+  \node[entidad, anchor=north west] (forecasts) at (5.92,0) {\entcab{DEMAND\_FORECASTS}
+    \nodepart{two} id: uuid [PK]\\ store\_id: uuid [FK $\rightarrow$ STORES]\\ variant\_id: uuid [FK $\rightarrow$ VARIANTS]\\ forecast\_date: date\\ predicted\_units: decimal\\ model: string\\ params: json?\\ wape: decimal?\\ low\_confidence: boolean\\ key\_date\_factor: decimal\\ generated\_at: timestamp};
+  \node[entidad, anchor=north west] (fruns) at (5.92,-5.1) {\entcab{FORECAST\_RUNS}
+    \nodepart{two} id: uuid [PK]\\ store\_id: uuid [FK $\rightarrow$ STORES]\\ wape: decimal?\\ variants\_count: int\\ model\_counts: json\\ horizon\_days: int\\ metrics: json?\\ key\_date\_factors: json?\\ generated\_at: timestamp};
+  \node[entidad, anchor=north west] (feedback) at (5.92,-9.0) {\entcab{FEEDBACK\_CONFIGS}
+    \nodepart{two} id: uuid [PK]\\ store\_id: uuid [FK $\rightarrow$ STORES]\\ priority: string\\ mode: string\\ interval\_days: int?\\ updated\_at: timestamp};
+  \node[entidad, anchor=north west] (arms) at (11.78,0) {\entcab{BANDIT\_ARMS}
+    \nodepart{two} id: uuid [PK]\\ store\_id: uuid [FK $\rightarrow$ STORES]\\ recommendation\_type: string\\ alpha: decimal\\ beta: decimal\\ updated\_at: timestamp};
+  \node[entidad, anchor=north west] (history) at (11.78,-3.0) {\entcab{BANDIT\_ARM\_HISTORY}
+    \nodepart{two} id: uuid [PK]\\ store\_id: uuid [FK $\rightarrow$ STORES]\\ recommendation\_type: string\\ recommendation\_id: uuid? [UQ]\\ outcome: string\\ alpha: decimal\\ beta: decimal\\ is\_simulated: boolean\\ created\_at: timestamp};
+  \node[entidad, anchor=north west] (priors) at (11.78,-6.9) {\entcab{RUBRO\_PRIORS}
+    \nodepart{two} id: uuid [PK]\\ rubro: string\\ recommendation\_type: string\\ alpha: decimal\\ beta: decimal\\ updated\_at: timestamp};
+\end{tikzpicture}
