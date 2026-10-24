@@ -313,6 +313,29 @@ La clave de acceso (API key) de Gemini se almacena exclusivamente en el backend,
 
 Las recomendaciones de riesgo de abandono y de fidelización proponen una acción que no deja rastro en los datos de la tienda: contactar a los clientes (Sección~\ref{sec:feedback-loop}). Para que esa acción pueda ejecutarse desde el panel, el sistema envía por correo electrónico el cupón a los clientes que el comerciante elige (RF-26, CU-10). Los correos salen a través de Resend, un servicio de envío de correo transaccional que se integra al backend mediante su SDK para Node.js, y no a través de las plantillas de correo de la plataforma, de modo que el envío funciona igual en Tiendanube y en WooCommerce y no requiere permisos adicionales sobre la tienda (Sección~\ref{sec:permisos-app}). El remitente es una dirección del dominio verificado del sistema, con el nombre de la tienda como nombre visible, y la dirección de contacto de la tienda figura como respuesta, para que las respuestas de los clientes le lleguen al comerciante. Cada correo se arma en HTML y en texto plano, con el código del cupón destacado y un pie que indica cómo darse de baja; todo el texto que escribe el comerciante se escapa antes de insertarlo en el HTML.
 
+Como en el resto del stack, el servicio de correo se eligió comparando alternativas concretas, sobre la base de sus características documentadas y de su adecuación al volumen de un prototipo. Los criterios fueron el costo en ese volumen, la disponibilidad de un SDK oficial para Node.js y la simplicidad de la configuración. La Tabla~\ref{tab:comparativo_correo} resume la comparación.
+
+\begin{table}[!htbp]
+\centering
+\caption{Comparación de servicios para enviar los correos con cupones}
+\label{tab:comparativo_correo}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{|m{2.3cm}|m{4.4cm}|m{4.4cm}|m{3.4cm}|}
+\hline
+\textbf{Opción} & \textbf{Ventajas} & \textbf{Consideraciones} & \textbf{Decisión} \\
+\hline
+Resend & API de correo transaccional con SDK oficial para Node.js (\texttt{resend}); configuración con una clave de API y un dominio verificado; plan gratuito de 3.000 correos por mes, con un máximo de 100 por día \parencite{ResendPricing2026} & Proveedor más reciente que las otras opciones; superado el plan gratuito, el plan pago más económico cuesta USD~20 por mes \parencite{ResendPricing2026} & \textbf{Elegido.} El plan gratuito cubre el volumen del prototipo, con hasta 10 destinatarios por envío, y la integración se reduce a una llamada \\
+\hline
+Amazon SES & Costo por correo muy bajo: USD~0,10 cada 1.000 correos en la modalidad sin plan \parencite{AmazonSESPricing2026}; alta capacidad de envío & Requiere una cuenta de AWS, la configuración de identidades y permisos de IAM y la salida del entorno de prueba (\emph{sandbox}) de la cuenta antes de enviar a cualquier destinatario & Descartado para el prototipo: más configuración sin un beneficio en su volumen; opción si el sistema migra a AWS \\
+\hline
+% VERIFICAR-FUENTE: fin del plan gratuito permanente de SendGrid (dato de fuentes de terceros; la página oficial de precios no se pudo consultar)
+SendGrid (Twilio) & Servicio maduro y ampliamente documentado, con SDK oficial para Node.js & Para cuentas nuevas no ofrece un plan gratuito permanente, sino una prueba por tiempo limitado; más funciones de marketing de las que el prototipo usa & Descartado: sin plan gratuito permanente para el desarrollo y la validación \\
+\hline
+Nodemailer con SMTP & Biblioteca de código abierto, sin un proveedor dedicado & La entrega depende de la reputación del servidor SMTP elegido; una cuenta personal impone límites de envío y no permite usar el dominio del sistema como remitente & Descartado: no garantiza la entrega de correos a clientes reales \\
+\hline
+\end{tabular}
+\end{table}
+
 El envío sigue un orden pensado para que no se repita. El backend valida la solicitud, que admite hasta 10 destinatarios, y comprueba que cada uno figure en la lista de la recomendación y tenga correo electrónico. Luego reclama la recomendación con una única actualización condicionada, que la pasa de activa a ejecutada solo si seguía activa, de modo que dos clics o dos pestañas no envían dos veces. Recién entonces envía los correos y registra cada uno en \texttt{COUPON\_SENDS}, con el cliente, la dirección, el código y su estado: enviado, fallido o filtrado. Si no salió ningún correo, la recomendación vuelve a estar activa para poder reintentar. Por la misma razón, una recomendación cuyos correos ya salieron no puede deshacerse: deshacerla habilitaría un segundo envío a los mismos clientes. % PENDIENTE-IMPL: A3-conversion
 Durante la ventana de evaluación, el impacto se mide con la proporción de clientes de la lista que volvieron a comprar y, cuando la orden registra un cupón (campo \texttt{coupon\_code} de \texttt{ORDERS}), con las órdenes que aplicaron el código enviado.
 
