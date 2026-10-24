@@ -30,7 +30,7 @@ Cada objetivo específico de la Sección~\ref{sec:objetivos-especificos} incluye
 \hline
 3 & 100\% de las recomendaciones con texto explicativo, aun sin el modelo de lenguaje & 178 de 178 recomendaciones con texto: 67 redactadas por el modelo y 111 por la plantilla de respaldo & Cumplido \\
 \hline
-4 & Cobertura de al menos el 85\% de las líneas del backend y del frontend; pruebas de punta a punta con las dos plataformas & Backend: 85,2\% de las líneas, con 469 pruebas. Frontend: al menos el 85\% de las líneas en la versión de diciembre de 2026, con 73 pruebas. Pruebas de punta a punta con una tienda WooCommerce; con la tienda de desarrollo de Tiendanube, solo la carga de la aplicación en el panel & Parcialmente cumplido \\
+4 & Cobertura de al menos el 85\% de las líneas del backend y del frontend; pruebas de punta a punta con las dos plataformas & Backend: 85,2\% de las líneas, con 469 pruebas. Frontend: al menos el 85\% de las líneas, con 73 pruebas. Pruebas de punta a punta con una tienda WooCommerce; con la tienda de desarrollo de Tiendanube, solo la carga de la aplicación en el panel & Parcialmente cumplido \\
 \hline
 \end{tabular}
 
@@ -45,7 +45,7 @@ El segundo objetivo se cumple en los términos en que se formuló, pero el resul
 
 El tercer objetivo se cumple: las 178 recomendaciones generadas en la medición de rendimiento contaron con su texto explicativo. La medición se realizó con la capa gratuita de la API de Gemini, que rechazó por exceso de cuota buena parte de las solicitudes, de modo que el resultado demuestra en condiciones reales el mecanismo de respaldo que el objetivo exigía: cuando el modelo no responde, la recomendación conserva su texto, generado por la plantilla. La priorización según los resultados anteriores, que el mismo objetivo menciona, funciona como se diseñó, aunque solo pudo verificarse sobre un historial simulado (Sección~\ref{sec:eval-bandit}).
 
-El cuarto objetivo se cumple parcialmente. En el backend, las 469 pruebas automatizadas cubren el 85,2\% de las líneas, por encima de la meta; en el frontend, las 73 pruebas cubren al menos el 85\% de las líneas en la versión que se entrega en diciembre de 2026 (Tabla~\ref{tab:resultados-cobertura}). Las pruebas de punta a punta se completaron con una de las dos plataformas: con una tienda WooCommerce se probaron la sincronización inicial, las recomendaciones, los \emph{webhooks} y la aplicación dentro del panel; con la tienda de desarrollo de Tiendanube solo se verificó la carga de la aplicación en el panel y el intercambio con Nexo, y la base de desarrollo no registra datos sincronizados desde ella (Tabla~\ref{tab:eval-origen}).
+El cuarto objetivo se cumple parcialmente. En el backend, las 469 pruebas automatizadas cubren el 85,2\% de las líneas, por encima de la meta; en el frontend, las 73 pruebas cubren al menos el 85\% de las líneas (Tabla~\ref{tab:resultados-cobertura}). Las pruebas de punta a punta se completaron con una de las dos plataformas: con una tienda WooCommerce se probaron la sincronización inicial, las recomendaciones, los \emph{webhooks} y la aplicación dentro del panel; con la tienda de desarrollo de Tiendanube solo se verificó la carga de la aplicación en el panel y el intercambio con Nexo, y la base de desarrollo no registra datos sincronizados desde ella (Tabla~\ref{tab:eval-origen}).
 
 \subsection{Objetivo general}
 \label{sec:conclusiones-general}
