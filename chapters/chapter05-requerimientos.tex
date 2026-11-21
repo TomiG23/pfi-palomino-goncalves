@@ -122,7 +122,7 @@ RF-29 & El sistema debe permitir al usuario deshacer una acción aplicada desde 
 \hline
 
 % PENDIENTE-IMPL: B2 (descuento sugerido con piso de margen)
-RF-30 & El sistema debe calcular el descuento sugerido sin el modelo de lenguaje: el porcentaje surge de una tabla por rubro y por días sin vender de la variante (Tabla~\ref{tab:motor-descuentos}) y, si la variante tiene costo cargado (\texttt{cost}, RF-11), se acota para que el precio con descuento no quede por debajo del costo multiplicado por 1,10. La vigencia predeterminada es de 14 días. Antes de sugerir un cupón, el sistema consulta los cupones vigentes de la tienda y, si hay uno equivalente, recomienda difundirlo en lugar de crear otro. & Sección~\ref{sec:comportamiento-consumidor}; E04 (Anexo~\ref{anx:entrevista-e04}) \\
+RF-30 & El sistema debe calcular el descuento sugerido sin el modelo de lenguaje: en el precio promocional, el porcentaje surge de una tabla por rubro y por días sin vender de la variante (Tabla~\ref{tab:motor-descuentos}) y, si la variante tiene costo cargado (\texttt{cost}, RF-11), se acota para que el precio con descuento no quede por debajo del costo multiplicado por 1,10; en el cupón, sugiere un 10\%, editable, con un máximo sugerido del 15\% y un aviso si el comerciante lo supera. La vigencia predeterminada es de 14 días. Antes de sugerir un cupón, el sistema consulta los cupones vigentes de la tienda y, si hay uno equivalente, recomienda difundirlo en lugar de crear otro. & Sección~\ref{sec:comportamiento-consumidor}; E04 (Anexo~\ref{anx:entrevista-e04}) \\
 \hline
 
 % PENDIENTE-IMPL: B4 (carrito abandonado)
@@ -1005,7 +1005,7 @@ Postcondiciones & El cupón o el precio promocional queda aplicado en la tienda,
 
 \noindent\textbf{Flujo principal:}
 \begin{enumerate}
-    \item El comerciante abre la recomendación, que muestra la acción armada: por ejemplo, \enquote{Creá el cupón VUELVE15 · 15\% · válido 14 días}, o el precio promocional de cada variante.
+    \item El comerciante abre la recomendación, que muestra la acción armada: por ejemplo, \enquote{Creá el cupón VUELVE10 · 10\% · válido 14 días}, o el precio promocional de cada variante.
     \item El comerciante revisa los valores y, si lo desea, edita el código, el porcentaje, la vigencia o el precio.
     \item El sistema verifica que los valores editados respeten el piso de margen cuando la variante tiene costo cargado (RF-30) y lo advierte si no lo respetan.
     \item El comerciante confirma con el botón \enquote{Crear cupón en mi tienda} o \enquote{Aplicar precio promocional}.
@@ -1271,7 +1271,7 @@ Al descartar una recomendación, un cuadro de diálogo pide el motivo, con un ca
 \subsubsection{Acción sugerida lista para aplicar}
 \label{sec:captura-accion}
 
-En las recomendaciones de descuento o de cupón, el detalle muestra la acción armada, por ejemplo \enquote{Creá el cupón VUELVE15 · 15\% · válido 14 días}, con los campos editables, el botón de confirmación que describe lo que va a ocurrir y la opción \enquote{Prefiero hacerlo yo}. Una vez aplicada, la tarjeta indica que la acción se aplicó desde Decidata y ofrece \enquote{Deshacer} (CU-11, Figura~\ref{fig:captura-accion}).
+En las recomendaciones de descuento o de cupón, el detalle muestra la acción armada, por ejemplo \enquote{Creá el cupón VUELVE10 · 10\% · válido 14 días}, con los campos editables, el botón de confirmación que describe lo que va a ocurrir y la opción \enquote{Prefiero hacerlo yo}. Una vez aplicada, la tarjeta indica que la acción se aplicó desde Decidata y ofrece \enquote{Deshacer} (CU-11, Figura~\ref{fig:captura-accion}).
 
 % PENDIENTE-CAPTURA: B1 (detalle con la acción armada y el botón de confirmación)
 \begin{figure}[ht]
