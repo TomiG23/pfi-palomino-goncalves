@@ -266,15 +266,16 @@ Congelamiento del código: 7/12. Los cambios del documento los aplica otra sesi�
 | T-09 | Ajustar el documento a los textos reales: «Aplicar precio promocional» y «Ya lo apliqué por mi cuenta» |
 | I-04 | Sacar del documento la insignia «Recomendación de Decidata» |
 | B-08 | Ajustar el documento: opción «inmediato», predeterminado sin preferencia, sin etiqueta de recomendado |
-| T-05 | Cambio en el código (mostrar el aviso de costo faltante) y después ajustar el documento |
+| T-05 | Cambio en el código (mostrar el aviso de costo faltante) y después ajustar el documento. Hecho en la rama `fix/T11-aviso-costo` del código (PR sin mergear) |
 | I-10 | Ajustar el documento a los textos reales de la inferencia |
 | T-14 | Ajustar el documento: carrito, segunda compra y venta cruzada sugieren un cupón que se crea en la tienda, sin envío por correo |
 | T-07 | Ajustar el documento: si ya hay un cupón porcentual vigente, se informa en lugar de crear otro |
 | T-08 | Ajustar el documento: la vista previa consulta los cupones vigentes |
-| C-06, C-04, C-05 | Ajustar el documento. Pendiente: fuente guardada de las cifras que se van a usar |
+| C-06, C-04, C-05 | Ajustar el documento con las cifras guardadas del 22/11 (`mediciones-2026-11-22.md`): WAPE total 17,0% / 41,0% / 38,1%; silueta 0,6625 / 0,5184 / 0,3829. El objetivo 2 se cumple en parte (MariCafé sí; Lucía y TecnoShop no) |
 | M-09 | Dejar como está |
 | S-09 | Confirmado contra el panel de Partners |
 | C-09 | Reemplazar «178 de 178» por «30 de 30 (6 de Gemini, 24 de plantilla), medición del 22/11» |
-| C-10 | Recalculada con la copia de producción. Pendiente: origen de «decidata-gastro» |
-| C-01, C-02, C-07, C-08 | Sin decidir |
+| C-10 | Recalculada con la copia de producción (`docs/evaluacion/origen-datos-produccion-2026-11-22.txt` del código). «decidata-gastro» es una tienda de desarrollo (confirmado por Tomi): no hay datos de comerciantes reales. Seed 1.730 órdenes (74,2%); tiendas de desarrollo 600 órdenes (25,8%) |
+| C-01, C-02, C-07 | Actualizar el documento con las cifras del 22/11 (cobertura `cobertura-2026-11-22.md`; tiempos `mediciones-2026-11-22.md`) |
+| C-08 | Actualizar con las cifras del 22/11. Ojo: el p95 da 306,0 ms en Lucía y 304,8 ms en TecnoShop, por encima del objetivo de 300 ms: el objetivo 1 se cumple en parte. Medido con el backend en una PC contra Neon |
 
