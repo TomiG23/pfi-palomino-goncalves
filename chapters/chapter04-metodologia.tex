@@ -435,7 +435,7 @@ nginx cumple, además, una función de seguridad y otra de enrutamiento, ambas c
 
 La base de datos se aloja en Neon, en su rama principal (\texttt{main}), que funciona como rama de producción, separada de las ramas de desarrollo. La API se conecta a ella a través del \emph{pooler} de conexiones de Neon, mientras que el worker usa una conexión directa, que requiere la cola de pg-boss. Las credenciales y claves de cada servicio se cargan como variables de entorno en Railway, fuera del repositorio. La misma imagen de Docker puede trasladarse a AWS sin cambios, migración que queda como trabajo futuro.
 
-Las Tablas~\ref{tab:comparativo_hosting}, \ref{tab:comparativo_bd_nube} y~\ref{tab:comparativo_cola} resumen la comparación con la que se eligieron el proveedor de despliegue, el servicio de base de datos y el mecanismo de cola de trabajos. Como en el resto del stack, la comparación se apoya en las características documentadas de cada opción y en su adecuación al alcance de un prototipo. Railway se eligió porque despliega los tres servicios desde el mismo repositorio y ejecuta el worker como un proceso de larga duración, sin adaptarlo a un modelo \emph{serverless}; AWS queda como camino de migración, ya que admite las mismas imágenes de Docker. Neon se eligió por las ramas de la base de datos, que permiten que cada integrante trabaje sobre una copia aislada (Sección~\ref{sec:eval-generacion}), por su \emph{pooler} de conexiones y por su plan gratuito; sus limitaciones son el arranque en frío después de un período sin uso, la cuota de cómputo del plan y la dependencia de un tercero. pg-boss se eligió porque aloja la cola en la misma base de datos PostgreSQL y evita sumar un servicio de mensajería.
+Las Tablas~\ref{tab:comparativo_hosting}, \ref{tab:comparativo_bd_nube} y~\ref{tab:comparativo_cola} resumen la comparación con la que se eligieron el proveedor de despliegue, el servicio de base de datos y el mecanismo de cola de trabajos. Como en el resto del stack, la comparación se apoya en las características documentadas de cada opción y en su adecuación al alcance de un prototipo. Railway se eligió porque despliega los tres servicios desde el mismo repositorio y ejecuta el worker como un proceso de larga duración, sin adaptarlo a un modelo \emph{serverless}; AWS queda como camino de migración, ya que admite las mismas imágenes de Docker. Neon se eligió por las ramas de la base de datos, que permiten que cada integrante trabaje sobre una copia aislada (Sección~\ref{sec:eval-generacion}), y por su \emph{pooler} de conexiones; el prototipo opera con el plan Launch (pago por uso con tope de 1~CU y límite de consumo). Sus limitaciones son el arranque en frío después de un período sin uso, la cuota de cómputo del plan y la dependencia de un tercero. pg-boss se eligió porque aloja la cola en la misma base de datos PostgreSQL y evita sumar un servicio de mensajería.
 
 \begin{table}[h]
 \centering
@@ -464,7 +464,7 @@ AWS (ECS Fargate o App Runner) & Mayor control y capacidad de escalar; admite la
 \hline
 \textbf{Opción} & \textbf{Ventajas} & \textbf{Consideraciones} & \textbf{Decisión} \\
 \hline
-Neon & PostgreSQL \emph{serverless}; \emph{pooler} de conexiones; ramas de la base por desarrollador, creadas por copia en escritura \parencite{NeonBranching2026}; plan gratuito & Arranque en frío después de un período sin uso; cuota de cómputo del plan; dependencia de un tercero & \textbf{Elegido} \\
+Neon & PostgreSQL \emph{serverless}; \emph{pooler} de conexiones; ramas de la base por desarrollador, creadas por copia en escritura \parencite{NeonBranching2026}; plan Launch (pago por uso, tope 1~CU) & Arranque en frío después de un período sin uso; cuota de cómputo del plan; dependencia de un tercero & \textbf{Elegido} \\
 \hline
 PostgreSQL de Railway & Misma plataforma que los servicios desplegados & No ofrece el flujo de trabajo con una rama de la base por desarrollador que usa el equipo & Descartado: el flujo de ramas pesó más que unificar el proveedor \\
 \hline
@@ -508,7 +508,6 @@ El backend no mantiene estado de sesión en el servidor: cada solicitud se auten
 
 Los permisos que la aplicación pide a cada plataforma aplican el principio de mínimo privilegio, que en el modelo STRIDE limita el daño de un incremento de privilegios: la aplicación solicita solo los permisos que usa y explica para qué usa cada uno (RNF-22). En Tiendanube, los permisos no se definen en el código, sino en la configuración de la aplicación en el panel de Partners, y el comerciante los acepta al instalarla. La Tabla~\ref{tab:permisos-app} resume los permisos de Tiendanube y su uso.
 
-% PENDIENTE-IMPL: B3 (filas de read_coupons, write_coupons y write_products)
 % VERIFICAR-COD: nombre exacto del permiso de Tiendanube para leer los carritos abandonados (RF-31)
 \begin{table}[!htbp]
 \centering
@@ -519,17 +518,17 @@ Los permisos que la aplicación pide a cada plataforma aplican el principio de m
 \hline
 \textbf{Permiso} & \textbf{Uso} \\
 \hline
-\texttt{read\_products} & Sincronizar el catálogo de productos y variantes, con su stock, su precio y su costo. \\
+\texttt{read\_products} (View Products) & Sincronizar el catálogo de productos y variantes, con su stock, su precio y su costo. \\
 \hline
-\texttt{read\_orders} & Sincronizar las órdenes para el pronóstico, las reglas y la medición del impacto, incluido el cupón aplicado en cada orden. \\
+\texttt{read\_orders} (View Orders) & Sincronizar las órdenes para el pronóstico, las reglas y la medición del impacto, incluido el cupón aplicado en cada orden. \\
 \hline
 \texttt{read\_customers} & Sincronizar los clientes para la segmentación, el CLV y el envío de cupones. \\
 \hline
 \texttt{write\_webhooks} & Registrar los \emph{webhooks} de sincronización y de privacidad. \\
 \hline
-\texttt{read\_coupons}\newline\texttt{write\_coupons} & Consultar los cupones vigentes para no duplicarlos, y crear y borrar el cupón sugerido cuando el comerciante lo aplica o lo deshace. \\
+\texttt{read\_coupons} (View Coupons)\newline\texttt{write\_coupons} (Edit Coupons) & Consultar los cupones vigentes para no duplicarlos, y crear y borrar el cupón sugerido cuando el comerciante lo aplica o lo deshace. \\
 \hline
-\texttt{write\_products} & Cargar y vaciar el precio promocional de las variantes cuando el comerciante aplica o deshace la acción. \\
+\texttt{write\_products} (Edit Products) & Cargar y vaciar el precio promocional de las variantes cuando el comerciante aplica o deshace la acción. \\
 \hline
 \end{tabular}
 
@@ -537,7 +536,7 @@ Los permisos que la aplicación pide a cada plataforma aplican el principio de m
 \noindent\textit{Fuente: elaboración propia sobre la base de la configuración de la aplicación en el panel de Partners de Tiendanube.}
 \end{table}
 
-La aplicación no pide permisos de edición de órdenes ni de clientes, porque nunca los modifica, ni permisos sobre las plantillas de correo de la tienda: los correos a clientes salen por Resend (Sección~\ref{sec:envio-correos}). En WooCommerce, el complemento genera claves de API de solo lectura y el backend rechaza cualquier conexión que llegue con permisos de escritura (CU-09); por eso, en esa plataforma las acciones no se aplican desde el sistema (Sección~\ref{sec:aplicacion-accion}).
+La aplicación no pide permisos de edición de órdenes, riesgo de órdenes, plantillas de correo de la plataforma ni descuentos: los correos a clientes salen por Resend y no requieren plantillas de la tienda (Sección~\ref{sec:envio-correos}). En WooCommerce, el complemento genera claves de API de solo lectura y el backend rechaza cualquier conexión que llegue con permisos de escritura (CU-09); por eso, en esa plataforma las acciones no se aplican desde el sistema (Sección~\ref{sec:aplicacion-accion}).
 
 \subsubsection{Cifrado de credenciales}
 \label{sec:cifrado-credenciales}
@@ -580,12 +579,13 @@ Los nombres de productos, variantes y clientes que provienen de la tienda son da
     \item \textbf{Separación de instrucciones y datos:} el \emph{system prompt} contiene exclusivamente las instrucciones para el modelo; la información de la recomendación viaja en el contenido del usuario delimitada por las etiquetas \texttt{<datos\_tienda>} y \texttt{</datos\_tienda>}. El \emph{system prompt} instruye explícitamente al modelo a tratar todo el contenido del bloque solo como datos y a ignorar cualquier pedido o enlace que aparezca en él.
     \item \textbf{Sanitización de los textos de la tienda:} la función \texttt{sanitizeStoreText} normaliza cada texto antes de incluirlo en el bloque: elimina caracteres de control e invisibles (categorías Unicode $\{Cc\}$ y $\{Cf\}$, separadores de línea y párrafo), reemplaza los delimitadores del bloque (\texttt{<} y \texttt{>}) y los marcadores del sanitizador (\texttt{\{\{} y \texttt{\}\}}) para que ningún texto de la tienda pueda imitarlos, y aplica un límite de 120 caracteres por campo.
     \item \textbf{Validación de la respuesta:} la función \texttt{validateOutput} verifica que el texto generado cumpla con criterios predefinidos: largo máximo por campo (\texttt{message}: 300 caracteres; \texttt{detail\_reason}: 1\,200), ausencia de URLs o dominios, y mención del objetivo de la recomendación. Una respuesta que no supera la validación se descarta y el sistema usa la plantilla de respaldo sin exponer el error al usuario.
+    \item \textbf{Prohibición de números de descuento en la respuesta:} el \emph{system prompt} prohíbe explícitamente al modelo mencionar porcentajes de descuento ni montos de precio. Como segunda línea de defensa, si la respuesta contiene cualquier número seguido de \% (un porcentaje), se descarta por completo y se usa la plantilla de respaldo, de modo que el porcentaje del cupón o del precio promocional nunca puede provenir del modelo (RF-19, RF-30).
 \end{enumerate}
 
 \subsubsection{Endurecimiento general}
 \label{sec:endurecimiento}
 
-El backend aplica encabezados de seguridad mediante \texttt{helmet}, con una política de \texttt{Content-Security-Policy} configurada para que la aplicación funcione dentro de los \emph{iframes} de Tiendanube y WordPress. El acceso desde otros orígenes queda restringido mediante CORS al origen del frontend, y un limitador de tasa (\texttt{express-rate-limit}) aplica umbrales más estrictos en los \emph{endpoints} de escritura y en el \emph{endpoint} de generación manual. La validación de entradas en todos los \emph{endpoints} se implementa con Zod: una solicitud con cuerpo inválido devuelve~400 con un mensaje descriptivo. Los registros de sistema omiten automáticamente los campos sensibles. Como limitación del prototipo, la gestión de secretos se realiza mediante variables de entorno sin un sistema de rotación automatizado; la incorporación de un servicio dedicado queda como trabajo futuro (Sección~\ref{sec:conclusiones-futuro}).
+El backend aplica encabezados de seguridad mediante \texttt{helmet}, con una política de \texttt{Content-Security-Policy} configurada para que la aplicación funcione dentro de los \emph{iframes} de Tiendanube y WordPress. El acceso desde otros orígenes queda restringido mediante CORS al origen del frontend, y un limitador de tasa (\texttt{express-rate-limit}) aplica umbrales más estrictos en los \emph{endpoints} de escritura y en el \emph{endpoint} de generación manual. La validación de entradas en todos los \emph{endpoints} se implementa con Zod: una solicitud con cuerpo inválido devuelve~400 con un mensaje descriptivo. Los errores de base de datos devuelven~503 (\emph{Service Unavailable}); retornar~401 en esos casos podría confundirse con un error de autenticación. Los registros de sistema omiten automáticamente los campos sensibles. Como limitación del prototipo, la gestión de secretos se realiza mediante variables de entorno sin un sistema de rotación automatizado; la incorporación de un servicio dedicado queda como trabajo futuro (Sección~\ref{sec:conclusiones-futuro}). Existen vulnerabilidades de dependencias detectadas por \texttt{npm audit} que se postergaron deliberadamente: su detalle y la justificación de cada aplazamiento se documentan en \texttt{docs/seguridad/npm-audit-deferred.md} del repositorio del prototipo.
 
 \input{chapters/motor-ia}
 
