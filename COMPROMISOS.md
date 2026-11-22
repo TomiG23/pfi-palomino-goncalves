@@ -6,8 +6,8 @@ Checklist de lo que afirma el documento y dónde está en el código. Cada ítem
 |---|---|
 | Fecha | 22/11/2026 |
 | Documento | `main` en `2a62bd3` (PR #21) |
-| Código | `main` en `8536edb` (PR #61) de `proyecto-final-de-ingeniera`, solo lectura |
-| Conteo | 97 ítems: 79 Hecho · 15 Difiere · 1 Falta · 2 No verificado |
+| Código | `main` en `8536edb` (PR #61) de `proyecto-final-de-ingeniera`, solo lectura; T-05 verificado en `ec89c85` |
+| Conteo | 97 ítems: 80 Hecho · 14 Difiere · 1 Falta · 2 No verificado |
 
 Rutas de código relativas a `backend/src/` salvo que digan otra cosa. «Demo local» = base local con el seed (`docs/evaluacion/k83-tipos-2026-11-22.md`): «hoy» es el seed hasta el 21/11 y «12/12» el ensayo con el seed hasta el 11/12. «Tienda conectada» = «Demo Del Dato a la Decisión» en producción. `force-rule` = `node scripts/force-rule.js --store <tienda> --rule <tipo> --confirm CONFIRMAR` (agregar `--fecha 2026-12-12` para el ensayo del 12/12).
 
@@ -47,7 +47,7 @@ Valores vigentes desde el 21/11, contrastados: quiebre con demanda mínima 14 d/
 | T-02 | Día de baja demanda sin acción aplicable; stock, preparación y precio en texto (`motor-ia.tex:286`; RF-34) | `weekdayDemandRule.js` (sin acción) | — | Tarjeta de MariCafé | Hecho | |
 | T-03 | Tabla de descuento: 10/20/30, 10/15/20, 5/10/15 según días sin vender (`motor-ia.tex:303-307`; RF-30 `:123`) | `services/apply/discountSuggestion.js` (`PROMO_PRICE_DISCOUNTS`) | Vista previa del precio promocional | Tienda conectada: «Aplicar» en una de baja rotación | Hecho | |
 | T-04 | Piso de margen: costo × 1,10; si ni un descuento mínimo lo respeta, no propone (`motor-ia.tex:288`; RF-30) | `discountSuggestion.js` (`floor`, `margin_floor`) | Vista previa | Pruebas de `discountSuggestion` | Hecho | |
-| T-05 | Sin costo cargado, la interfaz sugiere cargar el costo (`motor-ia.tex:288`) | El backend devuelve `warned: 'no_cost'`; el frontend no lo muestra | Vista previa sin costo | — | Difiere | El documento dice que la interfaz lo sugiere; no hay ese aviso en `frontend/src` |
+| T-05 | Sin costo cargado, la interfaz sugiere cargar el costo (`motor-ia.tex:288`) | El backend devuelve `warned: 'no_cost'`; `frontend/src/components/Modals.jsx` muestra «Este producto no tiene costo cargado en Tiendanube. Cargalo para que el descuento cuide tu margen.» | Vista previa sin costo | Tienda conectada: «Aplicar» en un producto sin costo | Hecho | Agregado el 22/11 (`fix/T11-aviso-costo`, merge `208369e`) |
 | T-06 | Cupón: 10% editable, máximo sugerido 15% con aviso, vigencia 14 días (`motor-ia.tex:290`; RF-30) | `COUPON_DISCOUNT` en `rubroParams.js`; aviso «⚠ Descuento alto, revisá tu margen» en `frontend/src/components/Modals.jsx` | Vista previa del cupón | Tienda conectada: subir a 16% | Hecho | |
 | T-07 | Cupón vigente equivalente: porcentaje igual o mayor y vigencia que cubra la ventana; si hay, se difunde ese (`motor-ia.tex:317`; RF-30) | `routes/apply.js` (`findEquivalentActiveCoupon`) | Vista previa del cupón | Tienda conectada con un cupón activo | Difiere | El código toma cualquier cupón porcentual activo y sin vencer; no compara porcentaje ni vigencia |
 | T-08 | Antes de crear un cupón, el backend vuelve a consultar los cupones para no duplicar ni chocar con un código (`chapter04-metodologia.tex:350`) | `POST /:id/apply-coupon` en `routes/apply.js` | Confirmar el cupón | — | Difiere | `apply-coupon` crea el cupón sin volver a listar; solo evita dos cupones para la misma recomendación (409) |
@@ -266,7 +266,7 @@ Congelamiento del código: 7/12. Los cambios del documento los aplica otra sesi�
 | T-09 | Ajustar el documento a los textos reales: «Aplicar precio promocional» y «Ya lo apliqué por mi cuenta» |
 | I-04 | Sacar del documento la insignia «Recomendación de Decidata» |
 | B-08 | Ajustar el documento: opción «inmediato», predeterminado sin preferencia, sin etiqueta de recomendado |
-| T-05 | Cambio en el código (mostrar el aviso de costo faltante) y después ajustar el documento. Hecho en la rama `fix/T11-aviso-costo` del código (PR sin mergear) |
+| T-05 | Cambio en el código (mostrar el aviso de costo faltante): hecho y mergeado (`208369e`). El documento ya lo describe así |
 | I-10 | Ajustar el documento a los textos reales de la inferencia |
 | T-14 | Ajustar el documento: carrito, segunda compra y venta cruzada sugieren un cupón que se crea en la tienda, sin envío por correo |
 | T-07 | Ajustar el documento: si ya hay un cupón porcentual vigente, se informa en lugar de crear otro |
@@ -277,5 +277,5 @@ Congelamiento del código: 7/12. Los cambios del documento los aplica otra sesi�
 | C-09 | Reemplazar «178 de 178» por «30 de 30 (6 de Gemini, 24 de plantilla), medición del 22/11» |
 | C-10 | Recalculada con la copia de producción (`docs/evaluacion/origen-datos-produccion-2026-11-22.txt` del código). «decidata-gastro» es una tienda de desarrollo (confirmado por Tomi): no hay datos de comerciantes reales. Seed 1.730 órdenes (74,2%); tiendas de desarrollo 600 órdenes (25,8%) |
 | C-01, C-02, C-07 | Actualizar el documento con las cifras del 22/11 (cobertura `cobertura-2026-11-22.md`; tiempos `mediciones-2026-11-22.md`) |
-| C-08 | Actualizar con las cifras del 22/11. Ojo: el p95 da 306,0 ms en Lucía y 304,8 ms en TecnoShop, por encima del objetivo de 300 ms: el objetivo 1 se cumple en parte. Medido con el backend en una PC contra Neon |
+| C-08 | Se mantiene la latencia de octubre con su fecha (conjunto del 17/10). La medición del 22/11 (p95 de 306,0 ms en Lucía y 304,8 ms en TecnoShop) queda en `mediciones-2026-11-22.md` |
 
