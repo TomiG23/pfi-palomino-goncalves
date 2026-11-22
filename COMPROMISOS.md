@@ -7,7 +7,7 @@ Checklist de lo que afirma el documento y dónde está en el código. Cada ítem
 | Fecha | 22/11/2026 |
 | Documento | `main` en `2a62bd3` (PR #21) |
 | Código | `main` en `8536edb` (PR #61) de `proyecto-final-de-ingeniera`, solo lectura |
-| Conteo | 97 ítems: 78 Hecho · 15 Difiere · 1 Falta · 3 No verificado |
+| Conteo | 97 ítems: 79 Hecho · 15 Difiere · 1 Falta · 2 No verificado |
 
 Rutas de código relativas a `backend/src/` salvo que digan otra cosa. «Demo local» = base local con el seed (`docs/evaluacion/k83-tipos-2026-11-22.md`): «hoy» es el seed hasta el 21/11 y «12/12» el ensayo con el seed hasta el 11/12. «Tienda conectada» = «Demo Del Dato a la Decisión» en producción. `force-rule` = `node scripts/force-rule.js --store <tienda> --rule <tipo> --confirm CONFIRMAR` (agregar `--fecha 2026-12-12` para el ensayo del 12/12).
 
@@ -115,7 +115,7 @@ Valores vigentes desde el 21/11, contrastados: quiebre con demanda mínima 14 d/
 | S-06 | Anonimización para Gemini: `{{cliente}}`, sin correos, DNI de 7-8 dígitos ni enlaces (`chapter04-metodologia.tex:571`; RNF-19 `:230`) | `security/llmSanitizer.js` (`EMAIL_PATTERN`, `DNI_PATTERN`, `LINK_PATTERN`) | Cada texto | Pruebas de `llmSanitizer` | Hecho | |
 | S-07 | Textos de la tienda reducidos a una línea de hasta 120 caracteres, sin control, enlaces ni delimitadores, en un bloque separado (`motor-ia.tex:326`; `chapter04-metodologia.tex:573`) | `llmSanitizer.js` (`STORE_TEXT_MAX_LENGTH = 120`) | Cada texto | Pruebas de `llmSanitizer` | Hecho | |
 | S-08 | Correo: modo `allowlist` predeterminado, `live` solo desplegado; no envía dentro de una prueba ni sin clave (`chapter04-metodologia.tex:342`; RNF-21 `:237`) | `services/email.js`; `routes/coupons.js` | Envío de cupón | — | Hecho | |
-| S-09 | Permisos de Tiendanube: `read_products`, `read_orders`, `read_customers`, `write_webhooks`, `read_coupons`, `write_coupons`, `write_products`; no pide órdenes, riesgo, plantillas ni descuentos (`chapter04-metodologia.tex:509-539`; RNF-22 `:240`) | No están en el código: se configuran en el panel de Partners | Instalación | Panel de Partners | No verificado | El código usa cupones y precio de variante y maneja la falta de permiso (`scope_missing`); los nombres no se pueden confirmar desde el repo |
+| S-09 | Permisos de Tiendanube: `read_products`, `read_orders`, `read_customers`, `write_webhooks`, `read_coupons`, `write_coupons`, `write_products`; no pide órdenes, riesgo, plantillas ni descuentos (`chapter04-metodologia.tex:509-539`; RNF-22 `:240`) | No están en el código: se configuran en el panel de Partners | Instalación | Panel de Partners | Hecho | No está en el código. Confirmado por Tomi contra el panel de Partners (22/11) |
 | S-10 | WooCommerce con claves de solo lectura; rechaza conexiones con escritura (`chapter04-metodologia.tex:539`; `multiplataforma.tex:42`) | `routes/authWoocommerce.js` (`permissions !== 'read'` → 400) | Conexión | Pruebas de `wcRoutes` | Hecho | |
 | S-11 | Ninguna escritura en la tienda sin confirmación explícita (RNF-23 `:243`) | Las escrituras solo están en `POST` de `routes/apply.js`, llamadas desde el modal | Clic | Tienda conectada | Hecho | |
 | S-12 | Límite de pedidos por IP detrás de nginx, como limitación (`conclusiones.tex:87`) | `index.js` (`app.set('trust proxy', 1)`) | — | — | Hecho | Se declara como limitación |
@@ -148,7 +148,7 @@ Valores vigentes desde el 21/11, contrastados: quiebre con demanda mínima 14 d/
 | C-07 | Análisis por tienda sin Gemini entre 7,4 y 8,4 s, máximo 9,2 s (`evaluacion-modelos.tex:281-295`; `conclusiones.tex:28`) | `docs/evaluacion-modelos.md` | Difiere | 22/11: promedio 7,34 / 6,53 / 6,64 s, máximo 8,02 s. El objetivo de < 10 s se sigue cumpliendo |
 | C-08 | Latencia del panel: p95 < 240 ms; objetivo p95 < 300 ms (`evaluacion-modelos.tex:308-324`; `conclusiones.tex:28`) | `docs/evaluacion-modelos.md` | Difiere | 22/11: p95 306,0 / 265,9 / 304,8 ms (Lucía, MariCafé, TecnoShop); dos tiendas pasan de 300 ms. Backend local contra Neon desde una PC |
 | C-09 | 178 de 178 recomendaciones con texto: 67 del modelo y 111 de plantilla (`conclusiones.tex:32`) | No se encontró el resultado guardado (dos búsquedas) | No verificado | En la medición del 22/11 todas tienen texto (`mediciones-2026-11-22.md`) |
-| C-10 | Proporción de datos generados y fila `dev_tiendanube` de la tabla de origen (`evaluacion-modelos.tex:122-152`) | `node scripts/dataOrigin.js`; `raw-2026-11-22/data-origin.txt` | No verificado | La tabla del documento es de la base de desarrollo del 21/10; hay marcas `VERIFICAR-COD` en `:151-152` |
+| C-10 | Proporción de datos generados y fila `dev_tiendanube` de la tabla de origen (`evaluacion-modelos.tex:122-152`) | `node scripts/dataOrigin.js`; `raw-2026-11-22/data-origin.txt` | No verificado | Recalculada el 22/11 sobre una copia de producción (solo lectura): seed 3 tiendas, 1.730 órdenes (74,2%); `dev_tiendanube` 1 tienda, 356 órdenes (15,3%), 641 ítems, 63 clientes; `real` 1 tienda, 244 órdenes (10,5%); sintético 89,5% de las órdenes. Pendiente: la tienda marcada `real` («decidata-gastro») es la tienda WooCommerce local de desarrollo, no un comerciante real |
 
 ## Pendientes para decidir
 
@@ -256,3 +256,25 @@ Todos los Difiere, Falta y No verificado, ordenados por riesgo en la defensa: pr
 | `chapters/motor-ia.tex:275` | PENDIENTE-IMPL | B1, B2 (subsección completa) | T-10, T-11; T-03, T-04 |
 | `chapters/negocio-financiero.tex:57` | VERIFICAR-COD | costo real de infraestructura | — |
 | `chapters/summary.tex:6` | PENDIENTE-IMPL | B1 | T-10, T-11 |
+
+## Decisiones del 22/11 (Tomi, con Romi)
+
+Congelamiento del código: 7/12. Los cambios del documento los aplica otra sesión.
+
+| Ítem | Decisión |
+|---|---|
+| T-09 | Ajustar el documento a los textos reales: «Aplicar precio promocional» y «Ya lo apliqué por mi cuenta» |
+| I-04 | Sacar del documento la insignia «Recomendación de Decidata» |
+| B-08 | Ajustar el documento: opción «inmediato», predeterminado sin preferencia, sin etiqueta de recomendado |
+| T-05 | Cambio en el código (mostrar el aviso de costo faltante) y después ajustar el documento |
+| I-10 | Ajustar el documento a los textos reales de la inferencia |
+| T-14 | Ajustar el documento: carrito, segunda compra y venta cruzada sugieren un cupón que se crea en la tienda, sin envío por correo |
+| T-07 | Ajustar el documento: si ya hay un cupón porcentual vigente, se informa en lugar de crear otro |
+| T-08 | Ajustar el documento: la vista previa consulta los cupones vigentes |
+| C-06, C-04, C-05 | Ajustar el documento. Pendiente: fuente guardada de las cifras que se van a usar |
+| M-09 | Dejar como está |
+| S-09 | Confirmado contra el panel de Partners |
+| C-09 | Reemplazar «178 de 178» por «30 de 30 (6 de Gemini, 24 de plantilla), medición del 22/11» |
+| C-10 | Recalculada con la copia de producción. Pendiente: origen de «decidata-gastro» |
+| C-01, C-02, C-07, C-08 | Sin decidir |
+
