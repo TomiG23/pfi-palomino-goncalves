@@ -275,7 +275,7 @@ Congelamiento del código: 7/12. Los cambios del documento los aplica otra sesi�
 | M-09 | Dejar como está |
 | S-09 | Confirmado contra el panel de Partners |
 | C-09 | Reemplazar «178 de 178» por «30 de 30 (6 de Gemini, 24 de plantilla), medición del 22/11» |
-| C-10 | Recalculada con la copia de producción (`docs/evaluacion/origen-datos-produccion-2026-11-22.txt` del código). «decidata-gastro» es una tienda de desarrollo (confirmado por Tomi): no hay datos de comerciantes reales. Seed 1.730 órdenes (74,2%); tiendas de desarrollo 600 órdenes (25,8%) |
+| C-10 | Recalculada con la copia de producción (`docs/evaluacion/origen-datos-produccion-2026-11-22.txt` del código). «decidata-gastro» es una tienda de desarrollo con datos de `integrations/woocommerce-plugin/seed/seed.php`: el 22/11 se corrigió en producción su origen de `real` a `script` (permiso de Tomi por única vez). Resultado: seed 1.730 órdenes (74,2%), `dev_tiendanube` 356 (15,3%), `script` 244 (10,5%); 100% de los datos son sintéticos |
 | C-01, C-02, C-07 | Actualizar el documento con las cifras del 22/11 (cobertura `cobertura-2026-11-22.md`; tiempos `mediciones-2026-11-22.md`) |
 | C-08 | Se mantiene la latencia de octubre con su fecha (conjunto del 17/10). La medición del 22/11 (p95 de 306,0 ms en Lucía y 304,8 ms en TecnoShop) queda en `mediciones-2026-11-22.md` |
 
