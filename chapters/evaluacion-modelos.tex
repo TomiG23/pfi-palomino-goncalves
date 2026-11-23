@@ -1,7 +1,7 @@
 \section{Evaluación de los modelos}
 \label{sec:evaluacion-modelos}
 
-Los modelos del motor se desarrollaron y se evaluaron sobre un conjunto de datos generado por un script propio (Sección~\ref{sec:eval-generacion}). Métricas obtenidas solo sobre datos generados no demuestran el funcionamiento del sistema con datos reales, por lo que esta sección explicita cómo se generan esos datos, qué proporción de los datos disponibles representan, qué resultados obtiene cada capa del motor sobre ellos, incluidos los casos en que el modelo no supera a las referencias, y qué partes del sistema solo pueden validarse con su uso en tiendas reales. Los resultados se midieron el 17 de octubre de 2026 con el conjunto recién generado, sobre una base de datos local, salvo los de rendimiento, que se midieron sobre una rama descartable de la base de datos en Neon, y cada uno puede reproducirse con un comando del repositorio del prototipo.
+Los modelos del motor se desarrollaron y se evaluaron sobre un conjunto de datos generado por un script propio (Sección~\ref{sec:eval-generacion}). Métricas obtenidas solo sobre datos generados no demuestran el funcionamiento del sistema con datos reales, por lo que esta sección explicita cómo se generan esos datos, qué proporción de los datos disponibles representan, qué resultados obtiene cada capa del motor sobre ellos, incluidos los casos en que el modelo no supera a las referencias, y qué partes del sistema solo pueden validarse con su uso en tiendas reales. Los resultados se midieron el 22 de noviembre de 2026 sobre una rama de la base de datos en Neon, con el conjunto generado hasta el 14 de noviembre, salvo la latencia del panel, medida el 17 de octubre de 2026, y cada uno puede reproducirse con un comando del repositorio del prototipo.
 
 \subsection{Generación del conjunto de datos}
 \label{sec:eval-generacion}
@@ -73,7 +73,7 @@ Tipo de cambio & Tendencia diaria de +0,08\%, ruido de $\pm$1,5\% y saltos ocasi
 \noindent\textit{Fuente: elaboración propia sobre la base del código del prototipo.}
 \end{table}
 
-Para que las afirmaciones sobre el conjunto generado no dependan de los parámetros sino de los datos, sus características se midieron sobre los datos almacenados (Tabla~\ref{tab:eval-perfil}). El patrón semanal medido difiere del configurado en a lo sumo 0,05 en cada día de la semana, y las órdenes de los días de fecha clave superan a las del resto entre un 28\% y un 41\%. MariCafé registra 47,2 órdenes por día sobre una base de 35 porque el período abarca el invierno y las fechas clave.
+Para que las afirmaciones sobre el conjunto generado no dependan de los parámetros sino de los datos, sus características se midieron sobre los datos almacenados (Tabla~\ref{tab:eval-perfil}). El patrón semanal medido difiere del configurado en a lo sumo 0,07 en cada día de la semana, y las órdenes de los días de fecha clave superan a las del resto entre un 27\% y un 42\%. MariCafé registra 46,9 órdenes por día sobre una base de 35 porque el período abarca el invierno y las fechas clave.
 
 \begin{table}[!htbp]
 \centering
@@ -86,30 +86,30 @@ Para que las afirmaciones sobre el conjunto generado no dependan de los parámet
 \hline
 \textbf{Característica} & \textbf{MariCafé} & \textbf{Lucía Bordados} & \textbf{TecnoShop BA} \\
 \hline
-Órdenes & 8.685 & 1.089 & 779 \\
+Órdenes & 8.678 & 1.150 & 813 \\
 \hline
-Órdenes por día (coeficiente de variación) & 47,2 (0,38) & 6,02 (0,30) & 4,23 (0,21) \\
+Órdenes por día (coeficiente de variación) & 46,9 (0,41) & 6,22 (0,33) & 4,39 (0,24) \\
 \hline
-Órdenes en fechas clave frente al resto & $\times$1,28 & $\times$1,35 & $\times$1,41 \\
+Órdenes en fechas clave frente al resto & $\times$1,27 & $\times$1,42 & $\times$1,40 \\
 \hline
-Órdenes pagadas & 85,6\% & 86,9\% & 85,9\% \\
+Órdenes pagadas & 86,1\% & 85,0\% & 86,8\% \\
 \hline
-Variantes con ventas & 18 & 32 & 17 \\
+Variantes con ventas & 18 & 32 & 20 \\
 \hline
-Mediana de días sin ventas por variante & 2\% & 70\% & 65\% \\
+Mediana de días sin ventas por variante & 2\% & 70\% & 67\% \\
 \hline
-Clientes con compras / que recompran & 247 / 97,6\% & 112 / 85,7\% & 89 / 91,0\% \\
+Clientes con compras / que recompran & 248 / 98,8\% & 111 / 88,3\% & 94 / 85,1\% \\
 \hline
-Mediana del ciclo de recompra & 3 días & 10 días & 13 días \\
+Mediana del ciclo de recompra & 4 días & 10 días & 11 días \\
 \hline
-Facturación del 20\% de clientes que más compra & 40,8\% & 42,9\% & 41,8\% \\
+Facturación del 20\% de clientes que más compra & 40,9\% & 42,7\% & 43,1\% \\
 \hline
-Clientes inactivos según el umbral del rubro & 28,7\% & 26,8\% & 11,2\% \\
+Clientes inactivos según el umbral del rubro & 28,6\% & 27,0\% & 7,4\% \\
 \hline
 \end{tabular}
 
 \smallskip
-\noindent\textit{Fuente: elaboración propia sobre la base del conjunto generado el 17 de octubre de 2026.}
+\noindent\textit{Fuente: elaboración propia sobre la base de la medición del 22 de noviembre de 2026, con el conjunto generado hasta el 14 de noviembre (\texttt{docs/evaluacion/mediciones-2026-11-22.md} del repositorio del prototipo).}
 \end{table}
 
 Las tres tiendas cubren los dos perfiles de demanda que el motor debe manejar. La de gastronomía tiene una demanda alta y diaria, sin días sin ventas y con un patrón semanal marcado: es el caso en que el modelo de Holt-Winters dispone de datos suficientes. Las de indumentaria y electrónica tienen una demanda baja por variante, de alrededor de una unidad por día y con la mayoría de los días sin ventas: es el caso que el motor resuelve con un promedio móvil y marca como de baja confianza (Sección~\ref{sec:motor-predictiva}). Además, los catálogos contienen de forma deliberada los escenarios de las historias de usuario: el quiebre de stock (HU-01), la rotación decreciente (HU-03), el precio desactualizado (HU-05), las fechas clave (HU-06) y los clientes en riesgo (HU-10).
@@ -119,11 +119,11 @@ Los datos se alojan en una base de datos PostgreSQL provista por Neon, un servic
 \subsection{Proporción de datos generados y reales}
 \label{sec:eval-origen}
 
-Para que la proporción de datos generados pueda informarse en cualquier momento, cada tienda registra el origen de sus datos: \texttt{seed}, para las tres tiendas del conjunto generado; \texttt{script}, para las tiendas cargadas con otros scripts de generación, como la tienda WooCommerce de desarrollo; \texttt{dev\_tiendanube}, para la tienda de desarrollo de Tiendanube, cuyos datos se cargaron a mano y por script; y \texttt{real}, el valor que recibe por defecto toda tienda que se conecta a la aplicación. Un comando del prototipo informa, para cada origen, la cantidad de tiendas, órdenes, ítems, clientes y recomendaciones simuladas. La Tabla~\ref{tab:eval-origen} muestra el resultado sobre la base de datos compartida de desarrollo.
+Para que la proporción de datos generados pueda informarse en cualquier momento, cada tienda registra el origen de sus datos: \texttt{seed}, para las tres tiendas del conjunto generado; \texttt{script}, para las tiendas cargadas con otros scripts de generación, como la tienda WooCommerce de desarrollo; \texttt{dev\_tiendanube}, para la tienda de desarrollo de Tiendanube, cuyos datos se cargaron a mano y por script; y \texttt{real}, el valor que recibe por defecto toda tienda que se conecta a la aplicación. Un comando del prototipo informa, para cada origen, la cantidad de tiendas, órdenes, ítems, clientes y recomendaciones simuladas. La Tabla~\ref{tab:eval-origen} muestra el resultado sobre la base de producción del prototipo, donde se realizó la prueba de punta a punta con Tiendanube.
 
 \begin{table}[!htbp]
 \centering
-\caption{Datos de la base de desarrollo según su origen}
+\caption{Datos de la base de producción según su origen}
 \label{tab:eval-origen}
 \renewcommand{\arraystretch}{1.3}
 \footnotesize
@@ -132,25 +132,24 @@ Para que la proporción de datos generados pueda informarse en cualquier momento
 \hline
 \textbf{Origen} & \textbf{Tiendas} & \textbf{Órdenes} & \textbf{Ítems} & \textbf{Clientes} \\
 \hline
-Conjunto generado por script (\texttt{seed}) & 3 & 10.490 (97,7\%) & 20.013 (97,6\%) & 470 (92,0\%) \\
+Conjunto generado por script (\texttt{seed}) & 3 & 1.730 (74,2\%) & 3.222 (73,9\%) & 180 (63,4\%) \\
 \hline
-Tienda WooCommerce de desarrollo (\texttt{script}) & 1 & 244 (2,3\%) & 487 (2,4\%) & 41 (8,0\%) \\
+Tienda WooCommerce de desarrollo (\texttt{script}) & 1 & 244 (10,5\%) & 497 (11,4\%) & 41 (14,4\%) \\
 \hline
-Tienda de desarrollo de Tiendanube (\texttt{dev\_tiendanube}) & 0 & 0 & 0 & 0 \\
+Tienda de desarrollo de Tiendanube (\texttt{dev\_tiendanube}) & 1 & 356 (15,3\%) & 641 (14,7\%) & 63 (22,2\%) \\
 \hline
 Tiendas reales (\texttt{real}) & 0 & 0 & 0 & 0 \\
 \hline
 \end{tabular}
 
 \smallskip
-\noindent\textit{Fuente: elaboración propia sobre la base de datos de desarrollo al 21 de octubre de 2026.}
+\noindent\textit{Fuente: elaboración propia sobre una copia de la base de producción del 22 de noviembre de 2026 (\texttt{docs/evaluacion/origen-datos-produccion-2026-11-22.txt} del repositorio del prototipo).}
 
-\noindent\textit{Nota: los conteos corresponden a la base compartida de desarrollo, cargada con otra fecha de fin que el conjunto evaluado en las demás tablas de esta sección; por eso el total de órdenes difiere del de la Tabla~\ref{tab:eval-perfil}.}
+\noindent\textit{Nota: los conteos corresponden a la base de producción, cargada con otra fecha de fin que el conjunto evaluado en las demás tablas de esta sección; por eso el total de órdenes difiere del de la Tabla~\ref{tab:eval-perfil}.}
 \end{table}
 
-El 100\% de las órdenes disponibles fue generado por script y ninguna proviene de la operación de una tienda real. % VERIFICAR-COD: proporción de datos generados
-% VERIFICAR-COD: actualizar la fila dev_tiendanube de la Tabla eval-origen con los conteos de la base donde se corrió la prueba de punta a punta con Tiendanube
-La tienda de desarrollo de Tiendanube recibió únicamente órdenes creadas manualmente desde el panel de administración para validar el flujo de la conexión (CU-02); sus órdenes no corresponden a ventas reales. De las 774 recomendaciones de la base de desarrollo, 491 (63,4\%) pertenecen al historial simulado que se describe en la Sección~\ref{sec:eval-bandit}, y las 283 restantes las generó el motor sobre los mismos datos generados.
+El 100\% de las órdenes disponibles es sintético, generado por script o creado en tiendas de desarrollo, y ninguna proviene de la operación de una tienda real.
+La tienda de desarrollo de Tiendanube recibió órdenes creadas a mano desde el panel de administración y por script para validar el flujo de la conexión (CU-02); sus órdenes no corresponden a ventas reales. Las recomendaciones de esa base las generó el motor sobre esos mismos datos: ninguna pertenece al historial simulado que se describe en la Sección~\ref{sec:eval-bandit}.
 
 Se decidió no incorporar conjuntos de datos públicos de comercio electrónico. El motor opera sobre el stock de cada variante, el historial de sus precios, el rubro de la tienda y el calendario comercial argentino, y adaptar un conjunto externo que no registre esa información habría requerido completarla con supuestos propios, con lo que el problema de origen de los datos se habría trasladado en lugar de resolverse. La validación con datos reales queda, por lo tanto, como una limitación del trabajo, que se trata en la Sección~\ref{sec:eval-limitaciones}.
 
@@ -172,23 +171,23 @@ Para cada variante, el modelo se ajusta con la historia de ventas menos los últ
 \cline{3-8}
  & & \textbf{Modelo} & \textbf{Plano} & \textbf{Semanal} & \textbf{Modelo} & \textbf{Plano} & \textbf{Semanal} \\
 \hline
-MariCafé & 18 / 0 / 0 & \textbf{48,4\%} & 51,1\% & 59,5\% & \textbf{16,6\%} & 35,8\% & 20,7\% \\
+MariCafé & 18 / 0 / 0 & \textbf{53,8\%} & 57,8\% & 65,0\% & \textbf{17,0\%} & 37,3\% & 24,6\% \\
 \hline
-Lucía Bordados & 1 / 0 / 31 & \textbf{124,3\%} & 126,8\% & 142,3\% & 28,1\% & 34,7\% & \textbf{25,3\%} \\
+Lucía Bordados & 6 / 0 / 26 & 122,5\% & \textbf{122,4\%} & 126,0\% & 41,0\% & \textbf{26,4\%} & 36,2\% \\
 \hline
-TecnoShop BA & 4 / 0 / 13 & 119,3\% & \textbf{116,9\%} & 148,0\% & 27,7\% & \textbf{24,8\%} & 41,6\% \\
+TecnoShop BA & 5 / 0 / 15 & 111,1\% & \textbf{106,0\%} & 123,0\% & 38,1\% & \textbf{36,9\%} & 44,5\% \\
 \hline
 \end{tabular}
 
 \smallskip
 \noindent\textit{Nota: variantes por modelo, en el orden Holt-Winters / suavizado exponencial simple / promedio móvil. En negrita, el menor error de cada nivel.}
 
-\noindent\textit{Fuente: elaboración propia sobre la base del conjunto generado el 17 de octubre de 2026.}
+\noindent\textit{Fuente: elaboración propia sobre la base de la medición del 22 de noviembre de 2026, con el conjunto generado hasta el 14 de noviembre (\texttt{docs/evaluacion/mediciones-2026-11-22.md} del repositorio del prototipo).}
 \end{table}
 
-Los resultados difieren según el perfil de demanda. En gastronomía, donde todas las variantes usan Holt-Winters, el modelo supera a las dos referencias en los dos niveles, y para la serie total de la tienda reduce el error a menos de la mitad del de la referencia plana: 16,6\% frente a 35,8\%. En indumentaria y electrónica, en cambio, el modelo no aporta una mejora clara. Por variante, el error supera el 100\%: con alrededor de una unidad vendida por día y la mayoría de los días sin ventas, cualquier pronóstico diario de una variante comete un error mayor que el volumen que pronostica. A ese nivel, el modelo queda a la par de la referencia plana, apenas por debajo en indumentaria (124,3\% frente a 126,8\%) y apenas por encima en electrónica (119,3\% frente a 116,9\%), y solo supera con claridad a la referencia semanal ingenua, que repite los días sin ventas y los picos de la última semana. Para la serie total de la tienda, el error baja al rango del 25\% al 28\%, pero tampoco ahí el modelo es el mejor: en indumentaria lo supera la referencia semanal ingenua, y en electrónica, la plana. Estos resultados justifican que el motor use el promedio móvil en las variantes de demanda intermitente y marque sus pronósticos como de baja confianza: en ellas, el pronóstico sirve como estimación del volumen esperado, pero no como predicción precisa de las ventas de cada día.
+Los resultados difieren según el perfil de demanda. En gastronomía, donde todas las variantes usan Holt-Winters, el modelo supera a las dos referencias en los dos niveles, y para la serie total de la tienda reduce el error a menos de la mitad del de la referencia plana: 17,0\% frente a 37,3\%. En indumentaria y electrónica, en cambio, el modelo no aporta una mejora clara. Por variante, el error supera el 100\%: con alrededor de una unidad vendida por día y la mayoría de los días sin ventas, cualquier pronóstico diario de una variante comete un error mayor que el volumen que pronostica. A ese nivel, el modelo queda a la par de la referencia plana en indumentaria (122,5\% frente a 122,4\%) y apenas por encima en electrónica (111,1\% frente a 106,0\%), y solo supera con claridad a la referencia semanal ingenua, que repite los días sin ventas y los picos de la última semana. Para la serie total de la tienda, el error del modelo es de 41,0\% en indumentaria y de 38,1\% en electrónica, por encima del 30\% fijado como meta, y en las dos tiendas la referencia plana da menos error (26,4\% y 36,9\%). Los 14 días de validación, del 1 al 14 de noviembre, incluyen CyberMonday, cuyo factor estimado con la historia de cada tienda es de 2,43 en Lucía Bordados y de 2,57 en TecnoShop BA, frente a los configurados de 1,6 y 1,8. Estos resultados justifican que el motor use el promedio móvil en las variantes de demanda intermitente y marque sus pronósticos como de baja confianza: en ellas, el pronóstico sirve como estimación del volumen esperado, pero no como predicción precisa de las ventas de cada día.
 
-Con la misma historia, el motor estima el factor de las fechas clave que la tienda ya atravesó y lo usa en lugar del configurado. En el período generado, el factor estimado para el Día del Padre fue de 1,33 en MariCafé, 1,60 en Lucía Bordados y 1,71 en TecnoShop BA, frente a los configurados de 1,2, 1,4 y 1,5.
+Con la misma historia, el motor estima el factor de las fechas clave que la tienda ya atravesó y lo usa en lugar del configurado. En el período generado, el factor estimado para el Día de la Madre fue de 1,27 en MariCafé, 1,64 en Lucía Bordados y 1,36 en TecnoShop BA, frente a los configurados de 1,3, 1,5 y 1,3.
 
 \subsection{Segmentación de clientes}
 \label{sec:eval-segmentacion}
@@ -206,19 +205,19 @@ La segmentación calcula los indicadores RFM de los últimos 180 días y agrupa 
 \hline
 \textbf{Tienda} & \textbf{Clientes} & \textbf{$k$} & \textbf{Silueta ($k$=3 / 4 / 5)} & \textbf{Segmentos (clientes)} \\
 \hline
-MariCafé & 244 & 3 & \textbf{0,662} / 0,623 / 0,472 & Campeones 147, ocasionales 39, perdidos 58 \\
+MariCafé & 248 & 3 & \textbf{0,6625} / 0,5323 / 0,5042 & Campeones 149, ocasionales 39, perdidos 60 \\
 \hline
-Lucía Bordados & 112 & 3 & \textbf{0,546} / 0,438 / 0,422 & Campeones 56, ocasionales 30, perdidos 26 \\
+Lucía Bordados & 111 & 3 & \textbf{0,5184} / 0,4735 / 0,4377 & Campeones 47, ocasionales 41, perdidos 23 \\
 \hline
-TecnoShop BA & 89 & 3 & \textbf{0,444} / 0,357 / 0,379 & Campeones 51, en riesgo 25, perdidos 13 \\
+TecnoShop BA & 92 & 3 & \textbf{0,3829} / 0,3711 / 0,3793 & Campeones 38, ocasionales 33, perdidos 21 \\
 \hline
 \end{tabular}
 
 \smallskip
-\noindent\textit{Fuente: elaboración propia sobre la base del conjunto generado el 17 de octubre de 2026.}
+\noindent\textit{Fuente: elaboración propia sobre la base de la medición del 22 de noviembre de 2026, con el conjunto generado hasta el 14 de noviembre (\texttt{docs/evaluacion/mediciones-2026-11-22.md} del repositorio del prototipo).}
 \end{table}
 
-Las siluetas, entre 0,44 y 0,66, indican grupos separados. Este resultado debe leerse con la misma cautela que el del pronóstico: el generador asigna a los clientes tres perfiles de lealtad, y que la segmentación elija tres grupos en las tres tiendas muestra que el algoritmo recupera la estructura que el generador introdujo, no que los clientes de una tienda real se agrupen de la misma forma.
+Las siluetas de MariCafé y Lucía Bordados, de 0,66 y 0,52, indican grupos separados; la de TecnoShop BA, de 0,38, indica una separación débil y queda por debajo del 0,4 fijado como meta. Este resultado debe leerse con la misma cautela que el del pronóstico: el generador asigna a los clientes tres perfiles de lealtad, y que la segmentación elija tres grupos en las tres tiendas muestra que el algoritmo recupera la estructura que el generador introdujo, no que los clientes de una tienda real se agrupen de la misma forma.
 
 \subsection{Priorización con el historial simulado}
 \label{sec:eval-bandit}
@@ -246,24 +245,24 @@ Revisión de precio & 0,50 $\rightarrow$ 0,500 & 0,35 $\rightarrow$ 0,333 & 0,75
 \hline
 Clientes en riesgo & 0,30 $\rightarrow$ 0,385 & 0,40 $\rightarrow$ 0,417 & 0,25 $\rightarrow$ 0,333 \\
 \hline
-Promoción de fecha clave & 0,60 $\rightarrow$ 0,600 & 0,70 $\rightarrow$ 0,600 & 0,65 $\rightarrow$ 0,600 \\
+Promoción de fecha clave & 0,60 $\rightarrow$ 0,667 & 0,70 $\rightarrow$ 0,667 & 0,65 $\rightarrow$ 0,500 \\
 \hline
 \end{tabular}
 
 \smallskip
 \noindent\textit{Nota: en cada celda, la tasa fijada en el script $\rightarrow$ la media posterior aprendida.}
 
-\noindent\textit{Fuente: elaboración propia sobre la base del conjunto generado el 17 de octubre de 2026.}
+\noindent\textit{Fuente: elaboración propia sobre la base de la medición del 22 de noviembre de 2026, con el conjunto generado hasta el 14 de noviembre (\texttt{docs/evaluacion/mediciones-2026-11-22.md} del repositorio del prototipo).}
 \end{table}
 
-En gastronomía y en indumentaria, los tres tipos que el bandit prioriza son los mismos tres con mayor tasa fijada; en electrónica, la reposición de stock queda primera aunque su tasa fijada es la tercera, porque su media aprendida, 0,793, quedó por encima de esa tasa. La promoción de fecha clave cuenta con solo cinco observaciones por tienda y su media queda cerca de la distribución previa.
+En gastronomía y en indumentaria, los tres tipos que el bandit prioriza son los mismos tres con mayor tasa fijada; en electrónica, la reposición de stock queda primera aunque su tasa fijada es la tercera, porque su media aprendida, 0,793, quedó por encima de esa tasa. La promoción de fecha clave cuenta con solo seis observaciones por tienda y su media queda cerca de la distribución previa.
 
 Este resultado contiene una circularidad que debe declararse: el bandit aprendió de un historial cuyas tasas de éxito fijó el propio equipo. Que las recupere demuestra que el mecanismo de actualización y de priorización funciona como se diseñó, pero no dice nada sobre qué tipos de recomendación resultan exitosos en tiendas reales, ni sobre si el bandit mejora la priorización con el uso. La circularidad alcanza también a las tiendas que se conecten por primera vez: la distribución previa de cada rubro se calcula con los resultados de todas las tiendas de ese rubro, incluidos los del historial simulado, por lo que una tienda real comienza con una previa derivada de las tasas fijadas. El efecto está acotado, porque esa previa equivale a cuatro observaciones y la evidencia propia de la tienda pasa a dominar rápidamente, pero en una operación con tiendas reales las previas deberían calcularse excluyendo el historial simulado. Del mismo modo, la mitad de las recomendaciones simuladas de los tipos que admiten inferencia se marca como ejecutada por inferencia al azar, por lo que el historial tampoco permite evaluar la precisión de la inferencia de la ejecución.
 
 \subsection{Rendimiento}
 \label{sec:eval-rendimiento}
 
-El rendimiento se mide con un comando del prototipo que ejecuta, para cada tienda y como lo hace el proceso en segundo plano después de una sincronización, el pronóstico, la segmentación y el motor de reglas, y registra el tiempo de cada etapa, el total y la cantidad de recomendaciones generadas. Cada tienda se mide sin la redacción de Gemini, con las plantillas de respaldo, y con ella, en cuyo caso se registra cuántos textos redactó el modelo y cuántos recurrieron a la plantilla y por qué motivo. El mismo comando mide la latencia de la consulta de recomendaciones desde el panel. La medición se ejecutó el 17 de octubre de 2026 sobre una rama descartable de la base de datos en Neon, con el conjunto recién generado y sin otros procesos activos sobre ella, desde una computadora personal en Buenos Aires conectada a la base por internet. Sin Gemini se realizaron tres ejecuciones por tienda y, con Gemini, una. La Tabla~\ref{tab:eval-pipeline} presenta los resultados.
+El rendimiento se mide con un comando del prototipo que ejecuta, para cada tienda y como lo hace el proceso en segundo plano después de una sincronización, el pronóstico, la segmentación y el motor de reglas, y registra el tiempo de cada etapa, el total y la cantidad de recomendaciones generadas. Cada tienda se mide sin la redacción de Gemini, con las plantillas de respaldo, y con ella, en cuyo caso se registra cuántos textos redactó el modelo y cuántos recurrieron a la plantilla y por qué motivo. El mismo comando mide la latencia de la consulta de recomendaciones desde el panel. La medición del tiempo del análisis se ejecutó el 22 de noviembre de 2026 sobre una rama de la base de datos en Neon, con el conjunto generado hasta el 14 de noviembre y sin otros procesos activos sobre ella, desde una computadora personal en Buenos Aires conectada a la base por internet; la de la latencia del panel, el 17 de octubre de 2026, con el conjunto generado ese día. Sin Gemini se realizaron tres ejecuciones por tienda y, con Gemini, una. La Tabla~\ref{tab:eval-pipeline} presenta los resultados.
 
 \begin{table}[!htbp]
 \centering
@@ -278,23 +277,23 @@ El rendimiento se mide con un comando del prototipo que ejecuta, para cada tiend
 \cline{3-8}
  & & \textbf{Total (máx.)} & \textbf{Pronóstico} & \textbf{Segmen\-tación} & \textbf{Motor} & \textbf{Total} & \textbf{Gemini / plantilla} \\
 \hline
-MariCafé & 92 & 8,4 s (9,2 s) & 0,80 s & 0,58 s & 6,97 s & 60,7 s & 22 / 70 \\
+MariCafé & 5 & 6,5 s (6,7 s) & 0,88 s & 0,57 s & 5,06 s & 17,0 s & 1 / 4 \\
 \hline
-Lucía Bordados & 49 & 7,8 s (8,4 s) & 0,72 s & 0,45 s & 6,62 s & 41,1 s & 17 / 32 \\
+Lucía Bordados & 14 & 7,3 s (8,0 s) & 0,82 s & 0,44 s & 6,09 s & 35,9 s & 4 / 10 \\
 \hline
-TecnoShop BA & 37 & 7,4 s (7,5 s) & 0,70 s & 0,50 s & 6,21 s & 63,3 s & 28 / 9 \\
+TecnoShop BA & 11 & 6,6 s (7,1 s) & 0,84 s & 0,43 s & 5,38 s & 29,5 s & 1 / 10 \\
 \hline
 \end{tabular}
 
 \smallskip
 \noindent\textit{Nota: sin Gemini, mediana de tres ejecuciones y, entre paréntesis, la máxima. «Gemini / plantilla» indica cuántos textos redactó el modelo y cuántos recurrieron a la plantilla de respaldo.}
 
-\noindent\textit{Fuente: elaboración propia sobre la base del conjunto generado el 17 de octubre de 2026.}
+\noindent\textit{Fuente: elaboración propia sobre la base de la medición del 22 de noviembre de 2026, con el conjunto generado hasta el 14 de noviembre (\texttt{docs/evaluacion/mediciones-2026-11-22.md} del repositorio del prototipo).}
 \end{table}
 
-Sin Gemini, el análisis completo de una tienda tarda entre 7,4 y 8,4 segundos, y nunca superó los 9,2 segundos. El pronóstico y la segmentación suman alrededor de 1,2 segundos; el resto corresponde al motor de reglas, cuyo tiempo se explica casi por completo por la latencia de red: cada recomendación se almacena con una escritura propia, una después de otra, y cada escritura viaja hasta la base de datos. Como referencia, la misma ejecución contra una base de datos local tarda 0,50 segundos en total para Lucía Bordados, por lo que agrupar las escrituras reduciría ese tiempo. Con Gemini, el análisis pasa a tardar entre 41 y 63 segundos, porque los textos se redactan de a uno. En esta medición se usó la capa gratuita de la API, que rechazó por exceso de cuota buena parte de las solicitudes: esas recomendaciones recibieron el texto de la plantilla de respaldo, de modo que las 178 recomendaciones generadas cuentan con su texto, 67 redactados por el modelo y 111 por la plantilla. El tiempo con Gemini es, por lo tanto, una cota inferior del que tendría una cuenta paga que redactara todos los textos.
+Sin Gemini, el análisis completo de una tienda tarda entre 6,5 y 7,3 segundos, y nunca superó los 8,0 segundos. El pronóstico y la segmentación suman entre 1,3 y 1,5 segundos; el resto corresponde al motor de reglas, cuyo tiempo se explica casi por completo por la latencia de red: cada recomendación se almacena con una escritura propia, una después de otra, y cada escritura viaja hasta la base de datos, por lo que agrupar las escrituras reduciría ese tiempo. Con Gemini, el análisis pasa a tardar entre 17 y 36 segundos, porque los textos se redactan de a uno. En esta medición el modelo redactó 6 de los 30 textos: en los otros 24, la validación rechazó la respuesta (18) o el proveedor devolvió un error (6), y la recomendación recibió el texto de la plantilla de respaldo, de modo que las 30 recomendaciones generadas cuentan con su texto. El tiempo con Gemini es, por lo tanto, una cota inferior del que tendría una cuenta paga que redactara todos los textos.
 
-Estos tiempos no los percibe el comerciante, porque el análisis se ejecuta en segundo plano después de cada sincronización. Lo que el comerciante percibe es la latencia de la consulta con la que el panel carga las recomendaciones, que se midió contra el backend ejecutado en la misma computadora y conectado a la misma rama de la base de datos, con 25 consultas por tienda después de tres de calentamiento (Tabla~\ref{tab:eval-latencia}). Se realizaron 25 consultas y no más porque la API limita a 30 las consultas por minuto desde una misma dirección.
+Estos tiempos no los percibe el comerciante, porque el análisis se ejecuta en segundo plano después de cada sincronización. Lo que el comerciante percibe es la latencia de la consulta con la que el panel carga las recomendaciones, que se midió el 17 de octubre de 2026 contra el backend ejecutado en la misma computadora y conectado a la rama de la base de datos de esa fecha, con 25 consultas por tienda después de tres de calentamiento (Tabla~\ref{tab:eval-latencia}). Se realizaron 25 consultas y no más porque la API limita a 30 las consultas por minuto desde una misma dirección.
 
 \begin{table}[!htbp]
 \centering

@@ -16,6 +16,13 @@
   \node[entidad, anchor=north west] (coupons) at (0,-11.0) {\entcab{COUPON\_SENDS}
     \nodepart{two} id: uuid [PK]\\ recommendation\_id: uuid [FK]\\ customer\_id: uuid [FK $\rightarrow$ CUSTOMERS]\\ email\_address: string\\ coupon\_code: string?\\ sent\_at: timestamp\\ status: string};
 
+  \node[entidad, anchor=north west] (actions) at (5.92,-12.0) {\makebox[\linewidth]{\textbf{\fontsize{6.4}{8}\selectfont RECOMMENDATION\_ACTIONS}}
+    \nodepart{two} id: uuid [PK]\\ recommendation\_id: uuid [FK]\\ store\_id: uuid [FK $\rightarrow$ STORES]\\ action\_type: string\\ params: json\\ external\_id: string?\\ applied\_by: string?\\ applied\_at: timestamp\\ undone\_at: timestamp?};
+
   % RECOMMENDATIONS 1:N COUPON_SENDS
   \draw[relacion] (recs.south) -- node[card, pos=0.2, right]{1} node[card, pos=0.8, right]{N} (coupons.north);
+  % RECOMMENDATIONS 1:N RECOMMENDATION_ACTIONS (por el espacio entre columnas)
+  \draw[relacion] ([yshift=3mm]recs.south east) -- ++(0.5,0) |- (actions.west);
+  \node[card, above right] at ([yshift=3mm]recs.south east) {1};
+  \node[card, above left] at (actions.west) {N};
 \end{tikzpicture}
