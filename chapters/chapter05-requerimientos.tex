@@ -67,7 +67,7 @@ RF-12 & El sistema debe segmentar la base de clientes según su nivel de activid
 RF-13 & El sistema debe identificar clientes en riesgo de abandono basándose en \texttt{last\_order\_date} (calculado según RF-04) y generar recomendaciones de retención o reactivación. & Sección~\ref{sec:recursos-campos} \\
 \hline
 
-RF-14 \textit{(corregido)} & El sistema debe permitir al usuario registrar si ejecutó una recomendación recibida, almacenando la fecha y el tipo de acción realizada, o descartarla. La tarjeta expone también el camino \enquote{Ya lo apliqué por mi cuenta}, que se registra como ejecución manual (éxito, sin medición de impacto) y no abre el diálogo de descarte. Al descartar, el usuario elige un motivo de la ventana: \enquote{No aplica a mi tienda}, \enquote{No me interesa ahora} u \enquote{Otro motivo}, con un texto opcional de hasta 200 caracteres; el sistema registra el motivo y la fecha. Las recomendaciones de reposición de stock tienen motivos propios: \enquote{Está discontinuado / mi proveedor ya no lo tiene}, \enquote{Lo voy a reponer más adelante} y \enquote{Otro motivo}. El descarte puede deshacerse inmediatamente mediante el aviso que aparece unos segundos; después queda en Historial~$\triangleright$~Descartadas con fecha y motivo. En el \emph{bandit} (RF-16): \enquote{No aplica a mi tienda}, \enquote{Otro motivo}, \enquote{Está discontinuado} y \enquote{Otro motivo} de reposición cuentan como fracaso; \enquote{No me interesa ahora} y \enquote{Lo voy a reponer más adelante} no actualizan el \emph{bandit}. & Sección~\ref{sec:feedback-loop} \\
+RF-14 \textit{(corregido)} & El sistema debe permitir al usuario registrar si ejecutó una recomendación recibida, almacenando la fecha y el tipo de acción realizada, o descartarla. La tarjeta expone también el camino \enquote{Ya lo apliqué por mi cuenta}: el usuario indica la fecha en que aplicó la acción (por defecto, hoy), la recomendación pasa a En curso como ejecución manual y su impacto se mide como el de cualquier ejecución, sin abrir el diálogo de descarte. Al descartar, el usuario elige un motivo de la ventana: \enquote{No aplica a mi tienda}, \enquote{No me interesa ahora} u \enquote{Otro motivo}, con un texto opcional de hasta 200 caracteres; el sistema registra el motivo y la fecha. Las recomendaciones de reposición de stock tienen motivos propios: \enquote{Está discontinuado / mi proveedor ya no lo tiene}, \enquote{Lo voy a reponer más adelante} y \enquote{Otro motivo}. El descarte puede deshacerse inmediatamente mediante el aviso que aparece unos segundos; después queda en Historial~$\triangleright$~Descartadas con fecha y motivo. En el \emph{bandit} (RF-16): \enquote{No aplica a mi tienda}, \enquote{Otro motivo}, \enquote{Está discontinuado} y \enquote{Otro motivo} de reposición cuentan como fracaso; \enquote{No me interesa ahora} y \enquote{Lo voy a reponer más adelante} no actualizan el \emph{bandit}. & Sección~\ref{sec:feedback-loop} \\
 \hline
 
 RF-15 \textit{(corregido)} & El sistema debe medir el impacto de las recomendaciones ejecutadas comparando el valor observado en la ventana de evaluación contra el esperado, calculado con el pronóstico vigente al generar la recomendación, y presentar el resultado como correlación indicativa y no como relación de causalidad comprobada (RNF-10). La métrica objetivo varía por tipo: las recomendaciones de precio y stock miden la variación de ventas o del ritmo de venta del producto; las de retención y fidelización miden la tasa de retorno de los clientes listados; las de fecha clave miden las ventas de la tienda durante la ventana. Cuando la ventana de evaluación coincide con una fecha clave, la vista de impacto lo indica con la etiqueta correspondiente (p.~ej., \enquote{Coincidió con CyberMonday}). & Sección~\ref{sec:feedback-loop} \\
@@ -231,10 +231,10 @@ RNF-21 & El sistema debe usar la dirección de correo electrónico de los client
 RNF-22 & El sistema debe solicitar a la plataforma solo los permisos que usa, conforme al principio de mínimo privilegio: lectura de productos (View Products), órdenes (View Orders), clientes y cupones (View Coupons); edición de cupones (Edit Coupons) y de productos (Edit Products) para aplicar y deshacer las acciones sugeridas; y registro de \emph{webhooks}. No solicita permisos de edición de órdenes, riesgo de órdenes, plantillas de correo de la plataforma ni descuentos; los correos a clientes salen por Resend (Sección~\ref{sec:envio-correos}). & Seguridad & Sección~\ref{sec:permisos-app} \\
 \hline
 
-RNF-23 & El sistema no debe escribir en la tienda sin una confirmación explícita del usuario para cada acción: toda escritura en la plataforma responde a un clic del usuario sobre un botón que describe lo que va a ocurrir, y puede deshacerse (RF-29). & Control del usuario & Sección~\ref{sec:dss}; Sección~\ref{sec:brainstorming-resultados} \\
+RNF-23 & El sistema debe escribir en la tienda solo con la confirmación explícita del usuario para cada acción: toda escritura en la plataforma responde a un clic sobre un botón que describe lo que va a ocurrir, y puede deshacerse (RF-29). & Control del usuario & Sección~\ref{sec:dss}; Sección~\ref{sec:brainstorming-resultados} \\
 \hline
 
-RNF-24 & Ante un error de pantalla o ante una recomendación que no se encuentra, la aplicación debe mostrar un aviso con el botón \enquote{Volver a recomendaciones} en lugar de quedar en blanco. & Usabilidad / Confiabilidad & Sección~\ref{sec:capturas-implementacion} \\
+RNF-24 & El sistema debe mostrar, ante un error de pantalla o una recomendación que no se encuentra, un aviso con el botón \enquote{Volver a recomendaciones} en lugar de quedar en blanco. & Usabilidad / Confiabilidad & Sección~\ref{sec:capturas-implementacion} \\
 \hline
 
 \end{longtable}
@@ -359,7 +359,7 @@ Como usuario del sistema, quiero poder marcar que ejecuté una recomendación re
     \item Al marcar una recomendación como ejecutada, el sistema registra la fecha y el identificador de la recomendación.
     \item El sistema puede inferir automáticamente la ejecución de una recomendación cuando detecta, en la sincronización incremental, un cambio de stock o de precio coherente con la acción sugerida (tipos inferibles: reposición de stock, revisión de precio, baja rotación y preparación anticipada). El usuario puede rechazar la inferencia si no fue él quien realizó la acción.
     \item El usuario puede deshacer el registro de una ejecución marcada manualmente, siempre que no se haya completado aún la evaluación de impacto (RF-21).
-    \item La tarjeta expone el camino \enquote{Ya lo apliqué por mi cuenta}, que registra una ejecución manual (éxito, sin medición de impacto) sin abrir el diálogo de descarte.
+    \item La tarjeta expone el camino \enquote{Ya lo apliqué por mi cuenta}, que pide la fecha de aplicación y registra una ejecución manual cuyo impacto se mide, sin abrir el diálogo de descarte.
     \item El usuario puede descartar una recomendación eligiendo un motivo de la ventana: \enquote{No aplica a mi tienda}, \enquote{No me interesa ahora} u \enquote{Otro motivo} (con texto opcional). Las recomendaciones de reposición usan motivos propios: \enquote{Está discontinuado / mi proveedor ya no lo tiene}, \enquote{Lo voy a reponer más adelante} y \enquote{Otro motivo}. El descarte puede deshacerse inmediatamente; después queda en Historial~$\triangleright$~Descartadas (RF-14).
     \item El motivo define el efecto en el \emph{bandit}: \enquote{No aplica a mi tienda}, \enquote{Otro motivo} y \enquote{Está discontinuado} cuentan como fracaso; \enquote{No me interesa ahora} y \enquote{Lo voy a reponer más adelante} no actualizan el \emph{bandit}.
     \item El usuario elige, para cada nivel de prioridad, si quiere ver el resultado de las recomendaciones ejecutadas apenas se mide o a los 7, 14 o 30 días (RF-27).
@@ -497,7 +497,7 @@ Como comerciante, quiero que el sistema me proponga una acción sobre los carrit
     \item La recomendación propone un cupón de recupero, que el comerciante crea en su tienda con un clic.
 \end{itemize}
 
-\noindent\textbf{Requerimientos cubiertos:} RF-31, RF-28, RF-26.
+\noindent\textbf{Requerimientos cubiertos:} RF-31, RF-28.
 
 \subsection{HU-16 --- Incentivo a la segunda compra}
 \label{sec:hu-16}
@@ -512,7 +512,7 @@ Como comerciante, quiero identificar a los clientes que compraron una sola vez h
     \item La recomendación propone un cupón para la segunda compra, que el comerciante crea en su tienda con un clic.
 \end{itemize}
 
-\noindent\textbf{Requerimientos cubiertos:} RF-32, RF-12, RF-28, RF-26.
+\noindent\textbf{Requerimientos cubiertos:} RF-32, RF-12, RF-28.
 
 \subsection{HU-17 --- Curva de talles rota}
 \label{sec:hu-17}
@@ -560,7 +560,7 @@ Como dueño/a de una tienda de electrónica, quiero saber qué clientes compraro
     \item La recomendación propone un cupón para el accesorio, que el comerciante crea en su tienda con un clic.
 \end{itemize}
 
-\noindent\textbf{Requerimientos cubiertos:} RF-35, RF-06, RF-28, RF-26.
+\noindent\textbf{Requerimientos cubiertos:} RF-35, RF-06, RF-28.
 
 \section{Casos de Uso}
 \label{sec:casos-uso}
@@ -576,11 +576,11 @@ Los casos de uso formalizan las interacciones entre los actores y el sistema. Se
     \item \textbf{Servicio de correo electrónico:} Sistema externo que envía a los clientes de la tienda los correos con cupones que el comerciante confirma.
 \end{itemize}
 
-La Figura~\ref{fig:flujo-diagram} sintetiza el flujo completo del proceso, desde la ingesta de datos crudos de Tiendanube hasta la evaluación de impacto de una recomendación ejecutada, que los once casos de uso presentados a continuación detallan de forma individual.
+La Figura~\ref{fig:flujo-diagram} sintetiza el flujo completo del proceso, desde la ingesta de los datos de la tienda (Tiendanube o WooCommerce) hasta la evaluación de impacto de una recomendación ejecutada, que los once casos de uso presentados a continuación detallan de forma individual.
 
 \begin{figure}[ht]
     \centering
-    \includegraphics[width=0.6\textwidth]{./images/flujo_diagram.png}
+    \input{chapters/figuras/flujo}
     \caption{Diagrama de flujo del proceso de generación y evaluación de recomendaciones.}
     \label{fig:flujo-diagram}
 \smallskip
@@ -775,7 +775,7 @@ Postcondiciones & La recomendación queda registrada como ejecutada con su fecha
 \noindent 3b. El comerciante descarta la recomendación: elige un motivo de la ventana (\enquote{No aplica a mi tienda}, \enquote{No me interesa ahora} u \enquote{Otro motivo}, con texto opcional; para reposición de stock: \enquote{Está discontinuado / mi proveedor ya no lo tiene}, \enquote{Lo voy a reponer más adelante} u \enquote{Otro motivo}) y el sistema registra el descarte con motivo y fecha, retira la recomendación de las activas y libera su lugar en el cupo (RF-23).
 Según el motivo, el descarte cuenta como fracaso en el \emph{bandit} (\enquote{No aplica a mi tienda}, \enquote{Otro motivo}, \enquote{Está discontinuado}) o no actualiza el \emph{bandit} (\enquote{No me interesa ahora}, \enquote{Lo voy a reponer más adelante}) (RF-14, RF-16). El comerciante puede deshacer el descarte inmediatamente mediante el aviso que aparece unos segundos; después queda en Historial~$\triangleright$~Descartadas con fecha y motivo.
 
-\noindent 3c. \textit{Ejecución inferida:} en la siguiente sincronización incremental, el sistema detecta un cambio de stock o precio coherente con la acción sugerida (reposición, revisión de precio, baja rotación, preparación anticipada). El sistema marca la recomendación como ejecutada con fuente \texttt{inferred} y notifica al usuario, quien puede rechazar la inferencia si no fue él quien realizó la acción.
+\noindent 3c. \textit{Ejecución inferida:} en la siguiente sincronización incremental, el sistema detecta un cambio de stock o precio coherente con la acción sugerida (reposición, revisión de precio, baja rotación, preparación anticipada). Si el cambio es un descuento o un cambio de precio, el sistema pregunta al usuario si lo aplicó por esta recomendación y la marca como ejecutada solo si confirma; en los demás casos, como una reposición, la marca como ejecutada con fuente \texttt{inferred} y el usuario puede rechazar la inferencia desde el detalle (\enquote{No la apliqué por esta recomendación}).
 
 \noindent 4a. El usuario deshace una ejecución manual antes de que se complete la evaluación de impacto (RF-21): el sistema revierte el estado a activo y cancela la ventana de evaluación.
 
@@ -811,12 +811,12 @@ Postcondiciones & El brazo del bandit del tipo de recomendación se actualiza co
 
 \noindent 2a. La recomendación se ejecutó, pero no hay dato para medir el valor observado: el sistema la registra como fracaso.
 
-La Figura~\ref{fig:seq-feedback-loop} consolida en un diagrama de secuencia la interacción completa entre el comerciante, el frontend, el backend y la base de datos a lo largo del ciclo de retroalimentación que describen CU-05 y CU-06: desde que el comerciante marca una recomendación como ejecutada hasta que, una vez transcurrida la ventana temporal de evaluación, el sistema compara el valor observado en la ventana de evaluación contra el esperado, calculado con el pronóstico vigente al generar la recomendación, clasifica el resultado como éxito o fracaso, actualiza el brazo del bandit del tipo de recomendación y expone la comparación al comerciante como correlación indicativa (RNF-10).
+La Figura~\ref{fig:seq-feedback-loop} consolida en un diagrama de secuencia la interacción completa entre el comerciante, el frontend, el backend y la base de datos a lo largo del ciclo de retroalimentación que describen CU-05 y CU-06: desde que el comerciante aplica una recomendación desde Decidata, o registra que la aplicó por su cuenta, y eventualmente la deshace, hasta que, una vez transcurrida la ventana temporal de evaluación, el sistema compara el valor observado en la ventana de evaluación contra el esperado, calculado con el pronóstico vigente al generar la recomendación, clasifica el resultado como éxito o fracaso, actualiza el brazo del bandit del tipo de recomendación y expone la comparación al comerciante como correlación indicativa (RNF-10).
 
 \begin{figure}[ht]
     \centering
-    \includegraphics[width=\textwidth]{./images/diagramaSecuenciaDecidata.png}
-    \caption{Diagrama de secuencia del ciclo de retroalimentación: registro de ejecución y evaluación de impacto (CU-05 y CU-06).}
+    \input{chapters/figuras/secuencia}
+    \caption{Diagrama de secuencia del ciclo de retroalimentación: aplicación, deshacer y evaluación de impacto (CU-05, CU-06 y CU-11).}
     \label{fig:seq-feedback-loop}
 \smallskip
 \noindent\textit{Fuente: elaboración propia.}
@@ -1161,7 +1161,7 @@ Cuando existen recomendaciones activas, el panel las presenta como un conjunto d
 \begin{figure}[ht]
     \centering
     \includegraphics[width=0.75\textwidth]{./images/mockup_listado_recomendaciones.png}
-    \caption{Listado de recomendaciones activas del panel.}
+    \caption{Listado de recomendaciones activas del panel (mockup de diseño).}
     \label{fig:mockup-listado-recomendaciones}
 \smallskip
 \noindent\textit{Fuente: elaboración propia.}
@@ -1175,7 +1175,7 @@ Al seleccionar una tarjeta del listado, el comerciante accede al detalle de esa 
 \begin{figure}[ht]
     \centering
     \includegraphics[width=0.65\textwidth]{./images/mockup_detalle_recomendacion.png}
-    \caption{Detalle de una recomendación individual.}
+    \caption{Detalle de una recomendación individual (mockup de diseño).}
     \label{fig:mockup-detalle-recomendacion}
 \smallskip
 \noindent\textit{Fuente: elaboración propia.}
@@ -1320,7 +1320,6 @@ En las recomendaciones de descuento o de cupón, el detalle muestra la acción a
 
 Cuando el sistema detecta automáticamente la ejecución de una recomendación (CU-05, flujo alternativo 3c), no siempre la da por hecha. Si detecta un descuento o un cambio de precio, la tarjeta pregunta, por ejemplo, \enquote{Vimos un 20\% de descuento en [producto]. ¿Lo aplicaste por esta recomendación?}, con los botones \enquote{Sí} y \enquote{No}. Si la ejecución queda registrada como inferida, como en una reposición, el detalle ofrece el botón \enquote{No la apliqué por esta recomendación}, que permite al comerciante rechazar la inferencia. Esta diferenciación es necesaria para que el usuario comprenda el origen del cambio de estado y pueda corregirlo sin penalizar el aprendizaje del bandit por un falso positivo.
 
-% TODO: agregar captura de pantalla de ejecución inferida cuando esté disponible.
 
 \subsubsection{Comparación esperado vs.\ real}
 \label{sec:captura-esperado-real}
@@ -1343,14 +1342,12 @@ La Figura~\ref{fig:captura-resultado} muestra el resultado de una recomendación
 
 La tarjeta de recomendación de tipo \enquote{preparación} (HU-02) muestra el producto o variante a preparar, la cantidad de unidades pronosticadas para el pico y la fecha proyectada del pico, con una etiqueta de anticipación en días. La acción sugerida varía por rubro: en gastronomía indica qué insumos preparar; en indumentaria, qué talle o variante reponer antes del pico.
 
-% TODO: agregar captura de pantalla de preparación anticipada cuando esté disponible.
 
 \subsubsection{Recomendación de fecha clave}
 \label{sec:captura-fecha-clave}
 
 La tarjeta de recomendación de fecha clave (HU-06) identifica la fecha comercial próxima, los productos sugeridos para la promoción y la anticipación en días. El mensaje generado por Gemini incluye el nombre de la fecha y una sugerencia de acción diferenciada por rubro.
 
-% TODO: agregar captura de pantalla de fecha clave cuando esté disponible.
 
 \subsubsection{Tarjeta de reposición de stock}
 \label{sec:captura-reposicion}
@@ -1377,4 +1374,3 @@ La tarjeta de reposición de stock (HU-01) no incluye la opción \enquote{Ya lo 
 
 La misma interfaz React con componentes Nimbus se carga en el panel de administración de WordPress mediante el plugin Decidata (CU-09). El plugin crea una página de menú en wp-admin e incluye la aplicación como iframe, replicando la experiencia de Tiendanube. Los componentes Nimbus mantienen la consistencia visual en ambas plataformas (RNF-03).
 
-% TODO: agregar captura de pantalla de la app en WordPress cuando esté disponible.

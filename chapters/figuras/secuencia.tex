@@ -1,0 +1,43 @@
+% Diagrama de secuencia del ciclo de retroalimentación (CU-05, CU-06 y CU-11).
+\resizebox{\textwidth}{!}{%
+\begin{tikzpicture}[
+    actor/.style={draw, rounded corners=2pt, fill=gray!15, align=center, font=\footnotesize\bfseries, minimum width=2.5cm, minimum height=0.8cm},
+    msg/.style={-{Stealth[length=5pt]}, thin},
+    resp/.style={-{Stealth[length=5pt]}, thin, dashed},
+    etiq/.style={font=\scriptsize, above, align=center, inner sep=1.5pt, fill=white},
+    nota/.style={draw, fill=yellow!12, font=\scriptsize, align=center, inner sep=3pt}]
+
+  % Participantes y líneas de vida
+  \foreach \x/\n/\t in {0/c/Comerciante, 3.2/p/Panel (frontend), 6.4/a/API (backend), 9.6/t/Tiendanube, 12.8/b/Base de datos, 16/w/Worker}{
+    \node[actor] (\n) at (\x,0) {\t};
+    \draw[gray!70] (\x,-0.4) -- (\x,-17.6);
+  }
+
+  % Aplicar con un clic
+  \draw[msg]  (0,-1.2)   -- node[etiq]{Confirma la acción armada} (3.2,-1.2);
+  \draw[msg]  (3.2,-2.0) -- node[etiq]{Aplicar (cupón o precio)} (6.4,-2.0);
+  \draw[msg]  (6.4,-2.8) -- node[etiq]{Crea el cupón o carga el\\precio promocional} (9.6,-2.8);
+  \draw[resp] (9.6,-3.6) -- node[etiq]{Confirma} (6.4,-3.6);
+  \draw[msg]  (6.4,-4.4) -- node[etiq]{Registra la acción y la\\ejecución (\texttt{one\_click})} (12.8,-4.4);
+  \draw[resp] (6.4,-5.2) -- node[etiq]{Pasó a En curso} (3.2,-5.2);
+  \node[nota, text width=11.6cm] at (6.4,-6.1) {Alternativas: \enquote{Ya lo apliqué por mi cuenta} registra la fecha sin escribir en la tienda; la ejecución inferida se detecta en la sincronización y, si es un descuento o un cambio de precio, se confirma con el comerciante.};
+
+  % Deshacer
+  \draw[msg]  (0,-7.2)   -- node[etiq]{\enquote{Deshacer} (opcional)} (3.2,-7.2);
+  \draw[msg]  (3.2,-8.0) -- node[etiq]{Deshacer la acción} (6.4,-8.0);
+  \draw[msg]  (6.4,-8.8) -- node[etiq]{Restaura el precio anterior\\o borra el cupón} (9.6,-8.8);
+  \draw[msg]  (6.4,-9.6) -- node[etiq]{Vuelve a Para hacer} (12.8,-9.6);
+
+  % Evaluación del impacto
+  \node[nota, text width=6.0cm] at (14.4,-10.6) {Transcurre la ventana de evaluación del rubro};
+  \draw[msg]  (16,-11.6) -- node[etiq]{Ejecuciones con la ventana cerrada} (12.8,-11.6);
+  \draw[msg]  (16,-12.3) -- ++(0.6,0) -- ++(0,-0.5) -- node[font=\scriptsize, right, pos=0.5, xshift=0.6cm, align=left]{} (16,-12.8);
+  \node[font=\scriptsize, align=left, anchor=west] at (16.7,-12.55) {Compara real\\contra esperado};
+  \draw[msg]  (16,-13.6) -- node[etiq]{Guarda el resultado y actualiza\\el brazo del bandit} (12.8,-13.6);
+
+  % Consulta del resultado
+  \draw[msg]  (0,-14.6)   -- node[etiq]{Historial: Ver resultado} (3.2,-14.6);
+  \draw[msg]  (3.2,-15.4) -- node[etiq]{Pide las recomendaciones} (6.4,-15.4);
+  \draw[msg]  (6.4,-16.2) -- node[etiq]{Lee el resultado} (12.8,-16.2);
+  \draw[resp] (3.2,-17.0) -- node[etiq]{Estimación (no causalidad)} (0,-17.0);
+\end{tikzpicture}}
