@@ -231,10 +231,10 @@ RNF-21 & El sistema debe usar la dirección de correo electrónico de los client
 RNF-22 & El sistema debe solicitar a la plataforma solo los permisos que usa, conforme al principio de mínimo privilegio: lectura de productos (View Products), órdenes (View Orders), clientes y cupones (View Coupons); edición de cupones (Edit Coupons) y de productos (Edit Products) para aplicar y deshacer las acciones sugeridas; y registro de \emph{webhooks}. No solicita permisos de edición de órdenes, riesgo de órdenes, plantillas de correo de la plataforma ni descuentos; los correos a clientes salen por Resend (Sección~\ref{sec:envio-correos}). & Seguridad & Sección~\ref{sec:permisos-app} \\
 \hline
 
-RNF-23 & El sistema no debe escribir en la tienda sin una confirmación explícita del usuario para cada acción: toda escritura en la plataforma responde a un clic del usuario sobre un botón que describe lo que va a ocurrir, y puede deshacerse (RF-29). & Control del usuario & Sección~\ref{sec:dss}; Sección~\ref{sec:brainstorming-resultados} \\
+RNF-23 & El sistema debe escribir en la tienda solo con la confirmación explícita del usuario para cada acción: toda escritura en la plataforma responde a un clic sobre un botón que describe lo que va a ocurrir, y puede deshacerse (RF-29). & Control del usuario & Sección~\ref{sec:dss}; Sección~\ref{sec:brainstorming-resultados} \\
 \hline
 
-RNF-24 & Ante un error de pantalla o ante una recomendación que no se encuentra, la aplicación debe mostrar un aviso con el botón \enquote{Volver a recomendaciones} en lugar de quedar en blanco. & Usabilidad / Confiabilidad & Sección~\ref{sec:capturas-implementacion} \\
+RNF-24 & El sistema debe mostrar, ante un error de pantalla o una recomendación que no se encuentra, un aviso con el botón \enquote{Volver a recomendaciones} en lugar de quedar en blanco. & Usabilidad / Confiabilidad & Sección~\ref{sec:capturas-implementacion} \\
 \hline
 
 \end{longtable}
