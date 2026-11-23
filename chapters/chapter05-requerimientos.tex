@@ -1204,20 +1204,55 @@ Las siguientes subsecciones documentan las pantallas implementadas que no estaba
 \label{sec:captura-rediseno}
 
 La interfaz final incorpora la identidad de marca de Decidata (Sección~\ref{sec:marca-decidata}) sobre los componentes de Nimbus.
-El panel de recomendaciones se organiza en tres pestañas: \textbf{Para hacer} (recomendaciones activas), \textbf{En curso} (recomendaciones aplicadas cuya ventana de medición aún no terminó) e \textbf{Historial} (con filtros: Todas / Aplicadas / Descartadas / No aplicadas). Un banner \enquote{Lo que venís logrando con Decidata}, visible en la parte superior del panel, incluye el enlace \enquote{En curso, midiéndose $\rightarrow$} que lleva a la pestaña En curso; el resultado de cada recomendación aplicada se consulta en Historial~$\triangleright$~Aplicadas~$\triangleright$~Ver resultado. % PENDIENTE-CAPTURA: pestañas Para hacer, En curso e Historial con sus filtros y el banner
+El panel de recomendaciones se organiza en tres pestañas: \textbf{Para hacer} (recomendaciones activas), \textbf{En curso} (recomendaciones aplicadas cuya ventana de medición aún no terminó) e \textbf{Historial} (con filtros: Todas / Aplicadas / Descartadas / No aplicadas). Un banner \enquote{Lo que venís logrando con Decidata}, visible en la parte superior del panel, incluye el enlace \enquote{En curso, midiéndose $\rightarrow$} que lleva a la pestaña En curso; el resultado de cada recomendación aplicada se consulta en Historial~$\triangleright$~Aplicadas~$\triangleright$~Ver resultado. (Figuras~\ref{fig:captura-rediseno} y~\ref{fig:captura-historial})
 
-La pestaña En curso muestra, por tarjeta: título de la recomendación, fecha de aplicación, barra de la ventana de medición con la fecha de resultados y el botón \enquote{Deshacer}; el detalle muestra \enquote{Qué aplicamos en tu tienda} (variante, precio promocional o cupón, porcentaje, vigencia y fecha). % VERIFICAR-COD: confirmar en producción (pestaña En curso y detalle «Qué aplicamos en tu tienda»)
+La pestaña En curso muestra, por tarjeta: título de la recomendación, fecha de aplicación, barra de la ventana de medición con la fecha de resultados y el botón \enquote{Deshacer}; el detalle muestra \enquote{Qué aplicamos en tu tienda} (variante, precio promocional o cupón, porcentaje, vigencia y fecha). (Figura~\ref{fig:captura-en-curso})
 
 Cada tarjeta lleva un chip de prioridad con ícono (urgente, atención u oportunidad); la etiqueta \enquote{Generado por IA} del mockup no se incorporó. La pantalla de detalle se organiza en dos bloques: \enquote{Por qué te lo recomendamos}, con la explicación redactada por el modelo de lenguaje, y \enquote{Lo que vemos en tu tienda}, con tres datos clave que sustentan la recomendación; al pie figura el aviso legal de que se trata de una correlación indicativa. Las notificaciones se separan de las recomendaciones; no ocupan el cupo ni entran en la medición de impacto (Figura~\ref{fig:captura-rediseno}).
 
-% PENDIENTE-CAPTURA: A6 (pantallas del rediseño que pasa Romi: panel con banner de impacto y detalle)
-\begin{figure}[ht]
+\begin{figure}[!htbp]
     \centering
-    \fbox{\parbox{0.8\textwidth}{\centering\vspace{2cm}Captura pendiente: panel con el banner de impacto, tarjetas con chip de prioridad, y pantalla de detalle con \enquote{Por qué te lo recomendamos} y \enquote{Lo que vemos en tu tienda}.\vspace{2cm}}}
+    \begin{subfigure}{\textwidth}\centering
+        \includegraphics[width=0.85\textwidth]{./images/captura-01-panel.png}
+        \caption{Panel: banner \enquote{Lo que venís logrando con Decidata} y pestañas.}
+    \end{subfigure}\\[6pt]
+    \begin{subfigure}{\textwidth}\centering
+        \includegraphics[width=0.85\textwidth]{./images/captura-03-detalle.png}
+        \caption{Detalle de una recomendación: \enquote{Por qué te lo recomendamos} y \enquote{Lo que vemos en tu tienda}.}
+    \end{subfigure}
     \caption{Panel y detalle de una recomendación con la identidad de Decidata.}
     \label{fig:captura-rediseno}
 \smallskip
-\noindent\textit{Fuente: elaboración propia.}
+\noindent\textit{Fuente: elaboración propia, captura de la aplicación en producción (tienda de desarrollo de Tiendanube), 22 de noviembre de 2026.}
+\end{figure}
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=0.75\textwidth]{./images/captura-01b-historial.png}
+    \caption{Pestaña Historial con sus filtros.}
+    \label{fig:captura-historial}
+\smallskip
+\noindent\textit{Fuente: elaboración propia, captura de la aplicación en producción (tienda de desarrollo de Tiendanube), 22 de noviembre de 2026.}
+\end{figure}
+
+\begin{figure}[!htbp]
+    \centering
+    \begin{subfigure}{\textwidth}\centering
+        \includegraphics[width=0.85\textwidth]{./images/captura-07-en-curso.png}
+        \caption{Tarjeta en la pestaña En curso, con la ventana de medición y el botón \enquote{Deshacer}.}
+    \end{subfigure}\\[6pt]
+    \begin{subfigure}{\textwidth}\centering
+        \includegraphics[width=0.85\textwidth]{./images/captura-08-que-aplicamos.png}
+        \caption{Detalle: \enquote{Qué aplicamos en tu tienda}.}
+    \end{subfigure}\\[6pt]
+    \begin{subfigure}{\textwidth}\centering
+        \includegraphics[width=0.5\textwidth]{./images/captura-09-deshacer.png}
+        \caption{Confirmación de \enquote{Deshacer}.}
+    \end{subfigure}
+    \caption{Recomendación aplicada con un clic, en curso.}
+    \label{fig:captura-en-curso}
+\smallskip
+\noindent\textit{Fuente: elaboración propia, captura de la aplicación en producción (tienda de desarrollo de Tiendanube), 22 de noviembre de 2026.}
 \end{figure}
 
 \subsubsection{Envío del cupón por correo}
@@ -1225,14 +1260,13 @@ Cada tarjeta lleva un chip de prioridad con ícono (urgente, atención u oportun
 
 En las recomendaciones de riesgo de abandono y de fidelización, el botón \enquote{Enviar cupón} abre un formulario con la lista de clientes, todos elegidos de forma predeterminada, el asunto, el cuerpo del correo con el marcador \texttt{\{nombre\}}, el código del cupón y la dirección de respuesta de la tienda (CU-10, Figura~\ref{fig:captura-cupon}).
 
-% PENDIENTE-CAPTURA: A3 (formulario de envío del cupón)
-\begin{figure}[ht]
+\begin{figure}[!htbp]
     \centering
-    \fbox{\parbox{0.8\textwidth}{\centering\vspace{2cm}Captura pendiente: formulario de envío del cupón por correo, con la lista de clientes, el asunto, el cuerpo, el código y la dirección de respuesta.\vspace{2cm}}}
+    \includegraphics[width=0.45\textwidth]{./images/captura-04d-cupon-correo.png}
     \caption{Formulario de envío del cupón por correo.}
     \label{fig:captura-cupon}
 \smallskip
-\noindent\textit{Fuente: elaboración propia.}
+\noindent\textit{Fuente: elaboración propia, captura de la aplicación en producción (tienda de desarrollo de Tiendanube), 22 de noviembre de 2026. Los nombres y correos de los destinatarios se ocultaron.}
 \end{figure}
 
 \subsubsection{Descarte con motivo y frecuencia del resultado}
@@ -1240,14 +1274,20 @@ En las recomendaciones de riesgo de abandono y de fidelización, el botón \enqu
 
 Al descartar una recomendación, un cuadro de diálogo pide el motivo, con un campo de texto para \enquote{Otro}, y el panel ofrece deshacer el descarte (CU-05, flujo alternativo 3b). Desde el panel, el comerciante abre además la configuración del resultado de impacto, donde elige para cada nivel de prioridad si quiere verlo apenas se mide (\enquote{Inmediato}) o esperar 7, 14 o 30 días (\enquote{Esperar días}, con 14 días preseleccionado) (RF-27, Figura~\ref{fig:captura-descarte}).
 
-% PENDIENTE-CAPTURA: A4-A5 (cuadro de descarte con motivo y modal de frecuencia del resultado)
-\begin{figure}[ht]
+\begin{figure}[!htbp]
     \centering
-    \fbox{\parbox{0.8\textwidth}{\centering\vspace{2cm}Captura pendiente: cuadro de descarte con los cuatro motivos y configuración de la frecuencia del resultado por nivel de prioridad (7, 14 o 30 días).\vspace{2cm}}}
+    \begin{subfigure}[t]{0.48\textwidth}\centering
+        \includegraphics[width=\textwidth]{./images/captura-04b-motivos.png}
+        \caption{Motivos del descarte.}
+    \end{subfigure}\hfill
+    \begin{subfigure}[t]{0.48\textwidth}\centering
+        \includegraphics[width=\textwidth]{./images/captura-04c-frecuencia.png}
+        \caption{Configuración de la medición de resultados.}
+    \end{subfigure}
     \caption{Descarte con motivo y configuración de la frecuencia del resultado de impacto.}
     \label{fig:captura-descarte}
 \smallskip
-\noindent\textit{Fuente: elaboración propia.}
+\noindent\textit{Fuente: elaboración propia, captura de la aplicación en producción (tienda de desarrollo de Tiendanube), 22 de noviembre de 2026.}
 \end{figure}
 
 \subsubsection{Acción sugerida lista para aplicar}
@@ -1255,14 +1295,20 @@ Al descartar una recomendación, un cuadro de diálogo pide el motivo, con un ca
 
 En las recomendaciones de descuento o de cupón, el detalle muestra la acción armada, por ejemplo \enquote{Creá el cupón VUELVE10 · 10\% · válido 14 días}, con los campos editables, el botón de confirmación que describe lo que va a ocurrir y la opción \enquote{Prefiero hacerlo yo}. Una vez aplicada, la tarjeta indica que la acción se aplicó desde Decidata y ofrece \enquote{Deshacer} (CU-11, Figura~\ref{fig:captura-accion}).
 
-% PENDIENTE-CAPTURA: B1 (detalle con la acción armada y el botón de confirmación)
-\begin{figure}[ht]
+\begin{figure}[!htbp]
     \centering
-    \fbox{\parbox{0.8\textwidth}{\centering\vspace{2cm}Captura pendiente: detalle de una recomendación con la acción armada, los valores editables, el botón \enquote{Crear cupón en mi tienda} y la opción \enquote{Prefiero hacerlo yo}.\vspace{2cm}}}
-    \caption{Acción sugerida lista para aplicar con un clic.}
+    \begin{subfigure}{\textwidth}\centering
+        \includegraphics[width=0.6\textwidth]{./images/captura-05-promo-aplicar.png}
+        \caption{Acción armada: precio promocional editable, \enquote{Aplicar precio promocional} y \enquote{Prefiero hacerlo yo}.}
+    \end{subfigure}\\[6pt]
+    \begin{subfigure}{\textwidth}\centering
+        \includegraphics[width=0.9\textwidth]{./images/captura-06-promo-tiendanube.png}
+        \caption{Precio promocional cargado en el panel de administración de Tiendanube (variante S).}
+    \end{subfigure}
+    \caption{Acción sugerida lista para aplicar con un clic y su resultado en la tienda.}
     \label{fig:captura-accion}
 \smallskip
-\noindent\textit{Fuente: elaboración propia.}
+\noindent\textit{Fuente: elaboración propia, captura de la aplicación en producción (tienda de desarrollo de Tiendanube), 22 de noviembre de 2026.}
 \end{figure}
 
 \subsubsection{Ejecución inferida}
@@ -1277,7 +1323,16 @@ Cuando el sistema detecta automáticamente la ejecución de una recomendación (
 
 La vista de impacto final reemplaza la comparación \enquote{Antes / Después} del mockup por una comparación \enquote{Esperado / Real}: el valor esperado es el pronóstico calculado en el momento de la ejecución; el valor real son las ventas observadas en la ventana de evaluación. Esta decisión refleja el cambio metodológico documentado en RF-15 y CU-06: comparar contra un pronóstico es más informativo que comparar contra el período anterior, ya que aísla el efecto de la acción de la tendencia natural del producto.
 
-% TODO: agregar captura de pantalla de comparación esperado/real cuando esté disponible.
+La Figura~\ref{fig:captura-resultado} muestra el resultado de una recomendación aplicada, con la etiqueta de la fecha clave que coincidió con su ventana de medición.
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=0.85\textwidth]{./images/captura-14-resultado.png}
+    \caption{Resultado de una recomendación aplicada: real contra esperado, con la etiqueta \enquote{Coincidió con CyberMonday}.}
+    \label{fig:captura-resultado}
+\smallskip
+\noindent\textit{Fuente: elaboración propia, captura de la aplicación en producción (tienda de desarrollo de Tiendanube), 22 de noviembre de 2026.}
+\end{figure}
 
 \subsubsection{Recomendación de preparación anticipada}
 \label{sec:captura-preparacion}
@@ -1296,8 +1351,22 @@ La tarjeta de recomendación de fecha clave (HU-06) identifica la fecha comercia
 \subsubsection{Tarjeta de reposición de stock}
 \label{sec:captura-reposicion}
 
-La tarjeta de reposición de stock (HU-01) no incluye la opción \enquote{Ya lo apliqué por mi cuenta}: la recomendación se resuelve automáticamente cuando el stock vuelve a tener unidades. El título abre un detalle con la lista de variantes sin stock y las unidades vendidas en la ventana de historial del rubro. El botón principal es \enquote{Ver en Productos}, que abre la lista de productos del administrador de Tiendanube. % VERIFICAR-COD: confirmar en producción (tarjeta de reposición: variantes sin stock, unidades vendidas, botón Ver en Productos)
-% PENDIENTE-CAPTURA: captura de la tarjeta y detalle de reposición de stock
+La tarjeta de reposición de stock (HU-01) no incluye la opción \enquote{Ya lo apliqué por mi cuenta}: la recomendación se resuelve automáticamente cuando el stock vuelve a tener unidades. El título abre un detalle con la lista de variantes sin stock y las unidades vendidas en la ventana de historial del rubro. El botón principal es \enquote{Ver en Productos}, que abre la lista de productos del administrador de Tiendanube (Figura~ef{fig:captura-reposicion}). % VERIFICAR-COD: en producción (22/11) la tarjeta y el detalle muestran las variantes sin stock y «Ver en Productos», pero el detalle no muestra las unidades vendidas en la ventana del rubro
+\begin{figure}[!htbp]
+    \centering
+    \begin{subfigure}[t]{0.48\textwidth}\centering
+        \includegraphics[width=\textwidth]{./images/captura-reposicion-tarjeta.png}
+        \caption{Tarjeta, con \enquote{No me sirve} y \enquote{Ver en Productos}.}
+    \end{subfigure}\hfill
+    \begin{subfigure}[t]{0.48\textwidth}\centering
+        \includegraphics[width=\textwidth]{./images/captura-04-motivos-stock.png}
+        \caption{Motivos del descarte propios de la reposición.}
+    \end{subfigure}
+    \caption{Tarjeta de reposición de stock.}
+    \label{fig:captura-reposicion}
+\smallskip
+\noindent\textit{Fuente: elaboración propia, captura de la aplicación en producción (tienda de desarrollo de Tiendanube), 22 de noviembre de 2026.}
+\end{figure}
 
 \subsubsection{Aplicación integrada en WordPress}
 \label{sec:captura-wordpress}
