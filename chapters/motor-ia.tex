@@ -1,13 +1,12 @@
 \section{Arquitectura del motor de inteligencia artificial}
 \label{sec:motor-ia}
 
-El Marco Teórico presentó el enfoque híbrido en tres capas sobre el que se organiza el motor de recomendaciones (Sección~\ref{sec:sistemas-recomendacion}): una capa predictiva, una capa de reglas de negocio por rubro y una capa de aprendizaje por refuerzo para la priorización, a las que se suma un modelo de lenguaje que solo redacta. % PENDIENTE-IMPL: B4 (trece reglas), B2 (cálculo del descuento)
+El Marco Teórico presentó el enfoque híbrido en tres capas sobre el que se organiza el motor de recomendaciones (Sección~\ref{sec:sistemas-recomendacion}): una capa predictiva, una capa de reglas de negocio por rubro y una capa de aprendizaje por refuerzo para la priorización, a las que se suma un modelo de lenguaje que solo redacta.
 Esta sección describe cómo el prototipo implementa cada capa: el flujo de datos que las conecta, los algoritmos con sus parámetros, las trece reglas con sus umbrales por rubro, el calendario de fechas clave, la acción sugerida que acompaña a cada recomendación y el cálculo de su descuento, la regla de actualización del bandit y el criterio con el que se ordenan las recomendaciones. Cierra con la forma en que se evalúa el motor, cuyos resultados se presentan en la Sección~\ref{sec:evaluacion-modelos}.
 
 \subsection{Flujo de datos entre las capas}
 \label{sec:motor-flujo}
 
-% PENDIENTE-IMPL: B4 (trece reglas), B1 (acción sugerida armada)
 El motor se ejecuta en el proceso de tareas en segundo plano (\emph{worker}), separado de la API, y se encadena a la sincronización de los datos de cada tienda. La Figura~\ref{fig:motor-capas} resume el recorrido. Cada sincronización, ya sea la incremental, que se repite cada seis horas, o la que disparan los webhooks de la plataforma, deja los datos en el modelo canónico del sistema y encola el recálculo del pronóstico de demanda y de la segmentación de clientes (capa predictiva). Al terminar, se encola la ejecución del motor, que resuelve el rubro de la tienda, aplica las trece reglas sobre las predicciones (capa de reglas), arma la acción sugerida de cada recomendación con sus parámetros (Sección~\ref{sec:motor-accion}), asigna a cada recomendación el puntaje de su tipo según el bandit y completa hasta cuatro recomendaciones activas por tienda (capa de priorización). Antes de guardarla, el modelo de lenguaje redacta su mensaje (capa de explicación). Cuando el comerciante abre el panel, la API ordena las recomendaciones activas con una muestra de Thompson Sampling del día. Cuando un \emph{webhook} informa que una variante se quedó sin stock, la sincronización emite además una notificación para el comerciante y evalúa de inmediato la regla de quiebre de stock sobre esa variante.
 
 \begin{figure}[!htbp]
@@ -19,7 +18,6 @@ El motor se ejecuta en el proceso de tareas en segundo plano (\emph{worker}), se
   \node[caja] (sync) at (0,0) {Sincronización\\(incremental y webhooks)};
   \node[caja] (canon) at (4.4,0) {Modelo canónico\\(PostgreSQL)};
   \node[capa] (pred) at (8.8,0) {\textbf{Capa 1: predictiva}\\Pronóstico de demanda\\Segmentación RFM y CLV};
-  % PENDIENTE-IMPL: B4 (trece reglas), B1 (ejecución aplicada desde Decidata)
   \node[capa] (reglas) at (8.8,-2.2) {\textbf{Capa 2: reglas}\\Trece reglas con\\umbrales por rubro};
   \node[capa] (bandit) at (4.4,-2.2) {\textbf{Capa 3: priorización}\\Bandit con\\Thompson Sampling};
   \node[caja] (llm) at (0,-2.2) {Capa de explicación\\(Gemini, solo redacta)};
@@ -80,7 +78,6 @@ El umbral de inactividad de la tienda es el máximo entre el piso del rubro y la
 
 \paragraph{Resolución del rubro.} Las reglas usan los parámetros del rubro efectivo de la tienda. Si el rubro declarado es uno de los tres soportados, se usa ese. En otro caso, por ejemplo en las tiendas de Tiendanube que ingresan con tipo \emph{general}, se infiere de los nombres de las categorías y los productos mediante listas de palabras clave por rubro: la inferencia es concluyente si al menos tres nombres coinciden con alguna lista y un rubro reúne el 60\% de las coincidencias. Si no lo es, se usan parámetros genéricos, iguales a los de indumentaria, y la recomendación se marca para que la interfaz lo advierta.
 
-% PENDIENTE-IMPL: B4 (cinco reglas nuevas: trece en total, cuatro propias de un rubro)
 \paragraph{Reglas.} El motor aplica trece reglas, resumidas en la Tabla~\ref{tab:motor-reglas}. Nueve son generales: valen para los tres rubros, con los umbrales propios de cada uno (Tabla~\ref{tab:motor-umbrales}). Las otras cuatro son propias de un rubro, porque responden a una dinámica que solo aparece en él: el cambio de estación y la curva de talles rota en indumentaria, el día de baja demanda en gastronomía y la venta cruzada de accesorios en electrónica. Así, el motor no se limita a ajustar los mismos umbrales según el rubro, sino que incorpora reglas específicas de cada uno. Cada regla decide si corresponde recomendar, con qué nivel de prioridad (urgente, atención u oportunidad) y con qué puntaje propio, de 0 a 100, que ordena las recomendaciones de un mismo tipo. Al generar la recomendación, la regla guarda también el resultado esperado contra el que luego se medirá su impacto. Las reglas no repiten una recomendación que ya está activa para el mismo objetivo.
 
 {\renewcommand{\arraystretch}{1.3}
@@ -116,25 +113,19 @@ Revisión de precio (RF-20, HU-05) & Días desde el último cambio de precio $\g
 \hline
 Riesgo de abandono (RF-13, HU-10) & Días sin comprar mayores que el umbral de inactividad de la tienda; una recomendación por tienda con hasta 10 clientes inactivos de mayor CLV & Urgente si alguno es \emph{en riesgo} o \emph{campeón} con CLV en el cuartil superior; si no, atención & Promedio del percentil de CLV de los clientes listados & Tasa de retorno de sus segmentos \\
 \hline
-Fidelización (RF-25, HU-13) & Los 3 clientes con mayor facturación en órdenes pagadas de los últimos 90 días, con correo electrónico; una recomendación por tienda & Oportunidad & Sin puntaje propio (una por tienda) & % PENDIENTE-IMPL: A2-esperado (el código no guarda la tasa de retorno esperada de la fidelización)
+Fidelización (RF-25, HU-13) & Los 3 clientes con mayor facturación en órdenes pagadas de los últimos 90 días, con correo electrónico; una recomendación por tienda & Oportunidad & Sin puntaje propio (una por tienda) &
 Tasa de retorno de sus segmentos \\
 \hline
-% VERIFICAR-COD: seasonRule.js guarda rule_score = min(s/50, 1), en escala 0 a 1 y no 0 a 100 como el resto (la tabla lo expresa como min(2s, 100))
 Cambio de estación (RF-24, HU-12; solo indumentaria) & Producto de la estación que termina, reconocido por palabras clave en su nombre, con al menos 3 unidades en stock, entre 21 días antes y 42 días después del cambio de estación & Oportunidad & $\min(2s,\ 100)$, con $s$ el stock total del producto & Stock disponible al generarla; se mide la proporción vendida \\
 \hline
-% PENDIENTE-IMPL: B4 (carrito abandonado)
 Carrito abandonado (RF-31, HU-15) & Carritos abandonados en los últimos 7 días con al menos un producto con stock; una recomendación por tienda & Atención & Monto total de los carritos, en percentil entre los de la tienda & Tasa de recupero de carritos de la tienda sin cupón \\
 \hline
-% PENDIENTE-IMPL: B4 (segunda compra)
 Segunda compra (RF-32, HU-16) & Clientes con una sola compra, realizada hace entre 30 y 60 días; una recomendación por tienda & Oportunidad & Monto de la primera compra, en percentil & Tasa de segunda compra de la tienda \\
 \hline
-% PENDIENTE-IMPL: B4 (curva de talles rota)
 Curva de talles rota (RF-33, HU-17; solo indumentaria) & Producto con al menos cuatro talles, con stock solo en talles extremos y sin stock en todos los centrales & Atención & Proporción del stock del producto en los talles extremos & Unidades pronosticadas en la ventana de impacto \\
 \hline
-% PENDIENTE-IMPL: B4 (día de baja demanda)
 Día de baja demanda (RF-34, HU-18; solo gastronomía) & Un día de la semana con ventas $\le$ 60\% del promedio de los otros días en las últimas 4 semanas & Oportunidad & Caída porcentual del día frente a ese promedio & Venta promedio de ese día en las 4 semanas \\
 \hline
-% PENDIENTE-IMPL: B4 (venta cruzada de accesorios)
 Venta cruzada de accesorios (RF-35, HU-19; solo electrónica) & Cliente que compró un equipo y no compró accesorios en los 15 días siguientes & Oportunidad & Monto de la compra del equipo, en percentil & Tasa de compra de accesorios de la tienda sin cupón \\
 \hline
 \end{longtable}}
@@ -146,7 +137,6 @@ Venta cruzada de accesorios (RF-35, HU-19; solo electrónica) & Cliente que comp
 
 \paragraph{Umbrales por rubro y constantes fijas.} Los umbrales que diferencian a los rubros se resumen en la Tabla~\ref{tab:motor-umbrales}. Se definieron a partir de las entrevistas de los Anexos B a F y de las particularidades de cada rubro descriptas en la Sección~\ref{sec:comportamiento-consumidor}, y se configuran sin modificar las reglas. Además de estos umbrales, el motor usa constantes iguales para todos los rubros: en la preparación anticipada, un pico de al menos 30\% sobre el promedio reciente, una anticipación mínima de 48 horas, un alcance de 7 días y el nivel de atención a 3 días o menos; en las fechas clave, una anticipación de 14 días y 5 productos destacados; en el abandono, el cuartil superior de CLV para la prioridad urgente; y en la inferencia de ejecuciones, una suba del stock de al menos 20\% del stock de base (como mínimo una unidad) para una reposición, un cambio de precio de al menos 1\% para una revisión de precio y una baja de al menos 5\% para una promoción por baja rotación. La fidelización usa una ventana de 90 días y lista a los 3 clientes de mayor facturación. El cambio de estación toma como inicio de cada estación del hemisferio sur el 21 de marzo (otoño), el 21 de junio (invierno), el 21 de septiembre (primavera) y el 21 de diciembre (verano), y reconoce los productos de verano y de invierno por palabras clave en su nombre, como \emph{malla}, \emph{musculosa} o \emph{short} para el verano y \emph{campera}, \emph{buzo} o \emph{polar} para el invierno.
 
-% PENDIENTE-IMPL: B4 (umbrales de las reglas nuevas)
 Las cinco reglas incorporadas para dejar la acción lista usan, también, constantes iguales en los rubros donde se aplican: 7 días hacia atrás para los carritos abandonados; entre 30 y 60 días desde la única compra para la segunda compra; al menos cuatro talles, con los dos extremos de la curva como talles extremos y el resto como centrales, para la curva de talles rota; un día con ventas de hasta el 60\% del promedio de los otros días, medido sobre las últimas 4 semanas, para el día de baja demanda; y 15 días sin accesorios después de la compra de un equipo para la venta cruzada. En la curva de talles, los talles se ordenan según la escala habitual (XS a XXL, o numérica); en la venta cruzada, los equipos y los accesorios se distinguen por palabras clave en el nombre de la categoría y del producto, con el mismo mecanismo que la resolución del rubro.
 
 \begin{table}[!htbp]
@@ -186,7 +176,6 @@ Fidelización: ventana de facturación (días) y clientes listados & 90 y 3 & 90
 \hline
 Cambio de estación: días antes y después del cambio; stock mínimo (unidades) & --- & 21 y 42; 3 & --- \\
 \hline
-% PENDIENTE-IMPL: B4 (filas de las reglas nuevas)
 Carrito abandonado: antigüedad máxima del carrito (días) & 7 & 7 & 7 \\
 \hline
 Segunda compra: días desde la única compra & 30 a 60 & 30 a 60 & 30 a 60 \\
@@ -247,7 +236,6 @@ Navidad & 25 de diciembre & 7 días antes & 1,6 & 1,5 & 1,6 \\
 \subsection{Capa de priorización}
 \label{sec:motor-bandit}
 
-% PENDIENTE-IMPL: B4 y A1-bandit (el código tiene siete brazos; faltan season_change y los cinco tipos nuevos)
 La capa de priorización implementa el bandido multibrazo descripto en la Sección~\ref{sec:aprendizaje-refuerzo}. Cada tienda tiene trece brazos, uno por tipo de recomendación, y cada brazo mantiene una distribución Beta$(\alpha, \beta)$ sobre la probabilidad de que una recomendación de ese tipo resulte exitosa en esa tienda.
 
 \paragraph{Elección del método.} Se eligió Thompson Sampling frente a las otras dos estrategias habituales del bandido multibrazo, $\varepsilon$-greedy y los métodos de cota superior de confianza (UCB) \parencite{Sutton2018}. $\varepsilon$-greedy explora con una probabilidad fija, elegida de antemano, y cuando explora elige cualquier brazo al azar, incluso los que ya mostraron malos resultados \parencite{Russo2018}. UCB elige de forma determinista el brazo con mayor cota superior y, en su forma estándar, no incorpora una distribución previa. Thompson Sampling se ajusta a tres características del problema: la recompensa es binaria, por lo que la distribución Beta se actualiza sumando uno a uno de sus parámetros; la distribución previa permite que una tienda nueva parta de lo aprendido en su rubro; y la exploración disminuye a medida que se acumulan resultados, sin un parámetro que deba calibrarse sin datos. \textcite{Chapelle2011} muestran, además, que obtiene resultados competitivos frente a UCB y $\varepsilon$-greedy en problemas de publicidad y de recomendación. Las tres estrategias no se compararon sobre el historial simulado, porque sus tasas de éxito las fijó el equipo (Sección~\ref{sec:eval-bandit}).
@@ -261,18 +249,15 @@ La capa de priorización implementa el bandido multibrazo descripto en la Secci�
     \item \emph{fracaso}, si se ejecutó sin impacto positivo o sin dato para medirlo o si venció sin ejecutarse: se suma uno a $\beta$.
 \end{itemize}
 
-% PENDIENTE-IMPL: A4-bandit (hoy los descartes no actualizan el bandit; TODO en bandit/index.js)
 El descarte se traduce en un resultado según el motivo que elige el comerciante (RF-14). «No aplica a mi tienda» y «Otro» cuentan como fracaso del brazo, porque indican que la recomendación no era adecuada. «Ya lo hice por mi cuenta» se registra como una ejecución manual y cuenta como éxito, sin medición de impacto, porque el comerciante tomó la acción que el sistema proponía. «No me interesa ahora» no actualiza el bandit: expresa un problema de momento y no de la recomendación, y penalizar al brazo por ese motivo enseñaría al sistema a dejar de proponer acciones que el comerciante sí valora. Si el comerciante deshace un descarte antes de que se registre el resultado, el descarte no se cuenta.
 
-% PENDIENTE-IMPL: B1 (origen «aplicada desde Decidata»)
 Las ejecuciones tienen tres orígenes: la aplicada desde Decidata (RF-28), la confirmada por el comerciante y la inferida a partir de los cambios de stock y de precio. La primera es la más confiable, porque el propio sistema realizó el cambio en la plataforma con los parámetros que el comerciante confirmó y conoce la fecha exacta en que lo hizo; la inferida es la menos confiable, porque el cambio observado puede deberse a otra causa. Cada recomendación se cuenta una sola vez. Después de actualizar los brazos, se recalculan las distribuciones previas de cada rubro, agrupando cada resultado por el rubro con el que el motor generó la recomendación.
 
 \paragraph{Orden de las recomendaciones.} El panel ordena las recomendaciones activas con tres criterios sucesivos. Primero, el nivel de prioridad que fijó la regla: las urgentes, luego las de atención y por último las oportunidades. Dentro de un mismo nivel, la muestra de Thompson Sampling del tipo de cada recomendación, de mayor a menor. Dentro de un mismo tipo, el puntaje de la regla. Las muestras se toman con un generador pseudoaleatorio cuya semilla combina la tienda y el día, de modo que el orden no cambia durante el día y una demostración puede repetirse. El nivel de prioridad tiene precedencia sobre el aprendizaje porque responde a la urgencia del caso, como un quiebre de stock inminente, que el historial de éxitos de un tipo no debe postergar. Cada recomendación guarda, además, la media posterior de su brazo multiplicada por 100 como puntaje de referencia, y el panel muestra una explicación breve de lo aprendido; por ejemplo: «En tu tienda se ejecutaron 4 recomendaciones de este tipo y 3 de 4 evaluadas tuvieron impacto positivo».
 
-\paragraph{Cupo de recomendaciones activas.} Cada tienda tiene como máximo cuatro recomendaciones activas (RF-23), para que el panel muestre solo las acciones más relevantes. Cuando las reglas producen más candidatas que lugares libres, el motor completa el cupo en orden: primero por nivel de prioridad y, dentro de un mismo nivel, por la muestra de Thompson Sampling del tipo de cada candidata, con como máximo una recomendación nueva por tipo en cada ejecución, para que el panel no se llene con varias recomendaciones de la misma regla. % PENDIENTE-IMPL: B4 (más reglas compitiendo por el cupo)
+\paragraph{Cupo de recomendaciones activas.} Cada tienda tiene como máximo cuatro recomendaciones activas (RF-23), para que el panel muestre solo las acciones más relevantes. Cuando las reglas producen más candidatas que lugares libres, el motor completa el cupo en orden: primero por nivel de prioridad y, dentro de un mismo nivel, por la muestra de Thompson Sampling del tipo de cada candidata, con como máximo una recomendación nueva por tipo en cada ejecución, para que el panel no se llene con varias recomendaciones de la misma regla.
 Con trece reglas y cuatro lugares, la mayoría de las candidatas compite por los mismos lugares, y es la priorización, y no el orden en que se ejecutan las reglas, la que decide cuáles llegan al panel. Las candidatas que no entran se vuelven a evaluar en las siguientes ejecuciones del motor, a medida que se liberan lugares porque una recomendación se ejecuta, se descarta o vence. Las notificaciones no ocupan lugares del cupo.
 
-% PENDIENTE-IMPL: B1, B2 (subsección completa)
 \subsection{Acción sugerida y cálculo del descuento}
 \label{sec:motor-accion}
 
