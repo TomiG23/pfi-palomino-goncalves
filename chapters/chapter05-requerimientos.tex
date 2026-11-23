@@ -113,7 +113,7 @@ RF-27 & El sistema debe permitir al usuario elegir, para cada nivel de prioridad
 RF-28 & El sistema debe presentar cada recomendación de descuento o de cupón con la acción armada, con sus valores editables: el código, el porcentaje y la vigencia del cupón, o el precio promocional de cada variante. Los botones de acción son: \enquote{Crear cupón en mi tienda} (cupón), \enquote{Aplicar precio promocional} (precio promocional) y \enquote{Prefiero hacerlo yo} (copia los datos para cargarlos a mano); la tarjeta ofrece siempre, además, \enquote{Ya lo apliqué por mi cuenta}, que registra la ejecución manual. Al confirmar, el sistema aplica la acción en la tienda de Tiendanube mediante su API y marca la recomendación como ejecutada con origen \enquote{aplicada desde Decidata}. En tiendas de ejemplo sin identificador de variante de Tiendanube, responde con un mensaje claro sin modificar datos. En los cupones, el código creado se precarga en el correo de RF-26. El sistema nunca aplica una acción sin la confirmación del usuario (RNF-23). & Sección~\ref{sec:dss}; Sección~\ref{sec:brainstorming-resultados} \\
 \hline
 
-RF-29 & El sistema debe permitir al usuario deshacer una acción aplicada desde Decidata mientras no se haya completado la evaluación de impacto ni se haya enviado el cupón por correo: revierte el precio promocional anterior o lo vacía, o borra el cupón; registra la fecha del deshacer y devuelve la recomendación al estado activo. No se ofrece si no se conoce el estado anterior o si el cupón ya se envió por correo a clientes. & Sección~\ref{sec:feedback-loop} \\ % VERIFICAR-COD: confirmar en producción (deshacer aplicado)
+RF-29 & El sistema debe permitir al usuario deshacer una acción aplicada desde Decidata mientras no se haya completado la evaluación de impacto ni se haya enviado el cupón por correo: revierte el precio promocional anterior o lo vacía, o borra el cupón; registra la fecha del deshacer y devuelve la recomendación al estado activo. No se ofrece si no se conoce el estado anterior o si el cupón ya se envió por correo a clientes. & Sección~\ref{sec:feedback-loop} \\
 \hline
 
 RF-30 & El sistema debe calcular el descuento sugerido sin el modelo de lenguaje: en el precio promocional, el porcentaje surge de una tabla por rubro y por días sin vender de la variante (Tabla~\ref{tab:motor-descuentos}) y, si la variante tiene costo cargado (\texttt{cost}, RF-11), se acota para que el precio con descuento no quede por debajo del costo multiplicado por 1,10; en el cupón, sugiere un 10\%, editable, con un máximo sugerido del 15\% y un aviso si el comerciante lo supera. La vigencia predeterminada es de 14 días. Antes de sugerir un cupón, el sistema consulta los cupones vigentes de la tienda y, si ya hay un cupón porcentual vigente, lo informa y recomienda difundirlo en lugar de crear otro. & Sección~\ref{sec:comportamiento-consumidor}; E04 (Anexo~\ref{anx:entrevista-e04}) \\
@@ -992,7 +992,7 @@ Postcondiciones & El cupón o el precio promocional queda aplicado en la tienda,
     \item El comerciante confirma con el botón \enquote{Crear cupón en mi tienda} (cupón) o \enquote{Aplicar precio promocional} (precio promocional). La opción \enquote{Ya lo apliqué por mi cuenta} también está disponible para registrar que la acción ya se realizó fuera del sistema.
     \item El backend crea el cupón o carga el precio promocional de las variantes mediante la API de Tiendanube.
     \item El sistema registra la acción aplicada con los parámetros confirmados, el identificador del cupón o de las variantes en la plataforma y la fecha, y marca la recomendación como ejecutada con origen \enquote{aplicada desde Decidata}.
-    \item El sistema confirma la aplicación y ofrece \enquote{Deshacer}; si la acción es un cupón, ofrece además enviarlo por correo con el código precargado (CU-10). % VERIFICAR-COD: confirmar en producción (deshacer aplicado: revierte precio promocional o borra cupón, devuelve a «Para hacer»)
+    \item El sistema confirma la aplicación y ofrece \enquote{Deshacer}; si la acción es un cupón, ofrece además enviarlo por correo con el código precargado (CU-10).
 \end{enumerate}
 
 \noindent\textbf{Flujos alternativos:}
@@ -1304,8 +1304,12 @@ En las recomendaciones de descuento o de cupón, el detalle muestra la acción a
     \begin{subfigure}{\textwidth}\centering
         \includegraphics[width=0.9\textwidth]{./images/captura-06-promo-tiendanube.png}
         \caption{Precio promocional cargado en el panel de administración de Tiendanube (variante S).}
+    \end{subfigure}\\[6pt]
+    \begin{subfigure}{\textwidth}\centering
+        \includegraphics[width=0.9\textwidth]{./images/captura-10-promo-revertida.png}
+        \caption{Después de \enquote{Deshacer}: la variante S vuelve a \$28.000, sin precio promocional.}
     \end{subfigure}
-    \caption{Acción sugerida lista para aplicar con un clic y su resultado en la tienda.}
+    \caption{Acción sugerida lista para aplicar con un clic, su resultado en la tienda y su reversión con \enquote{Deshacer}.}
     \label{fig:captura-accion}
 \smallskip
 \noindent\textit{Fuente: elaboración propia, captura de la aplicación en producción (tienda de desarrollo de Tiendanube), 22 de noviembre de 2026.}
