@@ -1,7 +1,7 @@
 \section{Evaluación de los modelos}
 \label{sec:evaluacion-modelos}
 
-Los modelos del motor se desarrollaron y se evaluaron sobre un conjunto de datos generado por un script propio (Sección~\ref{sec:eval-generacion}). Métricas obtenidas solo sobre datos generados no demuestran el funcionamiento del sistema con datos reales, por lo que esta sección explicita cómo se generan esos datos, qué proporción de los datos disponibles representan, qué resultados obtiene cada capa del motor sobre ellos, incluidos los casos en que el modelo no supera a las referencias, y qué partes del sistema solo pueden validarse con su uso en tiendas reales. Los resultados se midieron el 17 de octubre de 2026 con el conjunto recién generado, sobre una base de datos local, salvo los de rendimiento, que se midieron sobre una rama descartable de la base de datos en Neon, y cada uno puede reproducirse con un comando del repositorio del prototipo.
+Los modelos del motor se desarrollaron y se evaluaron sobre un conjunto de datos generado por un script propio (Sección~\ref{sec:eval-generacion}). Métricas obtenidas solo sobre datos generados no demuestran el funcionamiento del sistema con datos reales, por lo que esta sección explicita cómo se generan esos datos, qué proporción de los datos disponibles representan, qué resultados obtiene cada capa del motor sobre ellos, incluidos los casos en que el modelo no supera a las referencias, y qué partes del sistema solo pueden validarse con su uso en tiendas reales. Los resultados se midieron el 22 de noviembre de 2026 sobre una rama de la base de datos en Neon, con el conjunto generado hasta el 14 de noviembre, salvo la latencia del panel, medida el 17 de octubre de 2026, y cada uno puede reproducirse con un comando del repositorio del prototipo.
 
 \subsection{Generación del conjunto de datos}
 \label{sec:eval-generacion}
@@ -73,7 +73,7 @@ Tipo de cambio & Tendencia diaria de +0,08\%, ruido de $\pm$1,5\% y saltos ocasi
 \noindent\textit{Fuente: elaboración propia sobre la base del código del prototipo.}
 \end{table}
 
-Para que las afirmaciones sobre el conjunto generado no dependan de los parámetros sino de los datos, sus características se midieron sobre los datos almacenados (Tabla~\ref{tab:eval-perfil}). El patrón semanal medido difiere del configurado en a lo sumo 0,05 en cada día de la semana, y las órdenes de los días de fecha clave superan a las del resto entre un 28\% y un 41\%. MariCafé registra 47,2 órdenes por día sobre una base de 35 porque el período abarca el invierno y las fechas clave.
+Para que las afirmaciones sobre el conjunto generado no dependan de los parámetros sino de los datos, sus características se midieron sobre los datos almacenados (Tabla~\ref{tab:eval-perfil}). El patrón semanal medido difiere del configurado en a lo sumo 0,07 en cada día de la semana, y las órdenes de los días de fecha clave superan a las del resto entre un 27\% y un 42\%. MariCafé registra 46,9 órdenes por día sobre una base de 35 porque el período abarca el invierno y las fechas clave.
 
 \begin{table}[!htbp]
 \centering
@@ -86,30 +86,30 @@ Para que las afirmaciones sobre el conjunto generado no dependan de los parámet
 \hline
 \textbf{Característica} & \textbf{MariCafé} & \textbf{Lucía Bordados} & \textbf{TecnoShop BA} \\
 \hline
-Órdenes & 8.685 & 1.089 & 779 \\
+Órdenes & 8.678 & 1.150 & 813 \\
 \hline
-Órdenes por día (coeficiente de variación) & 47,2 (0,38) & 6,02 (0,30) & 4,23 (0,21) \\
+Órdenes por día (coeficiente de variación) & 46,9 (0,41) & 6,22 (0,33) & 4,39 (0,24) \\
 \hline
-Órdenes en fechas clave frente al resto & $\times$1,28 & $\times$1,35 & $\times$1,41 \\
+Órdenes en fechas clave frente al resto & $\times$1,27 & $\times$1,42 & $\times$1,40 \\
 \hline
-Órdenes pagadas & 85,6\% & 86,9\% & 85,9\% \\
+Órdenes pagadas & 86,1\% & 85,0\% & 86,8\% \\
 \hline
-Variantes con ventas & 18 & 32 & 17 \\
+Variantes con ventas & 18 & 32 & 20 \\
 \hline
-Mediana de días sin ventas por variante & 2\% & 70\% & 65\% \\
+Mediana de días sin ventas por variante & 2\% & 70\% & 67\% \\
 \hline
-Clientes con compras / que recompran & 247 / 97,6\% & 112 / 85,7\% & 89 / 91,0\% \\
+Clientes con compras / que recompran & 248 / 98,8\% & 111 / 88,3\% & 94 / 85,1\% \\
 \hline
-Mediana del ciclo de recompra & 3 días & 10 días & 13 días \\
+Mediana del ciclo de recompra & 4 días & 10 días & 11 días \\
 \hline
-Facturación del 20\% de clientes que más compra & 40,8\% & 42,9\% & 41,8\% \\
+Facturación del 20\% de clientes que más compra & 40,9\% & 42,7\% & 43,1\% \\
 \hline
-Clientes inactivos según el umbral del rubro & 28,7\% & 26,8\% & 11,2\% \\
+Clientes inactivos según el umbral del rubro & 28,6\% & 27,0\% & 7,4\% \\
 \hline
 \end{tabular}
 
 \smallskip
-\noindent\textit{Fuente: elaboración propia sobre la base del conjunto generado el 17 de octubre de 2026.}
+\noindent\textit{Fuente: elaboración propia sobre la base de la medición del 22 de noviembre de 2026, con el conjunto generado hasta el 14 de noviembre (\texttt{docs/evaluacion/mediciones-2026-11-22.md} del repositorio del prototipo).}
 \end{table}
 
 Las tres tiendas cubren los dos perfiles de demanda que el motor debe manejar. La de gastronomía tiene una demanda alta y diaria, sin días sin ventas y con un patrón semanal marcado: es el caso en que el modelo de Holt-Winters dispone de datos suficientes. Las de indumentaria y electrónica tienen una demanda baja por variante, de alrededor de una unidad por día y con la mayoría de los días sin ventas: es el caso que el motor resuelve con un promedio móvil y marca como de baja confianza (Sección~\ref{sec:motor-predictiva}). Además, los catálogos contienen de forma deliberada los escenarios de las historias de usuario: el quiebre de stock (HU-01), la rotación decreciente (HU-03), el precio desactualizado (HU-05), las fechas clave (HU-06) y los clientes en riesgo (HU-10).
@@ -245,17 +245,17 @@ Revisión de precio & 0,50 $\rightarrow$ 0,500 & 0,35 $\rightarrow$ 0,333 & 0,75
 \hline
 Clientes en riesgo & 0,30 $\rightarrow$ 0,385 & 0,40 $\rightarrow$ 0,417 & 0,25 $\rightarrow$ 0,333 \\
 \hline
-Promoción de fecha clave & 0,60 $\rightarrow$ 0,600 & 0,70 $\rightarrow$ 0,600 & 0,65 $\rightarrow$ 0,600 \\
+Promoción de fecha clave & 0,60 $\rightarrow$ 0,667 & 0,70 $\rightarrow$ 0,667 & 0,65 $\rightarrow$ 0,500 \\
 \hline
 \end{tabular}
 
 \smallskip
 \noindent\textit{Nota: en cada celda, la tasa fijada en el script $\rightarrow$ la media posterior aprendida.}
 
-\noindent\textit{Fuente: elaboración propia sobre la base del conjunto generado el 17 de octubre de 2026.}
+\noindent\textit{Fuente: elaboración propia sobre la base de la medición del 22 de noviembre de 2026, con el conjunto generado hasta el 14 de noviembre (\texttt{docs/evaluacion/mediciones-2026-11-22.md} del repositorio del prototipo).}
 \end{table}
 
-En gastronomía y en indumentaria, los tres tipos que el bandit prioriza son los mismos tres con mayor tasa fijada; en electrónica, la reposición de stock queda primera aunque su tasa fijada es la tercera, porque su media aprendida, 0,793, quedó por encima de esa tasa. La promoción de fecha clave cuenta con solo cinco observaciones por tienda y su media queda cerca de la distribución previa.
+En gastronomía y en indumentaria, los tres tipos que el bandit prioriza son los mismos tres con mayor tasa fijada; en electrónica, la reposición de stock queda primera aunque su tasa fijada es la tercera, porque su media aprendida, 0,793, quedó por encima de esa tasa. La promoción de fecha clave cuenta con solo seis observaciones por tienda y su media queda cerca de la distribución previa.
 
 Este resultado contiene una circularidad que debe declararse: el bandit aprendió de un historial cuyas tasas de éxito fijó el propio equipo. Que las recupere demuestra que el mecanismo de actualización y de priorización funciona como se diseñó, pero no dice nada sobre qué tipos de recomendación resultan exitosos en tiendas reales, ni sobre si el bandit mejora la priorización con el uso. La circularidad alcanza también a las tiendas que se conecten por primera vez: la distribución previa de cada rubro se calcula con los resultados de todas las tiendas de ese rubro, incluidos los del historial simulado, por lo que una tienda real comienza con una previa derivada de las tasas fijadas. El efecto está acotado, porque esa previa equivale a cuatro observaciones y la evidencia propia de la tienda pasa a dominar rápidamente, pero en una operación con tiendas reales las previas deberían calcularse excluyendo el historial simulado. Del mismo modo, la mitad de las recomendaciones simuladas de los tipos que admiten inferencia se marca como ejecutada por inferencia al azar, por lo que el historial tampoco permite evaluar la precisión de la inferencia de la ejecución.
 
