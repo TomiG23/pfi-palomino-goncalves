@@ -505,7 +505,6 @@ El backend no mantiene estado de sesión en el servidor: cada solicitud se auten
 
 Los permisos que la aplicación pide a cada plataforma aplican el principio de mínimo privilegio, que en el modelo STRIDE limita el daño de un incremento de privilegios: la aplicación solicita solo los permisos que usa y explica para qué usa cada uno (RNF-22). En Tiendanube, los permisos no se definen en el código, sino en la configuración de la aplicación en el panel de Partners, y el comerciante los acepta al instalarla. La Tabla~\ref{tab:permisos-app} resume los permisos de Tiendanube y su uso.
 
-% VERIFICAR-COD: nombre exacto del permiso de Tiendanube para leer los carritos abandonados (RF-31)
 \begin{table}[!htbp]
 \centering
 \caption{Permisos que la aplicación solicita a Tiendanube}
@@ -517,7 +516,7 @@ Los permisos que la aplicación pide a cada plataforma aplican el principio de m
 \hline
 \texttt{read\_products} (View Products) & Sincronizar el catálogo de productos y variantes, con su stock, su precio y su costo. \\
 \hline
-\texttt{read\_orders} (View Orders) & Sincronizar las órdenes para el pronóstico, las reglas y la medición del impacto, incluido el cupón aplicado en cada orden. \\
+\texttt{read\_orders} (View Orders) & Sincronizar las órdenes para el pronóstico, las reglas y la medición del impacto, incluido el cupón aplicado en cada orden, y leer los carritos abandonados (RF-31). \\
 \hline
 \texttt{read\_customers} & Sincronizar los clientes para la segmentación, el CLV y el envío de cupones. \\
 \hline
