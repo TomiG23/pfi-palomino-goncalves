@@ -1,0 +1,50 @@
+% Diagrama de flujo del proceso de generación y evaluación de recomendaciones.
+\begin{tikzpicture}[
+    paso/.style={draw, rounded corners=3pt, align=center, font=\footnotesize, text width=8cm, minimum height=0.8cm, fill=white},
+    datos/.style={paso, fill=gray!10},
+    capa/.style={paso, fill=gray!20},
+    ejec/.style={draw, rounded corners=3pt, align=center, font=\scriptsize, text width=2.9cm, minimum height=1.1cm, fill=white},
+    lateral/.style={draw, dashed, rounded corners=3pt, align=center, font=\scriptsize, text width=2.5cm, minimum height=0.8cm, fill=white},
+    flecha/.style={-{Stealth[length=5pt]}, thin},
+    vuelta/.style={-{Stealth[length=5pt]}, thin, dashed},
+    etiq/.style={font=\scriptsize, fill=white, inner sep=1pt, align=center}]
+
+  \def\sep{0.45}
+  \node[datos] (datos) at (0,0) {Datos de la tienda (Tiendanube o WooCommerce)};
+  \node[paso,  anchor=north] (sync)   at ($(datos.south)+(0,-\sep)$)  {Sincronización e ingesta (ETL):\\inicial, incremental cada seis horas y por \emph{webhooks}};
+  \node[datos, anchor=north] (bd)     at ($(sync.south)+(0,-\sep)$)   {Modelo canónico (PostgreSQL en Neon)};
+  \node[capa,  anchor=north] (pred)   at ($(bd.south)+(0,-\sep)$)     {Capa predictiva: pronóstico de demanda\\y segmentación RFM con k-means};
+  \node[paso,  anchor=north] (rubro)  at ($(pred.south)+(0,-\sep)$)   {Resolución del rubro de la tienda};
+  \node[capa,  anchor=north] (reglas) at ($(rubro.south)+(0,-\sep)$)  {Motor de trece reglas con umbrales por rubro\\(acción sugerida y esperado de cada recomendación)};
+  \node[capa,  anchor=north] (bandit) at ($(reglas.south)+(0,-\sep)$) {Priorización con el bandit (Thompson Sampling)\\y cupo de cuatro recomendaciones activas};
+  \node[paso,  anchor=north] (llm)    at ($(bandit.south)+(0,-\sep)$) {Redacción con Gemini\\(plantilla de respaldo si la respuesta no es válida)};
+  \node[datos, anchor=north] (panel)  at ($(llm.south)+(0,-\sep)$)    {Panel del comerciante: Para hacer};
+  \node[lateral] (notif) at ($(reglas.east)+(1.9,0)$) {Notificaciones\\(por ejemplo, stock agotado)};
+
+  \path (panel.south) ++(0,-1.0) coordinate (fila);
+  \node[ejec, anchor=north] (clic)     at ($(fila)+(-5.1,0)$) {Aplicar con un clic\\(cupón o precio promocional, en Tiendanube)};
+  \node[ejec, anchor=north] (manual)   at ($(fila)+(-1.7,0)$) {\enquote{Ya lo apliqué por mi cuenta}\\(indica la fecha)};
+  \node[ejec, anchor=north] (infer)    at ($(fila)+(1.7,0)$)  {Ejecución inferida (con confirmación si es un descuento o un precio)};
+  \node[ejec, anchor=north] (descarte) at ($(fila)+(5.1,0)$)  {Descarte con motivo};
+
+  \path (clic.south) ++(0,-0.9) coordinate (fila2);
+  \node[paso, text width=5.6cm, anchor=north] (curso) at (fila2 -| manual) {En curso: ventana de medición};
+  \node[lateral, anchor=east] (deshacer) at ($(curso.west)+(-0.6,0)$) {\enquote{Deshacer}: revierte en la tienda y vuelve a Para hacer};
+  \node[capa, text width=5.6cm, anchor=north] (impacto) at ($(curso.south)+(0,-\sep)$) {Evaluación del impacto:\\real contra esperado\\(estimación, no causalidad)};
+
+  \foreach \a/\b in {datos/sync, sync/bd, bd/pred, pred/rubro, rubro/reglas, reglas/bandit, bandit/llm, llm/panel}
+    \draw[flecha] (\a) -- (\b);
+  \draw[flecha] (reglas) -- (notif);
+  \foreach \e in {clic, manual, infer, descarte}
+    \draw[flecha] (panel.south) -- (\e.north);
+  \foreach \e in {clic, manual, infer}
+    \draw[flecha] (\e.south) -- (curso.north);
+  \draw[flecha] (curso) -- (impacto);
+  \draw[vuelta] (curso.west) -- (deshacer.east);
+  \draw[vuelta] (deshacer.west) -- ++(-0.3,0) |- (panel.west);
+
+  % Resultado al bandit: el impacto medido y el motivo del descarte
+  \coordinate (carril) at ($(notif.east)+(0.35,0)$);
+  \draw[vuelta] (impacto.east) -- (impacto.east -| carril) -- (carril |- bandit.east) -- node[etiq, above, pos=0.5]{éxito o fracaso} (bandit.east);
+  \draw[vuelta] (descarte.south) |- ($(impacto.east -| carril)+(0,0)$);
+\end{tikzpicture}
