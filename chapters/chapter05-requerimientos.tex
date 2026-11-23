@@ -1320,7 +1320,6 @@ En las recomendaciones de descuento o de cupón, el detalle muestra la acción a
 
 Cuando el sistema detecta automáticamente la ejecución de una recomendación (CU-05, flujo alternativo 3c), no siempre la da por hecha. Si detecta un descuento o un cambio de precio, la tarjeta pregunta, por ejemplo, \enquote{Vimos un 20\% de descuento en [producto]. ¿Lo aplicaste por esta recomendación?}, con los botones \enquote{Sí} y \enquote{No}. Si la ejecución queda registrada como inferida, como en una reposición, el detalle ofrece el botón \enquote{No la apliqué por esta recomendación}, que permite al comerciante rechazar la inferencia. Esta diferenciación es necesaria para que el usuario comprenda el origen del cambio de estado y pueda corregirlo sin penalizar el aprendizaje del bandit por un falso positivo.
 
-% TODO: agregar captura de pantalla de ejecución inferida cuando esté disponible.
 
 \subsubsection{Comparación esperado vs.\ real}
 \label{sec:captura-esperado-real}
@@ -1343,14 +1342,12 @@ La Figura~\ref{fig:captura-resultado} muestra el resultado de una recomendación
 
 La tarjeta de recomendación de tipo \enquote{preparación} (HU-02) muestra el producto o variante a preparar, la cantidad de unidades pronosticadas para el pico y la fecha proyectada del pico, con una etiqueta de anticipación en días. La acción sugerida varía por rubro: en gastronomía indica qué insumos preparar; en indumentaria, qué talle o variante reponer antes del pico.
 
-% TODO: agregar captura de pantalla de preparación anticipada cuando esté disponible.
 
 \subsubsection{Recomendación de fecha clave}
 \label{sec:captura-fecha-clave}
 
 La tarjeta de recomendación de fecha clave (HU-06) identifica la fecha comercial próxima, los productos sugeridos para la promoción y la anticipación en días. El mensaje generado por Gemini incluye el nombre de la fecha y una sugerencia de acción diferenciada por rubro.
 
-% TODO: agregar captura de pantalla de fecha clave cuando esté disponible.
 
 \subsubsection{Tarjeta de reposición de stock}
 \label{sec:captura-reposicion}
@@ -1377,4 +1374,3 @@ La tarjeta de reposición de stock (HU-01) no incluye la opción \enquote{Ya lo 
 
 La misma interfaz React con componentes Nimbus se carga en el panel de administración de WordPress mediante el plugin Decidata (CU-09). El plugin crea una página de menú en wp-admin e incluye la aplicación como iframe, replicando la experiencia de Tiendanube. Los componentes Nimbus mantienen la consistencia visual en ambas plataformas (RNF-03).
 
-% TODO: agregar captura de pantalla de la app en WordPress cuando esté disponible.

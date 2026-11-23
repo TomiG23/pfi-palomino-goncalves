@@ -326,7 +326,6 @@ Resend & API de correo transaccional con SDK oficial para Node.js (\texttt{resen
 \hline
 Amazon SES & Costo por correo muy bajo: USD~0,10 cada 1.000 correos en la modalidad sin plan \parencite{AmazonSESPricing2026}; alta capacidad de envío & Requiere una cuenta de AWS, la configuración de identidades y permisos de IAM y la salida del entorno de prueba (\emph{sandbox}) de la cuenta antes de enviar a cualquier destinatario & Descartado para el prototipo: más configuración sin un beneficio en su volumen; opción si el sistema migra a AWS \\
 \hline
-% VERIFICAR-FUENTE: fin del plan gratuito permanente de SendGrid (dato de fuentes de terceros; la página oficial de precios no se pudo consultar)
 SendGrid (Twilio) & Servicio maduro y ampliamente documentado, con SDK oficial para Node.js & Para cuentas nuevas no ofrece un plan gratuito permanente, sino una prueba por tiempo limitado; más funciones de marketing de las que el prototipo usa & Descartado: sin plan gratuito permanente para el desarrollo y la validación \\
 \hline
 Nodemailer con SMTP & Biblioteca de código abierto, sin un proveedor dedicado & La entrega depende de la reputación del servidor SMTP elegido; una cuenta personal impone límites de envío y no permite usar el dominio del sistema como remitente & Descartado: no garantiza la entrega de correos a clientes reales \\
