@@ -43,7 +43,7 @@ El motor se ejecuta en el proceso de tareas en segundo plano (\emph{worker}), se
 \noindent\textit{Fuente: elaboración propia.}
 \end{figure}
 
-El ciclo se cierra con dos tareas adicionales. Después de cada sincronización incremental, la inferencia de ejecuciones compara las fotos de stock y precio de las variantes con lo que proponía cada recomendación activa. Una vez por día, a las 5 de la mañana (hora de Argentina), la evaluación de impacto compara el resultado real de las recomendaciones cuya ventana terminó con el esperado que se fijó al generarlas, registra cada resultado como éxito o fracaso en el bandit y recalcula las distribuciones previas de cada rubro. El momento en que el comerciante ve ese resultado lo elige él mismo, para cada nivel de prioridad, entre 7, 14 y 30 días desde la ejecución (RF-27); la elección no modifica la ventana de evaluación del rubro, con la que se mide el impacto, sino solo cuándo se muestra la medición.
+El ciclo se cierra con dos tareas adicionales. Después de cada sincronización incremental, la inferencia de ejecuciones compara las fotos de stock y precio de las variantes con lo que proponía cada recomendación activa. Una vez por día, a las 5 de la mañana (hora de Argentina), la evaluación de impacto compara el resultado real de las recomendaciones cuya ventana terminó con el esperado que se fijó al generarlas, registra cada resultado como éxito o fracaso en el bandit y recalcula las distribuciones previas de cada rubro. El momento en que el comerciante ve ese resultado lo elige él mismo, para cada nivel de prioridad: apenas se mide o a los 7, 14 o 30 días desde la ejecución (RF-27); la elección no modifica la ventana de evaluación del rubro, con la que se mide el impacto, sino solo cuándo se muestra la medición.
 
 \subsection{Capa predictiva}
 \label{sec:motor-predictiva}
@@ -314,7 +314,7 @@ Más de 60 & 30\% & 20\% & 15\% \\
 
 Los porcentajes son más bajos en electrónica, donde el margen es más chico y el costo de reposición depende del dólar (Sección~\ref{sec:comportamiento-consumidor}), y más altos en indumentaria, donde la liquidación de temporada es una práctica habitual: E02 relató que, al pasar la temporada de calor, vendía las remeras \enquote{a mitad de precio para que se las lleven} (Anexo~\ref{anx:entrevista-e02}). El piso de margen recoge, por su parte, la práctica que describió E04: sus promociones con descuento no llegan a precios de pérdida, porque \enquote{sigo teniendo una ganancia, es un poco menor, y lo hago por un período corto de tiempo} (Anexo~\ref{anx:entrevista-e04}), y la idea del brainstorming de dar solo recomendaciones que generen un buen margen (Sección~\ref{sec:brainstorming-resultados}).
 
-\paragraph{Cupones vigentes.} Antes de sugerir un cupón, el sistema consulta los cupones vigentes de la tienda. Si ya hay uno equivalente, con un porcentaje igual o mayor y una vigencia que cubre la ventana de evaluación, la recomendación propone difundir ese cupón en lugar de crear otro, para que la tienda no acumule cupones superpuestos.
+\paragraph{Cupones vigentes.} Antes de sugerir un cupón, el sistema consulta los cupones vigentes de la tienda. Si ya hay un cupón porcentual vigente, el sistema lo informa y propone difundir ese cupón en lugar de crear otro, para que la tienda no acumule cupones superpuestos.
 
 \subsection{Capa de explicación}
 \label{sec:motor-explicacion}

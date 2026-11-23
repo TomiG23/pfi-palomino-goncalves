@@ -109,26 +109,26 @@ RF-26 & El sistema debe permitir al usuario enviar por correo electrónico un cu
 \hline
 
 % PENDIENTE-IMPL: A5-default (sin preferencia guardada, el backend muestra el resultado apenas se mide; el modal preselecciona 14)
-RF-27 & El sistema debe permitir al usuario elegir, para cada nivel de prioridad (urgente, atención y oportunidad), cuántos días después de ejecutar una recomendación quiere ver su resultado: 7, 14 o 30 días. El valor recomendado y predeterminado es 14 días; el mínimo de 7 días es el tiempo necesario para reunir ventas suficientes para que la medición tenga sentido. La elección determina cuándo se muestra el resultado, no la ventana con la que se mide (RF-15). & Sección~\ref{sec:feedback-loop}; Sección~\ref{sec:brainstorming-resultados} \\
+RF-27 & El sistema debe permitir al usuario elegir, para cada nivel de prioridad (urgente, atención y oportunidad), cuándo quiere ver el resultado de una recomendación ejecutada: apenas se mide (\enquote{Inmediato}) o después de esperar 7, 14 o 30 días desde la ejecución (\enquote{Esperar días}, con 14 días preseleccionado). Sin una preferencia guardada, el resultado se muestra apenas se mide. La elección determina cuándo se muestra el resultado, no la ventana con la que se mide (RF-15). & Sección~\ref{sec:feedback-loop}; Sección~\ref{sec:brainstorming-resultados} \\
 \hline
 
 % PENDIENTE-IMPL: B1 (aplicar la acción con un clic)
-RF-28 & El sistema debe presentar cada recomendación de descuento o de cupón con la acción armada, con sus valores editables: el código, el porcentaje y la vigencia del cupón, o el precio promocional de cada variante. Los botones de acción son: \enquote{Crear cupón en mi tienda} (cupón), \enquote{Aplicar promoción} (precio promocional) y \enquote{Prefiero hacerlo yo} (copia los datos para cargarlos a mano); el botón \enquote{Marcar como ejecutada} siempre está disponible. Al confirmar, el sistema aplica la acción en la tienda de Tiendanube mediante su API y marca la recomendación como ejecutada con origen \enquote{aplicada desde Decidata}. En tiendas de ejemplo sin identificador de variante de Tiendanube, responde con un mensaje claro sin modificar datos. En los cupones, el código creado se precarga en el correo de RF-26. El sistema nunca aplica una acción sin la confirmación del usuario (RNF-23). & Sección~\ref{sec:dss}; Sección~\ref{sec:brainstorming-resultados} \\
+RF-28 & El sistema debe presentar cada recomendación de descuento o de cupón con la acción armada, con sus valores editables: el código, el porcentaje y la vigencia del cupón, o el precio promocional de cada variante. Los botones de acción son: \enquote{Crear cupón en mi tienda} (cupón), \enquote{Aplicar precio promocional} (precio promocional) y \enquote{Prefiero hacerlo yo} (copia los datos para cargarlos a mano); la tarjeta ofrece siempre, además, \enquote{Ya lo apliqué por mi cuenta}, que registra la ejecución manual. Al confirmar, el sistema aplica la acción en la tienda de Tiendanube mediante su API y marca la recomendación como ejecutada con origen \enquote{aplicada desde Decidata}. En tiendas de ejemplo sin identificador de variante de Tiendanube, responde con un mensaje claro sin modificar datos. En los cupones, el código creado se precarga en el correo de RF-26. El sistema nunca aplica una acción sin la confirmación del usuario (RNF-23). & Sección~\ref{sec:dss}; Sección~\ref{sec:brainstorming-resultados} \\
 \hline
 
 RF-29 & El sistema debe permitir al usuario deshacer una acción aplicada desde Decidata mientras no se haya completado la evaluación de impacto ni se haya enviado el cupón por correo: revierte el precio promocional anterior o lo vacía, o borra el cupón; registra la fecha del deshacer y devuelve la recomendación al estado activo. No se ofrece si no se conoce el estado anterior o si el cupón ya se envió por correo a clientes. & Sección~\ref{sec:feedback-loop} \\ % VERIFICAR-COD: confirmar en producción (deshacer aplicado)
 \hline
 
 % PENDIENTE-IMPL: B2 (descuento sugerido con piso de margen)
-RF-30 & El sistema debe calcular el descuento sugerido sin el modelo de lenguaje: en el precio promocional, el porcentaje surge de una tabla por rubro y por días sin vender de la variante (Tabla~\ref{tab:motor-descuentos}) y, si la variante tiene costo cargado (\texttt{cost}, RF-11), se acota para que el precio con descuento no quede por debajo del costo multiplicado por 1,10; en el cupón, sugiere un 10\%, editable, con un máximo sugerido del 15\% y un aviso si el comerciante lo supera. La vigencia predeterminada es de 14 días. Antes de sugerir un cupón, el sistema consulta los cupones vigentes de la tienda y, si hay uno equivalente, recomienda difundirlo en lugar de crear otro. & Sección~\ref{sec:comportamiento-consumidor}; E04 (Anexo~\ref{anx:entrevista-e04}) \\
+RF-30 & El sistema debe calcular el descuento sugerido sin el modelo de lenguaje: en el precio promocional, el porcentaje surge de una tabla por rubro y por días sin vender de la variante (Tabla~\ref{tab:motor-descuentos}) y, si la variante tiene costo cargado (\texttt{cost}, RF-11), se acota para que el precio con descuento no quede por debajo del costo multiplicado por 1,10; en el cupón, sugiere un 10\%, editable, con un máximo sugerido del 15\% y un aviso si el comerciante lo supera. La vigencia predeterminada es de 14 días. Antes de sugerir un cupón, el sistema consulta los cupones vigentes de la tienda y, si ya hay un cupón porcentual vigente, lo informa y recomienda difundirlo en lugar de crear otro. & Sección~\ref{sec:comportamiento-consumidor}; E04 (Anexo~\ref{anx:entrevista-e04}) \\
 \hline
 
 % PENDIENTE-IMPL: B4 (carrito abandonado)
-RF-31 & El sistema debe generar una recomendación de recupero de carritos abandonados cuando existan carritos abandonados en los últimos 7 días con al menos un producto con stock, y sugerir un cupón de recupero enviado por correo a esos clientes. & Sección~\ref{sec:klaviyo}; E03 (Anexo~\ref{anx:entrevista-e03}) \\
+RF-31 & El sistema debe generar una recomendación de recupero de carritos abandonados cuando existan carritos abandonados en los últimos 7 días con al menos un producto con stock, y sugerir un cupón de recupero, que el comerciante crea en su tienda con un clic (RF-28). & Sección~\ref{sec:klaviyo}; E03 (Anexo~\ref{anx:entrevista-e03}) \\
 \hline
 
 % PENDIENTE-IMPL: B4 (segunda compra)
-RF-32 & El sistema debe generar una recomendación de segunda compra para los clientes con una sola compra, realizada hace entre 30 y 60 días, y sugerir un cupón para incentivar que vuelvan, enviado por correo. & Sección~\ref{sec:segmentacion} \\
+RF-32 & El sistema debe generar una recomendación de segunda compra para los clientes con una sola compra, realizada hace entre 30 y 60 días, y sugerir un cupón para incentivar que vuelvan, que el comerciante crea en su tienda con un clic (RF-28). & Sección~\ref{sec:segmentacion} \\
 \hline
 
 % PENDIENTE-IMPL: B4 (curva de talles rota)
@@ -140,7 +140,7 @@ RF-34 & El sistema debe detectar, en las tiendas de gastronomía, un día de la 
 \hline
 
 % PENDIENTE-IMPL: B4 (venta cruzada de accesorios)
-RF-35 & El sistema debe identificar, en las tiendas de electrónica, a los clientes que compraron un equipo y no compraron accesorios en los 15 días siguientes, y sugerir un cupón para un accesorio, enviado por correo. & Sección~\ref{sec:klaviyo}; RF-10 \\
+RF-35 & El sistema debe identificar, en las tiendas de electrónica, a los clientes que compraron un equipo y no compraron accesorios en los 15 días siguientes, y sugerir un cupón para un accesorio, que el comerciante crea en su tienda con un clic (RF-28). & Sección~\ref{sec:klaviyo}; RF-10 \\
 
 \hline
 \end{longtable}
@@ -371,7 +371,7 @@ Como usuario del sistema, quiero poder marcar que ejecuté una recomendación re
     \item La tarjeta expone el camino \enquote{Ya lo apliqué por mi cuenta}, que registra una ejecución manual (éxito, sin medición de impacto) sin abrir el diálogo de descarte.
     \item El usuario puede descartar una recomendación eligiendo un motivo de la ventana: \enquote{No aplica a mi tienda}, \enquote{No me interesa ahora} u \enquote{Otro motivo} (con texto opcional). Las recomendaciones de reposición usan motivos propios: \enquote{Está discontinuado / mi proveedor ya no lo tiene}, \enquote{Lo voy a reponer más adelante} y \enquote{Otro motivo}. El descarte puede deshacerse inmediatamente; después queda en Historial~$\triangleright$~Descartadas (RF-14).
     \item El motivo define el efecto en el \emph{bandit}: \enquote{No aplica a mi tienda}, \enquote{Otro motivo} y \enquote{Está discontinuado} cuentan como fracaso; \enquote{No me interesa ahora} y \enquote{Lo voy a reponer más adelante} no actualizan el \emph{bandit}.
-    \item El usuario elige, para cada nivel de prioridad, si quiere ver el resultado de las recomendaciones ejecutadas a los 7, 14 o 30 días (RF-27).
+    \item El usuario elige, para cada nivel de prioridad, si quiere ver el resultado de las recomendaciones ejecutadas apenas se mide o a los 7, 14 o 30 días (RF-27).
     \item El sistema no obliga al usuario a ejecutar ni a registrar ninguna acción; el feedback es voluntario.
 \end{itemize}
 
@@ -505,7 +505,7 @@ Como comerciante, quiero que el sistema me proponga una acción sobre los carrit
 \noindent\textbf{Criterios de aceptación:}
 \begin{itemize}
     \item El sistema detecta los carritos abandonados en los últimos 7 días que tienen al menos un producto con stock.
-    \item La recomendación propone un cupón de recupero y su envío por correo a esos clientes.
+    \item La recomendación propone un cupón de recupero, que el comerciante crea en su tienda con un clic.
 \end{itemize}
 
 \noindent\textbf{Requerimientos cubiertos:} RF-31, RF-28, RF-26.
@@ -521,7 +521,7 @@ Como comerciante, quiero identificar a los clientes que compraron una sola vez h
 \noindent\textbf{Criterios de aceptación:}
 \begin{itemize}
     \item El sistema identifica a los clientes con una sola compra, realizada hace entre 30 y 60 días.
-    \item La recomendación propone un cupón para la segunda compra y su envío por correo.
+    \item La recomendación propone un cupón para la segunda compra, que el comerciante crea en su tienda con un clic.
 \end{itemize}
 
 \noindent\textbf{Requerimientos cubiertos:} RF-32, RF-12, RF-28, RF-26.
@@ -572,7 +572,7 @@ Como dueño/a de una tienda de electrónica, quiero saber qué clientes compraro
 \begin{itemize}
     \item La regla se evalúa en las tiendas de electrónica.
     \item El sistema identifica a los clientes que compraron un equipo y no compraron accesorios en los 15 días siguientes.
-    \item La recomendación propone un cupón para el accesorio y su envío por correo.
+    \item La recomendación propone un cupón para el accesorio, que el comerciante crea en su tienda con un clic.
 \end{itemize}
 
 \noindent\textbf{Requerimientos cubiertos:} RF-35, RF-06, RF-28, RF-26.
@@ -821,7 +821,7 @@ Postcondiciones & El brazo del bandit del tipo de recomendación se actualiza co
     % PENDIENTE-IMPL: A4-bandit (resultado de los descartes según el motivo)
     \item El sistema clasifica el resultado como éxito, si la recomendación se ejecutó y el valor observado superó al esperado, o como fracaso, si se ejecutó sin impacto positivo o sin dato para medirlo o si venció sin ejecutarse. Los descartes se clasifican según su motivo (CU-05, flujo alternativo 3b).
     \item El sistema actualiza el brazo del bandit correspondiente al tipo de recomendación para la tienda (RF-16): un éxito suma uno a $\alpha$ y un fracaso suma uno a $\beta$. Cada recomendación se cuenta una sola vez.
-    \item El resultado queda disponible para ser consultado por el usuario como correlación indicativa (RNF-10), a los 7, 14 o 30 días de la ejecución, según la preferencia que eligió para el nivel de prioridad de la recomendación (RF-27).
+    \item El resultado queda disponible para ser consultado por el usuario como correlación indicativa (RNF-10), apenas se mide o a los 7, 14 o 30 días de la ejecución, según la preferencia que eligió para el nivel de prioridad de la recomendación (RF-27).
 \end{enumerate}
 
 \noindent\textbf{Flujos alternativos:}
@@ -1008,7 +1008,7 @@ Postcondiciones & El cupón o el precio promocional queda aplicado en la tienda,
     \item El comerciante abre la recomendación, que muestra la acción armada: por ejemplo, \enquote{Creá el cupón VUELVE10 · 10\% · válido 14 días}, o el precio promocional de cada variante.
     \item El comerciante revisa los valores y, si lo desea, edita el código, el porcentaje, la vigencia o el precio.
     \item El sistema verifica que los valores editados respeten el piso de margen cuando la variante tiene costo cargado (RF-30) y lo advierte si no lo respetan.
-    \item El comerciante confirma con el botón \enquote{Crear cupón en mi tienda} (cupón) o \enquote{Aplicar promoción} (precio promocional). La opción \enquote{Marcar como ejecutada} también está disponible para registrar que la acción ya se realizó fuera del sistema.
+    \item El comerciante confirma con el botón \enquote{Crear cupón en mi tienda} (cupón) o \enquote{Aplicar precio promocional} (precio promocional). La opción \enquote{Ya lo apliqué por mi cuenta} también está disponible para registrar que la acción ya se realizó fuera del sistema.
     \item El backend crea el cupón o carga el precio promocional de las variantes mediante la API de Tiendanube.
     \item El sistema registra la acción aplicada con los parámetros confirmados, el identificador del cupón o de las variantes en la plataforma y la fecha, y marca la recomendación como ejecutada con origen \enquote{aplicada desde Decidata}.
     \item El sistema confirma la aplicación y ofrece \enquote{Deshacer}; si la acción es un cupón, ofrece además enviarlo por correo con el código precargado (CU-10). % VERIFICAR-COD: confirmar en producción (deshacer aplicado: revierte precio promocional o borra cupón, devuelve a «Para hacer»)
@@ -1080,15 +1080,15 @@ HU-13 (Premio a los mejores clientes) & RF-25, RF-12, RF-26 & CU-03, CU-04, CU-1
 % PENDIENTE-IMPL: B1, B4 (filas HU-14 a HU-19)
 HU-14 (Aplicar la acción con un clic) & RF-28, RF-29, RF-30, RF-26 & CU-11, CU-10 \\
 \hline
-HU-15 (Carrito abandonado) & RF-31, RF-28, RF-26 & CU-03, CU-11, CU-10 \\
+HU-15 (Carrito abandonado) & RF-31, RF-28 & CU-03, CU-11 \\
 \hline
-HU-16 (Segunda compra) & RF-32, RF-12, RF-28, RF-26 & CU-03, CU-11, CU-10 \\
+HU-16 (Segunda compra) & RF-32, RF-12, RF-28 & CU-03, CU-11 \\
 \hline
 HU-17 (Curva de talles rota) & RF-33, RF-06, RF-28 & CU-03, CU-11 \\
 \hline
 HU-18 (Día de baja demanda) & RF-34, RF-06, RF-09 & CU-03, CU-04 \\
 \hline
-HU-19 (Venta cruzada de accesorios) & RF-35, RF-06, RF-28, RF-26 & CU-03, CU-11, CU-10 \\
+HU-19 (Venta cruzada de accesorios) & RF-35, RF-06, RF-28 & CU-03, CU-11 \\
 \hline
 --- (Autenticación Tiendanube) & RF-01 & CU-01 \\
 \hline
@@ -1229,12 +1229,12 @@ El panel de recomendaciones se organiza en tres pestañas: \textbf{Para hacer} (
 
 La pestaña En curso muestra, por tarjeta: título de la recomendación, fecha de aplicación, barra de la ventana de medición con la fecha de resultados y el botón \enquote{Deshacer}; el detalle muestra \enquote{Qué aplicamos en tu tienda} (variante, precio promocional o cupón, porcentaje, vigencia y fecha). % VERIFICAR-COD: confirmar en producción (pestaña En curso y detalle «Qué aplicamos en tu tienda»)
 
-Cada tarjeta lleva un chip de prioridad con ícono (urgente, atención u oportunidad) y la insignia \enquote{Recomendación de Decidata}, que reemplaza a la etiqueta \enquote{Generado por IA} del mockup. La pantalla de detalle se organiza en dos bloques: \enquote{Por qué te lo recomendamos}, con la explicación redactada por el modelo de lenguaje, y \enquote{Lo que vemos en tu tienda}, con tres datos clave que sustentan la recomendación; al pie figura el aviso legal de que se trata de una correlación indicativa. Las notificaciones se separan de las recomendaciones; no ocupan el cupo ni entran en la medición de impacto (Figura~\ref{fig:captura-rediseno}).
+Cada tarjeta lleva un chip de prioridad con ícono (urgente, atención u oportunidad); la etiqueta \enquote{Generado por IA} del mockup no se incorporó. La pantalla de detalle se organiza en dos bloques: \enquote{Por qué te lo recomendamos}, con la explicación redactada por el modelo de lenguaje, y \enquote{Lo que vemos en tu tienda}, con tres datos clave que sustentan la recomendación; al pie figura el aviso legal de que se trata de una correlación indicativa. Las notificaciones se separan de las recomendaciones; no ocupan el cupo ni entran en la medición de impacto (Figura~\ref{fig:captura-rediseno}).
 
 % PENDIENTE-CAPTURA: A6 (pantallas del rediseño que pasa Romi: panel con banner de impacto y detalle)
 \begin{figure}[ht]
     \centering
-    \fbox{\parbox{0.8\textwidth}{\centering\vspace{2cm}Captura pendiente: panel con el banner de impacto, tarjetas con chip de prioridad e insignia \enquote{Recomendación de Decidata}, y pantalla de detalle con \enquote{Por qué te lo recomendamos} y \enquote{Lo que vemos en tu tienda}.\vspace{2cm}}}
+    \fbox{\parbox{0.8\textwidth}{\centering\vspace{2cm}Captura pendiente: panel con el banner de impacto, tarjetas con chip de prioridad, y pantalla de detalle con \enquote{Por qué te lo recomendamos} y \enquote{Lo que vemos en tu tienda}.\vspace{2cm}}}
     \caption{Panel y detalle de una recomendación con la identidad de Decidata.}
     \label{fig:captura-rediseno}
 \smallskip
@@ -1259,7 +1259,7 @@ En las recomendaciones de riesgo de abandono y de fidelización, el botón \enqu
 \subsubsection{Descarte con motivo y frecuencia del resultado}
 \label{sec:captura-descarte}
 
-Al descartar una recomendación, un cuadro de diálogo pide el motivo, con un campo de texto para \enquote{Otro}, y el panel ofrece deshacer el descarte (CU-05, flujo alternativo 3b). Desde el panel, el comerciante abre además la configuración del resultado de impacto, donde elige para cada nivel de prioridad si quiere verlo a los 7, 14 o 30 días; la opción de 14 días aparece marcada como recomendada, con la aclaración de que es el tiempo necesario para juntar ventas suficientes y medir el impacto con más precisión (RF-27, Figura~\ref{fig:captura-descarte}).
+Al descartar una recomendación, un cuadro de diálogo pide el motivo, con un campo de texto para \enquote{Otro}, y el panel ofrece deshacer el descarte (CU-05, flujo alternativo 3b). Desde el panel, el comerciante abre además la configuración del resultado de impacto, donde elige para cada nivel de prioridad si quiere verlo apenas se mide (\enquote{Inmediato}) o esperar 7, 14 o 30 días (\enquote{Esperar días}, con 14 días preseleccionado) (RF-27, Figura~\ref{fig:captura-descarte}).
 
 % PENDIENTE-CAPTURA: A4-A5 (cuadro de descarte con motivo y modal de frecuencia del resultado)
 \begin{figure}[ht]
@@ -1290,7 +1290,7 @@ En las recomendaciones de descuento o de cupón, el detalle muestra la acción a
 \subsubsection{Ejecución inferida}
 \label{sec:captura-inferencia}
 
-Cuando el sistema detecta automáticamente la ejecución de una recomendación (CU-05, flujo alternativo 3c), la tarjeta de la recomendación muestra la etiqueta \enquote{Ejecutada (inferida)} en lugar de \enquote{Ejecutada}, y presenta un botón \enquote{No fui yo} que permite al comerciante rechazar la inferencia. Esta diferenciación es necesaria para que el usuario comprenda el origen del cambio de estado y pueda corregirlo sin penalizar el aprendizaje del bandit por un falso positivo.
+Cuando el sistema detecta automáticamente la ejecución de una recomendación (CU-05, flujo alternativo 3c), no siempre la da por hecha. Si detecta un descuento o un cambio de precio, la tarjeta pregunta, por ejemplo, \enquote{Vimos un 20\% de descuento en [producto]. ¿Lo aplicaste por esta recomendación?}, con los botones \enquote{Sí} y \enquote{No}. Si la ejecución queda registrada como inferida, como en una reposición, el detalle ofrece el botón \enquote{No la apliqué por esta recomendación}, que permite al comerciante rechazar la inferencia. Esta diferenciación es necesaria para que el usuario comprenda el origen del cambio de estado y pueda corregirlo sin penalizar el aprendizaje del bandit por un falso positivo.
 
 % TODO: agregar captura de pantalla de ejecución inferida cuando esté disponible.
 
@@ -1318,7 +1318,7 @@ La tarjeta de recomendación de fecha clave (HU-06) identifica la fecha comercia
 \subsubsection{Tarjeta de reposición de stock}
 \label{sec:captura-reposicion}
 
-La tarjeta de reposición de stock (HU-01) no incluye el botón \enquote{Marcar como ejecutada}: la recomendación se resuelve automáticamente cuando el stock vuelve a tener unidades. El título abre un detalle con la lista de variantes sin stock y las unidades vendidas en la ventana de historial del rubro. El botón principal es \enquote{Ver en Productos}, que abre la lista de productos del administrador de Tiendanube. % VERIFICAR-COD: confirmar en producción (tarjeta de reposición: variantes sin stock, unidades vendidas, botón Ver en Productos)
+La tarjeta de reposición de stock (HU-01) no incluye la opción \enquote{Ya lo apliqué por mi cuenta}: la recomendación se resuelve automáticamente cuando el stock vuelve a tener unidades. El título abre un detalle con la lista de variantes sin stock y las unidades vendidas en la ventana de historial del rubro. El botón principal es \enquote{Ver en Productos}, que abre la lista de productos del administrador de Tiendanube. % VERIFICAR-COD: confirmar en producción (tarjeta de reposición: variantes sin stock, unidades vendidas, botón Ver en Productos)
 % PENDIENTE-CAPTURA: captura de la tarjeta y detalle de reposición de stock
 
 \subsubsection{Aplicación integrada en WordPress}
